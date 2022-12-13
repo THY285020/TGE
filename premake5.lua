@@ -9,14 +9,14 @@ workspace "TGE"
 		"Dist"
 	}
 
-outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"--Debug-windows-x86_64
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "TGE/vendor/GLFW/include"
 IncludeDir["Glad"] = "TGE/vendor/Glad/include"
 IncludeDir["ImGui"] = "TGE/vendor/imgui"
 IncludeDir["glm"] = "TGE/vendor/glm"
-
+IncludeDir["stb_image"] = "TGE/vendor/stb_image"
 
 --复制了里面的premake5
 include "TGE/vendor/GLFW"
@@ -25,7 +25,7 @@ include "TGE/vendor/imgui"
 
 project "TGE"
 	location "TGE"
-	kind "StaticLib"
+	kind "StaticLib"--动态则SharedLib
 	language"C++"
 	cppdialect"C++17"
 	staticruntime "on"
@@ -39,6 +39,8 @@ project "TGE"
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
@@ -50,7 +52,8 @@ project "TGE"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 	
 	links{
@@ -63,7 +66,7 @@ project "TGE"
 	filter "system:windows"
 		systemversion "latest"
 
-		defines
+		defines--预处理
 		{
 			"TGE_PLATFORM_WINDOWS",
 			"TGE_BUILD_DLL",

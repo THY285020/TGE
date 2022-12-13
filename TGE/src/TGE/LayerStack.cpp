@@ -31,6 +31,8 @@ namespace TGE {
 		if (it != m_Layers.end()) {
 			m_Layers.erase(it);
 			m_LayerInsertIndex--;
+		}else {
+			TGE_CORE_WARN("PopLayer did not find!");
 		}
 	}
 

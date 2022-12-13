@@ -3,7 +3,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace TGE {
-	std::shared_ptr<spdlog::logger> log::s_CoreLogger;
+	std::shared_ptr<spdlog::logger> log::s_CoreLogger;//∂®“Â
 	std::shared_ptr<spdlog::logger> log::s_ClientLogger;
 
 	void log::Init() {

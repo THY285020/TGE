@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #ifdef TGE_PLATFORM_WINDOWS
 	#if TGE_DYNAMIC_LINK
@@ -29,3 +30,12 @@
 #define BIT(x) (1 << x)
 
 #define TGE_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+//标明是TGE资产管理的指针
+namespace TGE {
+	template<typename T>
+	using Scop = std::unique_ptr<T>;
+
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+}

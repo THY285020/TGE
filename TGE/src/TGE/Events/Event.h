@@ -32,9 +32,12 @@ namespace TGE {
 	class TGE_API Event {
 			friend class EventDispatcher;
 		public:
+			//EVENT_CLASS_TYPE
 			virtual EventType GetEventType() const = 0;
 			virtual const char* GetName() const = 0;
+			//EVENT_CLASS_CATEGORY
 			virtual int GetCategoryFlags() const = 0;
+
 			virtual std::string ToString() const { return GetName(); }
 
 			inline bool IsInCategory(EventCategory category) {

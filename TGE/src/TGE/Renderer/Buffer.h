@@ -32,7 +32,7 @@ namespace TGE {
 		std::string Name;
 		ShaderDataType Type;
 		uint32_t Size;
-		uint32_t Offset;
+		uint64_t Offset;//64因为会警告uint32转换为64位的const void*
 		bool Normalized;
 		BufferElement(){}
 
@@ -66,7 +66,7 @@ namespace TGE {
 	{
 		public:
 			BufferLayout(){}
-			BufferLayout(const std::initializer_list<BufferElement>& elements)//initializer_list处理不同数量,想同类型的实参
+			BufferLayout(const std::initializer_list<BufferElement>& elements)//initializer_list处理不同数量,相同类型的实参
 				:m_Elements(elements)
 			{
 				CalculateOffsetAndStritde();

@@ -1,7 +1,5 @@
 #pragma once
 
-//#include <memory>
-
 #include "core.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"//在事件中记录自定义类型

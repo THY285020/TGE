@@ -64,7 +64,7 @@ namespace TGE {
 		//Set GLFW callbacks 注册回调函数，glfw反馈信息到用户定义函数
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
-			WindowData& data = *(WindowData*)(glfwGetWindowUserPointer(window));//WindowData结构体
+			WindowData& data = *(WindowData*)(glfwGetWindowUserPointer(window));//返回用户指针给WindowData结构体
 			data.Width = width;
 			data.Height = height;
 

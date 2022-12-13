@@ -58,6 +58,7 @@ namespace TGE {
 		//-----------------------------------------------------
 		//from C:\Engine\TGE\vendor\imgui\examples\example_glfw_opengl3\main.cpp
 		// Setup Dear ImGui context
+		//imgui更新后直接与glfw的事件沟通
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
