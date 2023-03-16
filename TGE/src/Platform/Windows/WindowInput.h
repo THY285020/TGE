@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TGE/Input.h"
+#include "TGE/Core/Input.h"
 
 namespace TGE {
 	class TGE_API WindowInput :public Input {

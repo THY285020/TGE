@@ -1,6 +1,6 @@
 #include "tgpch.h"
 #include "Application.h"
-#include "TGE/Window.h"
+#include "TGE/Core/Window.h"
 //#include "TGE.h"
 
 #include <glad/glad.h>
@@ -34,8 +34,7 @@ namespace TGE {
 		RenderCommand::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
-		PushOverlay(m_ImGuiLayer);
-
+		PushOverlay(m_ImGuiLayer);//overlay最先渲染，在画面顶层
 
 	}
 
@@ -48,6 +47,7 @@ namespace TGE {
 		EventDispatcher dispatcher(e);
 		//Dispatch函数检验e的类型是否是WindowCloseEvent 是则应用后面函数
 		dispatcher.Dispatch<WindowCloseEvent>(TGE_BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(TGE_BIND_EVENT_FN(Application::OnWindowResizeEvent));
 		//TGE_CORE_TRACE("{0}", e);//Sandbox处使用 
 
 		//从后往前处理
@@ -114,9 +114,11 @@ namespace TGE {
 			m_Shader->Bind();
 			m_VertexArray->Bind();
 			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);*/
-
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(timestep);
+			if (!m_Minimized)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(timestep);
+			}
 
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)
@@ -134,6 +136,17 @@ namespace TGE {
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
+		return true;
+	}
+	bool Application::OnWindowResizeEvent(WindowResizeEvent& e)
+	{
+		if (e.GetHeight() == 0 || e.GetWidth() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetHeight(), e.GetWidth());
 		return true;
 	}
 }

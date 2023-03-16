@@ -2,14 +2,14 @@
 //#define _CRT_SECURE_NO_WARNINGS 清楚安全警告
 //For use by TGE applications
 #include <iostream>
-#include "TGE/Application.h"
-#include "TGE/log.h"
-#include "TGE/Layer.h"
-#include "TGE/Input.h"
-#include "TGE/KeyCodes.h"
-#include "TGE/MouseButtonCodes.h"
+#include "TGE/Core/Application.h"
+#include "TGE/Core/log.h"
+#include "TGE/Core/Layer.h"
+#include "TGE/Core/Input.h"
+#include "TGE/Core/KeyCodes.h"
+#include "TGE/Core/MouseButtonCodes.h"
 #include "TGE/ImGui/ImGuiLayer.h"
-#include "TGE/core.h"
+#include "TGE/Core/core.h"
 
 //---Renderer---
 #include "TGE/Renderer/Renderer.h"
@@ -21,8 +21,9 @@
 #include "TGE/Renderer/Texture.h"
 
 #include "TGE/Renderer/OrthoCamera.h"
+#include "TGE/Renderer/OrthoCameraController.h"
 
 //----------------------------
 
 //---Entry Point---
-#include "TGE/EntryPoint.h"
+#include "TGE/Core/EntryPoint.h"

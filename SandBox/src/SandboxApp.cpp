@@ -20,10 +20,8 @@
 
 class ExampleLayer : public TGE::Layer {
 public:
-	ExampleLayer():Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
+	ExampleLayer():Layer("Example"), m_CameraController(1280.f/720.f, true)
 	{
-		m_CameraPos = m_Camera.GetPosition();
-		m_CameraRot = m_Camera.GetRotation();
 		m_VertexArray.reset(TGE::VertexArray::Create());
 		//glGenVertexArrays glBindVertexArray
 
@@ -83,9 +81,9 @@ public:
 			}
 		)";
 
-		m_Shader.reset(TGE::Shader::Create(vertexSrc, fragmentSrc));
+		m_Shader =TGE::Shader::Create("TriangleShader",vertexSrc, fragmentSrc);
 
-		//shader2--------------------------------------------
+		//SquareShader--------------------------------------------
 
 		m_SquareVA.reset(TGE::VertexArray::Create());
 		float squareVertices[4 * 5] = {
@@ -137,7 +135,8 @@ public:
 			}
 		)";
 
-		m_SquareShader.reset(TGE::Shader::Create(vertexSrc2, fragmentSrc2));
+		m_SquareShader = TGE::Shader::Create("Square",vertexSrc2, fragmentSrc2);
+#pragma region TextureSource
 		//--------------------------TextureShader
 		//std::string vertexSrcT = R"(
 		//	#version 330 core
@@ -167,13 +166,14 @@ public:
 		//		FragColor = texture(Texture, f_TexCoord);
 		//	}
 		//)";
-
-		m_TextureShader.reset(TGE::Shader::Create("assets/shaders/Texture.glsl"));
+#pragma endregion
+		auto textureShader = shaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = (TGE::Texture2D::Create("assets/textures/wood.png"));//此处已经返回共享指针，所以无需reset
 
-		std::dynamic_pointer_cast<TGE::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<TGE::OpenGLShader>(m_TextureShader)->SetUniformInt("Texture", 0);
+		//基类对象使用子类中才有的方法需要dynamic_pointer_cast
+		std::dynamic_pointer_cast<TGE::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<TGE::OpenGLShader>(textureShader)->SetUniformInt("Texture", 0);
 	}
 
 	virtual void OnImGuiRender() override {
@@ -195,59 +195,31 @@ public:
 		else {
 			time_temp += ts.GetTimeSeconds();
 		}
+		//--------------------Camera----------------
+		m_CameraController.OnUpdate(ts);
+
 		//--------Tab------------
 		if (TGE::Input::IsKeyPressed(TGE_KEY_TAB)) {
 			TGE_INFO("Tab key is pressed!(poll)");
 		}
-		//-------------CameraMove----------------
-		if (TGE::Input::IsKeyPressed(TGE_KEY_W) * ts)
-		{
-			m_CameraPos.z -= m_CameraSpeed * ts;
-		}
-		else if (TGE::Input::IsKeyPressed(TGE_KEY_S) * ts)
-		{
-			m_CameraPos.z += m_CameraSpeed * ts;
-		}
 
-		if (TGE::Input::IsKeyPressed(TGE_KEY_A) * ts)
-		{
-			m_CameraPos.x -= m_CameraSpeed * ts;
-		}
-		else if (TGE::Input::IsKeyPressed(TGE_KEY_D) * ts)
-		{
-			m_CameraPos.x += m_CameraSpeed * ts;
-		}
-
-		if (TGE::Input::IsKeyPressed(TGE_KEY_Q) * ts)
-		{
-			m_CameraPos.y += m_CameraSpeed * ts;
-		}
-		else if (TGE::Input::IsKeyPressed(TGE_KEY_E) )
-		{
-			m_CameraPos.y -= m_CameraSpeed * ts;
-		}
-		//------------Rotation--------------------
-		if (TGE::Input::IsKeyPressed(TGE_KEY_R) )
-		{
-			m_CameraRot += m_CameraRotSpeed * ts;
-		}
 		//------------transfromation----------------
 		if (TGE::Input::IsKeyPressed(TGE_KEY_LEFT) * ts)
 		{
-			m_SquareVA_Pos.x -= m_CameraSpeed * ts;
+			m_SquareVA_Pos.x -= MoveSpeed * ts;
 		}
 		else if (TGE::Input::IsKeyPressed(TGE_KEY_RIGHT) * ts)
 		{
-			m_SquareVA_Pos.x += m_CameraSpeed * ts;
+			m_SquareVA_Pos.x += MoveSpeed * ts;
 		}
 
 		if (TGE::Input::IsKeyPressed(TGE_KEY_UP) * ts)
 		{
-			m_SquareVA_Pos.y += m_CameraSpeed * ts;
+			m_SquareVA_Pos.y += MoveSpeed * ts;
 		}
 		else if (TGE::Input::IsKeyPressed(TGE_KEY_DOWN))
 		{
-			m_SquareVA_Pos.y -= m_CameraSpeed * ts;
+			m_SquareVA_Pos.y -= MoveSpeed * ts;
 		}
 
 		/*auto cam = camera(5.0f, { 0.5f, 0.5f });*/
@@ -255,12 +227,9 @@ public:
 		TGE::RenderCommand::SetClearColor({ 0.1f, 0.2f, 0.3f, 1.0f });
 		TGE::RenderCommand::Clear();
 
-		m_Camera.SetPosition(m_CameraPos);
-		m_Camera.SetRotation(m_CameraRot);
-
 		//Renderer的submit函数调用RenderCommand::DrawIndex与VAO的Bind，
 		//RenderCommand指定了RendererAPI成员，并调用对应API的DrawIndex
-		TGE::Renderer::BeginScene(m_Camera);
+		TGE::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		//m_SquareShader->Bind();
 		//m_SquareShader->SetUniformMat4("ViewProj",m_Camera.GetViewProjectionMatrix());
@@ -278,8 +247,9 @@ public:
 			}
 		}
 
+		auto textureShader = shaderLibrary.Get("Texture");
 		m_Texture->Bind(0);
-		TGE::Renderer::Submit(m_TextureShader, m_SquareVA, glm::vec3(0.0), glm::vec3(1.0f));
+		TGE::Renderer::Submit(textureShader, m_SquareVA, glm::vec3(0.0), glm::vec3(1.0f));
 
 		//Triangle
 		/*TGE::Renderer::Submit(m_Shader, m_VertexArray);*/
@@ -289,6 +259,14 @@ public:
 
 	void OnEvent(TGE::Event& event) override
 	{
+		m_CameraController.OnEvent(event);
+
+		if (event.GetEventType() == TGE::EventType::WindowResize)
+		{
+			auto& re = (TGE::WindowResizeEvent&)event;
+			float zoom = (float)re.GetWidth() / 1280.f;
+			m_CameraController.SetZoomLevel(zoom);
+		}
 		//TGE_TRACE("{0}", event);
 		//if (event.GetEventType() == TGE::EventType::KeyPressed) {
 		//	TGE::KeyPressedEvent& e = (TGE::KeyPressedEvent&)event;
@@ -300,6 +278,7 @@ public:
 	}
 private:
 	//Render
+	TGE::ShaderLibrary shaderLibrary;
 	TGE::Ref<TGE::Shader> m_Shader;
 	TGE::Ref<TGE::VertexArray> m_VertexArray;
 	//std::shared_ptr<VertexBuffer> m_VertexBuffer;
@@ -308,14 +287,11 @@ private:
 	TGE::Ref<TGE::Shader> m_SquareShader;
 	TGE::Ref<TGE::VertexArray> m_SquareVA;
 
-	TGE::Ref<TGE::Shader> m_TextureShader;
+	//TGE::Ref<TGE::Shader> m_TextureShader;
 	TGE::Ref<TGE::Texture2D> m_Texture;
 
-	TGE::OrthoCamera m_Camera;
-	glm::vec3 m_CameraPos;
-	float m_CameraRot;
-	float m_CameraSpeed = 10.f;
-	float m_CameraRotSpeed = 180.0f;
+	TGE::OrthoCameraController m_CameraController;
+	float MoveSpeed = 10.f;
 
 	double time_temp = 0.0;
 	glm::vec3 m_SquareVA_Pos = glm::vec3(0.0);
@@ -329,7 +305,6 @@ class Sandbox :public TGE::Application {
 public:
 	Sandbox() {
 		PushLayer(new ExampleLayer());
-		/*PushOverlay(new TGE::ImGuiLayer());*/
 	}
 	~Sandbox() {
 

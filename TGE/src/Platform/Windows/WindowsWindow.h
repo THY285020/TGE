@@ -1,5 +1,5 @@
 #pragma once
-#include "TGE/Window.h"
+#include "TGE/Core/Window.h"
 #include "TGE/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>

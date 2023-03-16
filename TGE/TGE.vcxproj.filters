@@ -78,14 +78,38 @@
     <ClInclude Include="src\TGE.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\TGE\Application.h">
-      <Filter>src\TGE</Filter>
+    <ClInclude Include="src\TGE\Core\Application.h">
+      <Filter>src\TGE\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Core\EntryPoint.h">
+      <Filter>src\TGE\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Core\Input.h">
+      <Filter>src\TGE\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Core\KeyCodes.h">
+      <Filter>src\TGE\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Core\Layer.h">
+      <Filter>src\TGE\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Core\LayerStack.h">
+      <Filter>src\TGE\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Core\MouseButtonCodes.h">
+      <Filter>src\TGE\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Core\TimeStep.h">
       <Filter>src\TGE\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\TGE\EntryPoint.h">
-      <Filter>src\TGE</Filter>
+    <ClInclude Include="src\TGE\Core\Window.h">
+      <Filter>src\TGE\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Core\core.h">
+      <Filter>src\TGE\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Core\log.h">
+      <Filter>src\TGE\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Events\ApplicationEvent.h">
       <Filter>src\TGE\Events</Filter>
@@ -101,21 +125,6 @@
     </ClInclude>
     <ClInclude Include="src\TGE\ImGui\ImGuiLayer.h">
       <Filter>src\TGE\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TGE\Input.h">
-      <Filter>src\TGE</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TGE\KeyCodes.h">
-      <Filter>src\TGE</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TGE\Layer.h">
-      <Filter>src\TGE</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TGE\LayerStack.h">
-      <Filter>src\TGE</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TGE\MouseButtonCodes.h">
-      <Filter>src\TGE</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\Buffer.h">
       <Filter>src\TGE\Renderer</Filter>
@@ -146,15 +155,6 @@
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\VertexArray.h">
       <Filter>src\TGE\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TGE\Window.h">
-      <Filter>src\TGE</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TGE\core.h">
-      <Filter>src\TGE</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TGE\log.h">
-      <Filter>src\TGE</Filter>
     </ClInclude>
     <ClInclude Include="src\tgpch.h">
       <Filter>src</Filter>
@@ -918,6 +918,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\TGE\Renderer\OrthoCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -944,20 +945,23 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\TGE\Application.cpp">
-      <Filter>src\TGE</Filter>
+    <ClCompile Include="src\TGE\Core\Application.cpp">
+      <Filter>src\TGE\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TGE\Core\Layer.cpp">
+      <Filter>src\TGE\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TGE\Core\LayerStack.cpp">
+      <Filter>src\TGE\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TGE\Core\log.cpp">
+      <Filter>src\TGE\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\ImGui\ImGuiBuild.cpp">
       <Filter>src\TGE\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\ImGui\ImGuiLayer.cpp">
       <Filter>src\TGE\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TGE\Layer.cpp">
-      <Filter>src\TGE</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TGE\LayerStack.cpp">
-      <Filter>src\TGE</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\Renderer\Buffer.cpp">
       <Filter>src\TGE\Renderer</Filter>
@@ -986,14 +990,12 @@
     <ClCompile Include="src\TGE\Renderer\VertexArray.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\TGE\log.cpp">
-      <Filter>src\TGE</Filter>
-    </ClCompile>
     <ClCompile Include="src\tgpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\TGE\Renderer\OrthoCameraController.cpp" />
   </ItemGroup>
 </Project>

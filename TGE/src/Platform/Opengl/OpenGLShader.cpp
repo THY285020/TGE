@@ -20,7 +20,7 @@ namespace TGE
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
 		std::string result;
-		std::ifstream in(filepath, std::ios::in, std::ios::binary);
+		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
@@ -62,7 +62,10 @@ namespace TGE
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
 		GLint program = glCreateProgram();
-		std::vector<GLenum> glShaderIDs;
+		TGE_CORE_ASSERT(shaderSources.size() <= 3, "We only support up to 3 shaders for now!");
+		std::array<GLenum, 3> glShaderIDs;
+		int glShaderIDIndex = 0;
+		//std::vector<GLenum> glShaderIDs;//array更节省性能
 		for (auto& kv : shaderSources)
 		{
 			GLenum type = kv.first;
@@ -96,7 +99,8 @@ namespace TGE
 			}
 			// Attach our shaders to our program
 			glAttachShader(program, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex++] = shader;
+			//glShaderIDs.push_back(shader);
 		}
 
 #pragma region shader
@@ -284,9 +288,17 @@ namespace TGE
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
+
+		//从filepath中提取文件名
+		auto last_slash = filepath.find_last_of("/\\");
+		last_slash = last_slash == std::string::npos ? 0 : last_slash+1;//+1是用于区分是否存在斜杠
+		auto lastDot = filepath.rfind(".");
+		auto count = lastDot == std::string::npos ? filepath.size() - last_slash : lastDot - last_slash;//名字长度
+		m_Name = filepath.substr(last_slash, count);
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		:m_Name(name)
 	{
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;

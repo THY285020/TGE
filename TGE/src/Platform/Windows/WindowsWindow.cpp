@@ -1,6 +1,6 @@
 #include "tgpch.h"
 #include "WindowsWindow.h"
-#include "TGE/log.h"
+#include "TGE/Core/log.h"
 
 #include "TGE/Events/KeyEvent.h"
 #include "TGE/Events/MouseEvent.h"
@@ -69,7 +69,7 @@ namespace TGE {
 			data.Height = height;
 
 			WindowResizeEvent event(width, height);
-			//Applicaiton创建时调用SetEventCallback把EventCallback定义为OnEvent，用OnEvent输出信息
+			//Applicaiton创建时调用SetEventCallback把EventCallback定义为OnEvent，用OnEvent接收信息
 			data.EventCallback(event);//把窗口变化event传入到event反馈中
 		});
 

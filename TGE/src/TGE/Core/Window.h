@@ -1,6 +1,6 @@
 #pragma once
 #include "tgpch.h"
-#include "TGE/core.h"
+#include "TGE/Core/core.h"
 #include "TGE/Events/Event.h"
 
 namespace TGE {

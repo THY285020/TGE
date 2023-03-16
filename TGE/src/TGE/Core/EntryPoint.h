@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 	int a = 5;
 	TGE_INFO("Hello! Var={0}", a);
 	//TGE::log::GetClientLogger()->info("Hello! Var=5");
-	auto app = TGE::CreateApplication();
+	auto app = TGE::CreateApplication();//在sandbox处用户指定
 	app->Run();
 	delete app;
 }

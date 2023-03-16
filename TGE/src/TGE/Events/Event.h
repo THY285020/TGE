@@ -1,5 +1,5 @@
 #pragma once
-#include "TGE/core.h"
+#include "TGE/Core/core.h"
 //#include <string>
 //#include <functional>
 

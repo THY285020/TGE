@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "TGE/core.h"
+#include "TGE/Core/core.h"
 
 namespace TGE
 {

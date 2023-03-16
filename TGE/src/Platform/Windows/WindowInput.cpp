@@ -2,7 +2,7 @@
 #include "WindowInput.h"
 
 #include <GLFW/glfw3.h>
-#include "TGE/Application.h"
+#include "TGE/Core/Application.h"
 
 //Application->s_Instance->Window* m_Window->GLFWwindow* m_Window
 namespace TGE { 

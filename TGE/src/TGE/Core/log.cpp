@@ -1,5 +1,5 @@
 #include "tgpch.h"
-#include "TGE/log.h"
+#include "log.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace TGE {

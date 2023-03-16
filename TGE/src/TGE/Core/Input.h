@@ -1,5 +1,5 @@
 #pragma once
-#include "TGE/core.h"
+#include "TGE/Core/core.h"
 //为了能检测组合键
 //Input->WindowInput->IsKeyPressed->IsKeyPressedImpl->glfw keypressed||keyrepeat
 namespace TGE {

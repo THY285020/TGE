@@ -1,11 +1,11 @@
 #pragma once
 #include "core.h"
-#include "Events/Event.h"
+#include "../Events/Event.h"
 #include "TGE/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "TGE/ImGui/ImGuiLayer.h"
 #include "Window.h"
-#include "Core/TimeStep.h"
+#include "TimeStep.h"
 
 //#include "TGE/Renderer/Shader.h"
 //#include "Renderer/VertexArray.h"
@@ -32,6 +32,7 @@ namespace TGE {
 	private:
 
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResizeEvent(WindowResizeEvent& e);
 		std::unique_ptr<Window> m_Window;
 
 		ImGuiLayer* m_ImGuiLayer;
@@ -42,6 +43,7 @@ namespace TGE {
 
 		static Application* s_Instance;
 
+		bool m_Minimized = false;
 	};
 	//To be defined in Client
 	Application* CreateApplication();
