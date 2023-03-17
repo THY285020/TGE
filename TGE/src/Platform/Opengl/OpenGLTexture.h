@@ -1,11 +1,13 @@
 #pragma once
 #include "TGE/Renderer/Texture.h"
+#include <glad/glad.h>
 
 namespace TGE
 {
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
+		OpenGLTexture2D(uint32_t width, uint32_t height);
 		OpenGLTexture2D(const  std::string& path);
 		virtual ~OpenGLTexture2D();
 
@@ -13,11 +15,15 @@ namespace TGE
 		virtual uint32_t GetHeight() const override { return m_Height; }
 
 		virtual void Bind(uint32_t slot) const override;
+
+		virtual void SetData(void* data, uint32_t size) override;
 	private:
 		std::string m_Path;
 		uint32_t m_Width;
 		uint32_t m_Height;
 		uint32_t m_TextureID;
+		GLenum m_InternalFormat;
+		GLenum m_DataFormat;
 	};
 }
 

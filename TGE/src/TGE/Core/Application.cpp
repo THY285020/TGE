@@ -31,7 +31,7 @@ namespace TGE {
 		//SetEventCallback函数让m_Window的m_Data结构体的callback函数变为(fn)
 		m_Window->SetEventCallback(TGE_BIND_EVENT_FN(Application::OnEvent));
 
-		RenderCommand::Init();
+		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);//overlay最先渲染，在画面顶层

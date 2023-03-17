@@ -1,13 +1,14 @@
 #include "tgpch.h"
 #include "TGE.h"
+#include "TGE/Core/EntryPoint.h"
+
 #include "Platform/Opengl/OpenGLShader.h"
 //#include <glm/vec3.hpp> // glm::vec3
 //#include <glm/vec4.hpp> // glm::vec4
 //#include <glm/mat4x4.hpp> // glm::mat4
-
-
 #include "imgui/imgui.h"
 #include <glm/gtc/type_ptr.hpp>
+#include "Sandbox2D.h"
 //glm::mat4 camera(float Translate, glm::vec2 const& Rotate)
 //{
 //	glm::mat4 Projection = glm::perspective(glm::pi<float>() * 0.25f, 4.0f / 3.0f, 0.1f, 100.f);
@@ -22,7 +23,7 @@ class ExampleLayer : public TGE::Layer {
 public:
 	ExampleLayer():Layer("Example"), m_CameraController(1280.f/720.f, true)
 	{
-		m_VertexArray.reset(TGE::VertexArray::Create());
+		m_VertexArray = (TGE::VertexArray::Create());
 		//glGenVertexArrays glBindVertexArray
 
 		float vertices[3 * 7] = {
@@ -85,7 +86,7 @@ public:
 
 		//SquareShader--------------------------------------------
 
-		m_SquareVA.reset(TGE::VertexArray::Create());
+		m_SquareVA = TGE::VertexArray::Create();
 		float squareVertices[4 * 5] = {
 			//Position			//TexCoord
 			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,//×óÏÂ
@@ -304,7 +305,8 @@ private:
 class Sandbox :public TGE::Application {
 public:
 	Sandbox() {
-		PushLayer(new ExampleLayer());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 	~Sandbox() {
 

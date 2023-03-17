@@ -23,7 +23,6 @@
 #include "TGE/Renderer/OrthoCamera.h"
 #include "TGE/Renderer/OrthoCameraController.h"
 
+#include "TGE/Renderer/Renderer2D.h"
 //----------------------------
 
-//---Entry Point---
-#include "TGE/Core/EntryPoint.h"

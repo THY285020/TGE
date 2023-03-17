@@ -21,23 +21,28 @@ namespace TGE {
 		{
 			m_CameraPos.z += m_CameraSpeed * ts;
 		}
-
+		//为了使移动方向不变，需要根据镜头旋转角度调整（向量推导）
 		if (Input::IsKeyPressed(TGE_KEY_A) * ts)
 		{
-			m_CameraPos.x -= m_CameraSpeed * ts;
+			m_CameraPos.x -= cos(glm::radians(m_CameraRot))* m_CameraSpeed * ts;
+			m_CameraPos.y -= sin(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
 		}
 		else if (Input::IsKeyPressed(TGE_KEY_D) * ts)
 		{
-			m_CameraPos.x += m_CameraSpeed * ts;
+			m_CameraPos.x += cos(glm::radians(m_CameraRot))* m_CameraSpeed * ts;
+			m_CameraPos.y += sin(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
 		}
 
 		if (Input::IsKeyPressed(TGE_KEY_Q) * ts)
 		{
-			m_CameraPos.y += m_CameraSpeed * ts;
+			m_CameraPos.x += sin(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
+			m_CameraPos.y -= cos(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
 		}
 		else if (Input::IsKeyPressed(TGE_KEY_E))
 		{
-			m_CameraPos.y -= m_CameraSpeed * ts;
+			m_CameraPos.x -= sin(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
+			m_CameraPos.y += cos(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
+
 		}
 		//------------Rotation--------------------
 		if (m_Rotation)
@@ -45,6 +50,11 @@ namespace TGE {
 			if (Input::IsKeyPressed(TGE_KEY_R))
 			{
 				m_CameraRot += m_CameraRotSpeed * ts;
+
+				if (m_CameraRot > 180.f)
+					m_CameraRot -= 360.f;
+				else if (m_CameraRot <= -180.f)
+					m_CameraRot += 360.f;
 			}
 			m_Camera.SetRotation(m_CameraRot);
 		}
@@ -60,7 +70,7 @@ namespace TGE {
 	}
 	bool OrthoCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
-		m_ZoomLevel -= e.GetYOffset() * 0.5;
+		m_ZoomLevel -= e.GetYOffset() * 0.5f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;

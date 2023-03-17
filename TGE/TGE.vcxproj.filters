@@ -919,6 +919,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\OrthoCameraController.h" />
+    <ClInclude Include="src\TGE\Renderer\Renderer2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -997,5 +998,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\Renderer\OrthoCameraController.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Renderer2D.cpp" />
   </ItemGroup>
 </Project>
