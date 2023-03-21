@@ -21,10 +21,8 @@ private:
 	//temp
 	TGE::Ref<TGE::Shader> m_Shader;
 	TGE::Ref<TGE::VertexArray> m_VertexArray;
-
-	glm::vec4 SquareColor = glm::vec4(0.2, 0.3, 0.8, 1.0f);
-
 	TGE::Ref<TGE::Texture2D> m_Texture;
 
+	glm::vec4 SquareColor = glm::vec4(0.2, 0.3, 0.8, 1.0f);
 };
 

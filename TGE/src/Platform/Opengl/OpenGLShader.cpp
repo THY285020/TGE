@@ -433,6 +433,11 @@ namespace TGE
 		SetUniformInt(name, value);
 	}
 
+	void OpenGLShader::SetIntArray(const std::string& name, uint32_t count, int* values)
+	{
+		SetUniformIntArray(name, count, values);
+	}
+
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
 		SetUniformFloat3(name, value);
@@ -453,6 +458,11 @@ namespace TGE
 	void OpenGLShader::SetUniformInt(const std::string& name, const int value)
 	{
 		glUniform1i(glGetUniformLocation(Shader_ID, name.c_str()), value);
+	}
+	void OpenGLShader::SetUniformIntArray(const std::string& name, uint32_t count, int* values)
+	{
+		GLint location = glGetUniformLocation(Shader_ID, name.c_str());
+		glUniform1iv(location, count, values);
 	}
 	//----------------------------------------------float
 	void OpenGLShader::SetUniformFloat(const std::string& name, const float value)

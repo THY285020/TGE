@@ -25,10 +25,12 @@ namespace TGE {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLRendererAPI::DrawIndex(const Ref<VertexArray>& vertexArray)
+	void OpenGLRendererAPI::DrawIndex(const Ref<VertexArray>& vertexArray, uint32_t indexcount)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		uint32_t count = indexcount ? vertexArray->GetIndexBuffer()->GetCount():indexcount;
+		//(mode, count, type, offset)
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);//不在使用索引缓冲对象的时候填入数组
+		glBindTexture(GL_TEXTURE_2D, 0);//解除绑定
 	}
 }
 

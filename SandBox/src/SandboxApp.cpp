@@ -34,7 +34,7 @@ public:
 		};
 
 		TGE::Ref<TGE::VertexBuffer> m_VertexBuffer;
-		m_VertexBuffer.reset(TGE::VertexBuffer::Create(vertices, sizeof(vertices)));
+		m_VertexBuffer = (TGE::VertexBuffer::Create(vertices, sizeof(vertices)));
 		////此处reset会释放智能指针原本的空间
 		//glGenBuffers glBindBuffer glBufferData
 
@@ -49,7 +49,7 @@ public:
 		uint32_t indices[3] = { 0, 1, 2 };
 
 		TGE::Ref<TGE::IndexBuffer> m_IndexBuffer;
-		m_IndexBuffer.reset(TGE::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_IndexBuffer = (TGE::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
 		std::string vertexSrc = R"(
@@ -95,7 +95,7 @@ public:
 			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f //左上
 		};
 		TGE::Ref<TGE::VertexBuffer> squareVB;
-		squareVB.reset(TGE::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		squareVB = (TGE::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
 			{ TGE::ShaderDataType::Float3, "Position" },
 			{ TGE::ShaderDataType::Float2, "TexCoord" }
@@ -106,7 +106,7 @@ public:
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
 		TGE::Ref<TGE::IndexBuffer> squareIB;
-		squareIB.reset(TGE::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		squareIB = (TGE::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIB);
 
 		std::string vertexSrc2 = R"(

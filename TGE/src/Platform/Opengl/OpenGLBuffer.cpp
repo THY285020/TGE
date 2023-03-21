@@ -12,6 +12,13 @@ namespace TGE {
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferID);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 	}
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+	{
+		glGenBuffers(1, &m_VertexBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferID);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+		//glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
 		glDeleteBuffers(1, &m_VertexBufferID);
@@ -24,6 +31,11 @@ namespace TGE {
 	void OpenGLVertexBuffer::UnBind()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}
 	////////////////////////////////////////////////////////////////////
 	// IndexBuffer------------------------------------------------------

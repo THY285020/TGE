@@ -35,13 +35,14 @@ namespace TGE {
 
 		if (Input::IsKeyPressed(TGE_KEY_Q) * ts)
 		{
-			m_CameraPos.x += sin(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
-			m_CameraPos.y -= cos(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
+			m_CameraPos.x -= sin(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
+			m_CameraPos.y += cos(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
 		}
 		else if (Input::IsKeyPressed(TGE_KEY_E))
 		{
-			m_CameraPos.x -= sin(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
-			m_CameraPos.y += cos(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
+			m_CameraPos.x += sin(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
+			m_CameraPos.y -= cos(glm::radians(m_CameraRot)) * m_CameraSpeed * ts;
+
 
 		}
 		//------------Rotation--------------------

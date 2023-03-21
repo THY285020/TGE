@@ -22,9 +22,9 @@ namespace TGE {
 		{
 			s_RendererAPI->Clear();
 		}
-		inline static void DrawIndex(const Ref<VertexArray>& vertexArray)
+		inline static void DrawIndex(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
 		{
-			s_RendererAPI->DrawIndex(vertexArray);
+			s_RendererAPI->DrawIndex(vertexArray, count);
 		}
 
 	private:
