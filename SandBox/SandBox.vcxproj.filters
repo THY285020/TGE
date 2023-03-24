@@ -21,14 +21,25 @@
     <ClCompile Include="src\Sandbox2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\ParticleSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Sandbox2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ParticleSystem.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\FlatColor.glsl" />
     <None Include="assets\shaders\Texture_s.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\game\textures\RPGpack_sheet_2X.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -920,6 +920,7 @@
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\OrthoCameraController.h" />
     <ClInclude Include="src\TGE\Renderer\Renderer2D.h" />
+    <ClInclude Include="src\TGE\Renderer\SubTexture2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -999,5 +1000,6 @@
     </ClCompile>
     <ClCompile Include="src\TGE\Renderer\OrthoCameraController.cpp" />
     <ClCompile Include="src\TGE\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\TGE\Renderer\SubTexture2D.cpp" />
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@
 #include "TGE/Core/MouseButtonCodes.h"
 #include "TGE/ImGui/ImGuiLayer.h"
 #include "TGE/Core/core.h"
+#include "TGE/Core/TimeStep.h"
 
 //---Renderer---
 #include "TGE/Renderer/Renderer.h"
@@ -19,6 +20,7 @@
 #include "TGE/Renderer/Buffer.h"
 #include "TGE/Renderer/VertexArray.h"
 #include "TGE/Renderer/Texture.h"
+#include "TGE/Renderer/SubTexture2D.h"
 
 #include "TGE/Renderer/OrthoCamera.h"
 #include "TGE/Renderer/OrthoCameraController.h"

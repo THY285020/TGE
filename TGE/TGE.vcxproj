@@ -178,6 +178,7 @@
     <ClInclude Include="src\TGE\Renderer\Texture.h" />
     <ClInclude Include="src\TGE\Renderer\VertexArray.h" />
     <ClInclude Include="src\tgpch.h" />
+    <ClInclude Include="src\TGE\Renderer\SubTexture2D.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -461,6 +462,7 @@
     <ClCompile Include="src\tgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\TGE\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
