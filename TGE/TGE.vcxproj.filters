@@ -57,6 +57,9 @@
     <ClInclude Include="src\Platform\Opengl\OpenGLContext.h">
       <Filter>src\Platform\Opengl</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Opengl\OpenGLFrameBuffer.h">
+      <Filter>src\Platform\Opengl</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Opengl\OpenGLRendererAPI.h">
       <Filter>src\Platform\Opengl</Filter>
     </ClInclude>
@@ -129,10 +132,16 @@
     <ClInclude Include="src\TGE\Renderer\Buffer.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\TGE\Renderer\FrameBuffer.h">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\TGE\Renderer\GraphicsContext.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\OrthoCamera.h">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Renderer\OrthoCameraController.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\PerspCamera.h">
@@ -144,10 +153,16 @@
     <ClInclude Include="src\TGE\Renderer\Renderer.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\TGE\Renderer\Renderer2D.h">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\TGE\Renderer\RendererAPI.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\Shader.h">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Renderer\SubTexture2D.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\Texture.h">
@@ -918,15 +933,15 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\TGE\Renderer\OrthoCameraController.h" />
-    <ClInclude Include="src\TGE\Renderer\Renderer2D.h" />
-    <ClInclude Include="src\TGE\Renderer\SubTexture2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
       <Filter>src\Platform\Opengl</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Opengl\OpenGLContext.cpp">
+      <Filter>src\Platform\Opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Opengl\OpenGLFrameBuffer.cpp">
       <Filter>src\Platform\Opengl</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Opengl\OpenGLRendererAPI.cpp">
@@ -968,7 +983,13 @@
     <ClCompile Include="src\TGE\Renderer\Buffer.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\TGE\Renderer\FrameBuffer.cpp">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\TGE\Renderer\OrthoCamera.cpp">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TGE\Renderer\OrthoCameraController.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\Renderer\PerspCamera.cpp">
@@ -980,10 +1001,16 @@
     <ClCompile Include="src\TGE\Renderer\Renderer.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\TGE\Renderer\Renderer2D.cpp">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\TGE\Renderer\RendererAPI.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\Renderer\Shader.cpp">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TGE\Renderer\SubTexture2D.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\Renderer\Texture.cpp">
@@ -998,8 +1025,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\TGE\Renderer\OrthoCameraController.cpp" />
-    <ClCompile Include="src\TGE\Renderer\Renderer2D.cpp" />
-    <ClCompile Include="src\TGE\Renderer\SubTexture2D.cpp" />
   </ItemGroup>
 </Project>

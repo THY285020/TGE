@@ -27,9 +27,16 @@ private:
 	TGE::Ref<TGE::SubTexture2D> m_StairTexture;
 	TGE::Ref<TGE::SubTexture2D> m_BarrelTexture;
 	TGE::Ref<TGE::SubTexture2D> m_TreeTexture;
+	TGE::Ref<TGE::SubTexture2D> m_GrassTexture;
+
+	TGE::Ref<TGE::FrameBuffer> m_FrameBuffer;
+
 	glm::vec4 SquareColor = glm::vec4(0.2, 0.3, 0.8, 1.0f);
 
 	ParticleProps m_Particle;
 	ParticleSystem m_ParticleSystem;
+
+	uint32_t m_MapHeight, m_MapWidth;
+	std::unordered_map<char, TGE::Ref<TGE::SubTexture2D>> s_TextureMap;
 };
 

@@ -24,16 +24,18 @@ namespace TGE
 		void OnEvent(Event& e);
 		OrthoCamera& GetCamera() { return m_Camera; };
 
-		void SetZoomLevel(float level) { m_ZoomLevel = level; }
+		void SetZoomLevel(float level) { m_ZoomLevel = level; CalculateView();}
 		float GetZoomLevel() const { return m_ZoomLevel; }
-
+		
 		const OrthoCameraBounds& GetBounds() const { return m_Bounds; }
+		void Resize(float width, float height);
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
+		void CalculateView();
 	private:
 		//先创建上面长宽比和Zoom等级再用两个参数创建相机
-		float m_AspectRatio;
+		float m_AspectRatio;//宽/高
 		float m_ZoomLevel = 1.0f;
 		OrthoCamera m_Camera;
 		OrthoCameraBounds m_Bounds;

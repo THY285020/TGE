@@ -21,6 +21,7 @@
 #include "TGE/Renderer/VertexArray.h"
 #include "TGE/Renderer/Texture.h"
 #include "TGE/Renderer/SubTexture2D.h"
+#include "TGE/Renderer/FrameBuffer.h"
 
 #include "TGE/Renderer/OrthoCamera.h"
 #include "TGE/Renderer/OrthoCameraController.h"

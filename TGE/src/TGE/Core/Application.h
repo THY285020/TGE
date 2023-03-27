@@ -18,7 +18,7 @@ namespace TGE {
 	class TGE_API Application
 	{
 	public:
-		Application();//创建窗口，调用SetEventCallback，设置反馈绑定OnEvent
+		Application(const std::string& name = "TGE Engine");//创建窗口，调用SetEventCallback，设置反馈绑定OnEvent
 		virtual ~Application();
 		void Run();
 
@@ -29,6 +29,8 @@ namespace TGE {
 
 		inline static Application& Get() { return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }
+
+		void Close();
 	private:
 
 		bool OnWindowClose(WindowCloseEvent& e);

@@ -22,12 +22,12 @@ namespace TGE {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application()
+	Application::Application(const std::string& name)
 	{
 		TGE_CORE_ASSERT(!s_Instance, "Application already exists!")
 			s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));
 		//SetEventCallback函数让m_Window的m_Data结构体的callback函数变为(fn)
 		m_Window->SetEventCallback(TGE_BIND_EVENT_FN(Application::OnEvent));
 
@@ -71,49 +71,12 @@ namespace TGE {
 	}
 
 	void Application::Run() {
-		//WindowResizeEvent e(1280, 720);
-		//if (e.IsInCategory(EventCategoryApplication)) {
-		//	TGE_TRACE(e);//Event.h中添加了输出流运算符
-		//}
-		//if (e.IsInCategory(EventCategoryInput)) {
-		//	TGE_TRACE(e);//e不属于Input类型
-		//}
 		TimeStep timestep(0.0);
 		while (m_Running) {
 			float time = (float)glfwGetTime();//Platform::GetTime
 			timestep = (time - m_LastFrameTime);
 			m_LastFrameTime = time;
 
-			//glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-			//glClear(GL_COLOR_BUFFER_BIT);
-			
-			/*RenderCommand::SetClearColor({ 0.1f, 0.2f, 0.3f, 1.0f });
-			RenderCommand::Clear();*/
-
-			//m_Camera.SetPosition({ 0.5f, 0.5f, 0.0f });
-			//m_Camera.SetRotation(45.0f);
-
-			//Renderer的submit函数调用RenderCommand::DrawIndex与VAO的Bind，
-			//RenderCommand指定RendererAPI成员，调用对应API的DrawIndex
-			/*Renderer::BeginScene(m_Camera);*/
-
-			//m_Shader2->Bind();
-			//m_Shader2->SetUniformMat4("ViewProj",m_Camera.GetViewProjectionMatrix());
-			/*Renderer::Submit(m_Shader2, m_SquareVA);*/
-
-			//m_Shader->Bind();
-			//m_Shader->SetUniformMat4("ViewProj", m_Camera.GetViewProjectionMatrix());
-			/*Renderer::Submit(m_Shader, m_VertexArray);
-
-			Renderer::EndScene();*/
-
-			/*m_Shader2->Bind();
-			m_SquareVA->Bind();
-			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-
-			m_Shader->Bind();
-			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);*/
 			if (!m_Minimized)
 			{
 				for (Layer* layer : m_LayerStack)
@@ -125,12 +88,14 @@ namespace TGE {
 				//OnImGuiRender方法用于渲染ImGui窗口，可自定义Layer，重载OnImGuiRender创建不同窗口
 				layer->OnImGuiRender();
 			m_ImGuiLayer->End();
-			//auto [x, y] = Input::GetMousePosition();
-			//TGE_CORE_TRACE("{0}, {1}", x, y);
+
 			m_Window->OnUpdate();
-			//=glfwPollEvents();
-			//+glfwSwapBuffers(m_Window)
 		};
+	}
+
+	void Application::Close()
+	{
+		m_Running = false;
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e)

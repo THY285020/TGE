@@ -18,14 +18,14 @@ IncludeDir["ImGui"] = "TGE/vendor/imgui"
 IncludeDir["glm"] = "TGE/vendor/glm"
 IncludeDir["stb_image"] = "TGE/vendor/stb_image"
 
---¸´ÖÆÁËÀïÃæµÄpremake5
+--ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½premake5
 include "TGE/vendor/GLFW"
 include "TGE/vendor/Glad"
 include "TGE/vendor/imgui"
 
 project "TGE"
 	location "TGE"
-	kind "StaticLib"--¶¯Ì¬ÔòSharedLib
+	kind "StaticLib"--ï¿½ï¿½Ì¬ï¿½ï¿½SharedLib
 	language"C++"
 	cppdialect"C++17"
 	staticruntime "on"
@@ -66,7 +66,7 @@ project "TGE"
 	filter "system:windows"
 		systemversion "latest"
 
-		defines--Ô¤´¦Àí
+		defines--Ô¤ï¿½ï¿½ï¿½ï¿½
 		{
 			"TGE_PLATFORM_WINDOWS",
 			"TGE_BUILD_DLL",
@@ -91,6 +91,56 @@ project "TGE"
 
 project "Sandbox"
 	location "Sandbox"
+	kind "ConsoleApp"
+	language"C++"
+	cppdialect"C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .."/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .."/%{prj.name}")
+
+	files{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp",
+	}
+
+	includedirs{
+		"TGE/vendor/spdlog/include",
+		"TGE/src",
+		"TGE/vendor",
+		"%{IncludeDir.glm}"
+	}
+	
+	links
+	{
+		"TGE"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+	defines
+	{
+		"TGE_PLATFORM_WINDOWS"	
+	}
+		
+	filter "configurations:Debug"
+		defines "TGE_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "TGE_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "TGE_DIST"
+		runtime "Release"
+		optimize "on"
+
+project "TGE-Editor"
+	location "TGE-Editor"
 	kind "ConsoleApp"
 	language"C++"
 	cppdialect"C++17"
