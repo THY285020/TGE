@@ -3,7 +3,7 @@
 #include "TGE/Renderer/OrthoCameraController.h"
 #include "TGE/Renderer/Texture.h"
 #include "TGE/Renderer/SubTexture2D.h"
-
+#include "TGE/Renderer/Camera.h"
 namespace TGE {
 	class Renderer2D
 	{
@@ -12,6 +12,7 @@ namespace TGE {
 		static void shutdown();
 
 		static void BeginScene(const OrthoCamera& camera);
+		static void BeginScene(const Camera& camera, const glm::mat4 transform);
 		static void EndScene();
 
 		static void Flush();
@@ -28,6 +29,9 @@ namespace TGE {
 		static void DrawQuad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color);
 		static void DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<Texture2D> texture, const float tilingFactor);
 		static void DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<SubTexture2D> subtexture, const float tilingFactor);
+
+		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, const float tilingFactor);
 		//Statistics
 		struct Statistics
 		{

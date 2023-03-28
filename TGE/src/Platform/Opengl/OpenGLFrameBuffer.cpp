@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 namespace TGE
 {
+	static const uint32_t MaxFramebufferSize = 8192;
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
 		:m_Specification(spec)
 	{
@@ -63,6 +64,11 @@ namespace TGE
 
 	void OpenGLFrameBuffer::Resize(uint32_t width, uint32_t height)
 	{
+		if (width == 0 || height == 0 || width > MaxFramebufferSize || height > MaxFramebufferSize)
+		{
+			TGE_CORE_WARN("Attempted to Resize FrameBuffer to ({0}, {1}) !", width, height);
+			return;
+		}
 		m_Specification.Width = width;
 		m_Specification.Height = height;
 		Invalidate();

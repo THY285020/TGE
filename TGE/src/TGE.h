@@ -11,6 +11,9 @@
 #include "TGE/ImGui/ImGuiLayer.h"
 #include "TGE/Core/core.h"
 #include "TGE/Core/TimeStep.h"
+#include "TGE/Scene/Scene.h"
+#include "TGE/Scene/Component.h"
+#include "TGE/Scene/Entity.h"
 
 //---Renderer---
 #include "TGE/Renderer/Renderer.h"

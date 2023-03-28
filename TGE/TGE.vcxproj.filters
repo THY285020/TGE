@@ -933,6 +933,11 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\TGE\Scene\Scene.h" />
+    <ClInclude Include="src\TGE\Scene\Component.h" />
+    <ClInclude Include="src\TGE\Scene\Entity.h" />
+    <ClInclude Include="src\TGE\Renderer\Camera.h" />
+    <ClInclude Include="src\TGE\Renderer\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -1025,5 +1030,8 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\TGE\Scene\Scene.cpp" />
+    <ClCompile Include="src\TGE\Scene\Entity.cpp" />
+    <ClCompile Include="src\TGE\Renderer\SceneCamera.cpp" />
   </ItemGroup>
 </Project>

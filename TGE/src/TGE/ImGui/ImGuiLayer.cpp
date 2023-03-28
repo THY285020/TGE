@@ -97,10 +97,14 @@ namespace TGE {
 		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::OnImGuiRender()
+	void ImGuiLayer::OnEvent(Event& e)
 	{
-		//static bool show = false;
-		//ImGui::ShowDemoWindow(&show);
+		if (m_BlockEvents)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			e.m_Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+			e.m_Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+		}
 	}
 
 	void ImGuiLayer::Begin()

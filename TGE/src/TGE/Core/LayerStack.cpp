@@ -2,10 +2,10 @@
 #include "LayerStack.h"
 
 namespace TGE {
-	LayerStack::LayerStack()
-	{
+	//LayerStack::LayerStack()
+	//{
 
-	}
+	//}
 
 	LayerStack::~LayerStack()
 	{

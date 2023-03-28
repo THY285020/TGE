@@ -51,10 +51,10 @@ namespace TGE {
 		//TGE_CORE_TRACE("{0}", e);//Sandbox处使用 
 
 		//从后往前处理
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
-			(*--it)->OnEvent(e);
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) {
 			if (e.m_Handled)
 				break;
+			(*it)->OnEvent(e);
 		}
 	}
 

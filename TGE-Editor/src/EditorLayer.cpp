@@ -18,6 +18,21 @@ namespace TGE
 		fbSpec.Width = TGE::Application::Get().GetWindow().GetWidth();//TGE::Application::Get().GetWindow().GetWidth();
 		fbSpec.Height = TGE::Application::Get().GetWindow().GetHeight();//TGE::Application::Get().GetWindow().GetHeight();
 		m_FrameBuffer = TGE::FrameBuffer::Create(fbSpec);
+
+		//Entity
+		m_ActiveScene = std::make_shared<Scene>();//创建registry
+		m_SquareEntity = m_ActiveScene->CreateEntity("Square");//创建entity
+		m_SquareEntity.AddComponent<TransformComponent>();
+		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0, 1.0, 0.0, 1.0 });
+
+		m_Camera = m_ActiveScene->CreateEntity("Camera Entity");
+		m_Camera.AddComponent<CameraComponent>();//glm::ortho(-16.f, 16.f, -9.f, 9.f, -1.f, 1.f)
+		m_Camera.AddComponent<TransformComponent>();
+
+		m_Camera2 = m_ActiveScene->CreateEntity("Camera Entity2");
+		auto& cc = m_Camera2.AddComponent<CameraComponent>();//glm::ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f)
+		cc.Primary = false;
+		m_Camera2.AddComponent<TransformComponent>();
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -110,21 +125,48 @@ namespace TGE
 			ImGui::Text("Quads : %d", stats.QuadCount);
 			ImGui::Text("Vertices : %d", stats.GetTotalVertexCount());
 			ImGui::Text("Indices : %d", stats.GetTotalIndexCount());
-
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(SquareColor));
+			//调整颜色
+			if (m_SquareEntity)
+			{
+				ImGui::Separator();
+				auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+				auto& SquareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+				ImGui::Text("%s", tag.c_str());
+				ImGui::ColorEdit4("Square Color", glm::value_ptr(SquareColor));
+				ImGui::Separator();
+			}
+			//transform and CheckBox
+			ImGui::DragFloat3("Camera Transform",
+				glm::value_ptr(m_Camera.GetComponent<TransformComponent>().Transform[3]));
+			if (ImGui::Checkbox("Camera A", &m_Primary))
+			{
+				m_Camera2.GetComponent<CameraComponent>().Primary = !m_Primary;
+				m_Camera.GetComponent<CameraComponent>().Primary = m_Primary;
+			}
+			
+			//orthoSize
+			{
+				auto& cc = m_Camera2.GetComponent<CameraComponent>().camera;
+				float orthoSize = cc.GetOrthographicSize();
+				if (ImGui::DragFloat("Camera2 OrthoSize", &orthoSize))
+					cc.SetOrthographicSize(orthoSize);
+			}
 
 			ImGui::End();
-			//----------------Settings
-
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+			//----------------Settings End
+			//----------------Viewport
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));//间隔缩小为0
 			ImGui::Begin("ViewPort");
-			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-			if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
-			{
-				m_FrameBuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-				m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+			//点击选中或悬停都会更新界面
+			m_ViewportFocused = ImGui::IsWindowFocused();
+			m_ViewportHovered = ImGui::IsWindowHovered();
+			Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
-				m_CameraController.Resize(viewportPanelSize.x, viewportPanelSize.y);
+			//Resize此处更新会闪屏
+			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+			if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0)
+			{
+				m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			}
 			uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment();
 			ImGui::Image((void*)m_TextureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
@@ -165,17 +207,29 @@ namespace TGE
 			time_temp += ts.GetTimeSeconds();
 		}
 		//--------------------Camera----------------
-		m_CameraController.OnUpdate(ts);
-
+		if(m_ViewportFocused)//没focuse则不更新相机
+			m_CameraController.OnUpdate(ts);
+		//------------------Resize-----------------
+		FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
+		if (m_ViewportSize.x > 0 && m_ViewportSize.y > 0 && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		{
+			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
+			m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+		}
+		//------------------Renderer---------------
 		TGE::Renderer2D::ResetStats();
 		m_FrameBuffer->Bind();
+		//以下是绘制到缓冲的部分
 		TGE::RenderCommand::SetClearColor({ 0.1f, 0.2f, 0.3f, 1.0f });
 		TGE::RenderCommand::Clear();
 
-		//Renderer的submit函数调用RenderCommand::DrawIndex与VAO的Bind，
-		//RenderCommand指定了RendererAPI成员，并调用对应API的DrawIndex
-		//TGE::Renderer::BeginScene(m_CameraController.GetCamera());
-#if 1
+		//--------------------Scene----------------
+		/*TGE::Renderer2D::BeginScene(m_CameraController.GetCamera());*/
+		m_ActiveScene->OnUpdate(ts);
+		//TGE::Renderer2D::EndScene();
+		//------------------multisquare------------
+#if 0
 		TGE::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
 		static float rotation = 0.0f;

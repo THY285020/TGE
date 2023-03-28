@@ -13,9 +13,9 @@ namespace TGE {
 		~ImGuiLayer();
 		virtual void OnAttach();
 		virtual void OnDetach();
-		virtual void OnImGuiRender() override;
-	/*	void OnUpdate();*/
-	//	void OnEvent(Event& event);
+		//virtual void OnImGuiRender() override;
+		/*	void OnUpdate();*/
+	    void OnEvent(Event& e) override;
 	//private:
 	//	bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
 	//	bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
@@ -27,8 +27,9 @@ namespace TGE {
 	//	bool OnWindowResizeEvent(WindowResizeEvent& e);
 		void Begin();
 		void End();
-
+		void BlockEvents(bool b) { m_BlockEvents = b; }
 	private:
 		float m_Time = 0.0f;
+		bool m_BlockEvents = false;
 	};
 }

@@ -26,8 +26,16 @@ namespace TGE
 		Ref<Texture2D> m_Texture;
 		glm::vec4 SquareColor = glm::vec4(0.2, 0.3, 0.8, 1.0f);
 
+		Ref<Scene> m_ActiveScene;
+		Entity m_SquareEntity;
+		Entity m_Camera;
+		Entity m_Camera2;
+		bool m_Primary = true;
+
 		double time_temp = 0.0;
 		glm::vec2 m_ViewportSize;
+		bool m_ViewportFocused = false;
+		bool m_ViewportHovered = false;
 	};
 }
 

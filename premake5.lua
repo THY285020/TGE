@@ -17,6 +17,7 @@ IncludeDir["Glad"] = "TGE/vendor/Glad/include"
 IncludeDir["ImGui"] = "TGE/vendor/imgui"
 IncludeDir["glm"] = "TGE/vendor/glm"
 IncludeDir["stb_image"] = "TGE/vendor/stb_image"
+IncludeDir["entt"] = "TGE/vendor/entt/include"
 
 --�����������premake5
 include "TGE/vendor/GLFW"
@@ -53,7 +54,8 @@ project "TGE"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entt}"
 	}
 	
 	links{
@@ -108,7 +110,8 @@ project "Sandbox"
 		"TGE/vendor/spdlog/include",
 		"TGE/src",
 		"TGE/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 	
 	links
@@ -158,7 +161,8 @@ project "TGE-Editor"
 		"TGE/vendor/spdlog/include",
 		"TGE/src",
 		"TGE/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 	
 	links
