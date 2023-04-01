@@ -48,34 +48,61 @@ namespace TGE
 	}
 	void Scene::OnUpdate(TimeStep ts)
 	{
+		//Update Script
+		{
+			//auto view = m_Registry.view<NativeScriptComponent>();
+			//for (auto entity : view)
+			//{
+			//	auto& nsc = view.get<NativeScriptComponent>(entity);
+			//	if (!nsc.Instance)
+			//	{
+			//		nsc.Instance = nsc.InitScript();
+			//		/*nsc.Instance->m_Entity = &Entity{ entity, this };*/
+			//		nsc.Instance->OnCreate();
+			//	}
+			//	
+			//	nsc.Instance->OnUpdate(ts);
+			//}
+			m_Registry.view<NativeScriptComponent>().each([=](entt::entity entity, auto& nsc)
+			{
+				if (!nsc.Instance)
+				{
+					nsc.Instance = nsc.InitScript();
+					/*nsc.Instance->m_Entity = &Entity{ entity, this };*/
+					nsc.Instance->OnCreate();
+				}
+				nsc.Instance->m_Entity = &Entity{ entity, this };
+				nsc.Instance->OnUpdate(ts);
+			});
+		}
 		//Render Scene
 		Camera* mainCamera = nullptr;
-		glm::mat4* mainTransform = nullptr;
+		glm::mat4 mainTransform;
 
 		auto view = m_Registry.view<TransformComponent, CameraComponent>();
 		for (auto entity : view)
 		{
 			//获取Component实例
-			auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
 			if (camera.Primary)
 			{
 				mainCamera = &camera.camera;
-				mainTransform = &transform.Transform;
+				mainTransform = transform.GetTransform();
 				break;
 			}
 		}
 
 		if (mainCamera)
 		{
-			Renderer2D::BeginScene(*mainCamera, *mainTransform);
+			Renderer2D::BeginScene(*mainCamera, mainTransform);
 			//遍历同时带有两个组件的group
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer2D::DrawQuad(transform, sprite.Color);
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
 			Renderer2D::EndScene();
 		}
@@ -108,5 +135,38 @@ namespace TGE
 			entity.AddComponent<TagComponent>(name);
 		}
 		return entity;
+	}
+	void Scene::DestroyEntity(Entity entity)
+	{
+		m_Registry.destroy(entity);
+	}
+
+	template<typename T>
+	void Scene::OnComponentAdded(Entity entity, T& component)
+	{
+		static_assert(false);
+
+	}
+	template<>
+	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+	{
+		
+	}
+	template<>
+	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+	{
+		component.camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+	template<>
+	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	{
 	}
 }

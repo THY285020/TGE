@@ -140,11 +140,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\TGE\Renderer\SceneCamera.h" />
-    <ClInclude Include="src\TGE\Renderer\Camera.h" />
-    <ClInclude Include="src\TGE\Scene\Entity.h" />
-    <ClInclude Include="src\TGE\Scene\Component.h" />
-    <ClInclude Include="src\TGE\Scene\Scene.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLContext.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLFrameBuffer.h" />
@@ -172,6 +167,7 @@
     <ClInclude Include="src\TGE\Events\MouseEvent.h" />
     <ClInclude Include="src\TGE\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\TGE\Renderer\Buffer.h" />
+    <ClInclude Include="src\TGE\Renderer\Camera.h" />
     <ClInclude Include="src\TGE\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\TGE\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\TGE\Renderer\OrthoCamera.h" />
@@ -181,10 +177,15 @@
     <ClInclude Include="src\TGE\Renderer\Renderer.h" />
     <ClInclude Include="src\TGE\Renderer\Renderer2D.h" />
     <ClInclude Include="src\TGE\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\TGE\Renderer\SceneCamera.h" />
     <ClInclude Include="src\TGE\Renderer\Shader.h" />
     <ClInclude Include="src\TGE\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\TGE\Renderer\Texture.h" />
     <ClInclude Include="src\TGE\Renderer\VertexArray.h" />
+    <ClInclude Include="src\TGE\Scene\Component.h" />
+    <ClInclude Include="src\TGE\Scene\Entity.h" />
+    <ClInclude Include="src\TGE\Scene\Scene.h" />
+    <ClInclude Include="src\TGE\Scene\ScriptableEntity.h" />
     <ClInclude Include="src\tgpch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -441,9 +442,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\TGE\Renderer\SceneCamera.cpp" />
-    <ClCompile Include="src\TGE\Scene\Entity.cpp" />
-    <ClCompile Include="src\TGE\Scene\Scene.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLFrameBuffer.cpp" />
@@ -468,10 +466,13 @@
     <ClCompile Include="src\TGE\Renderer\Renderer.cpp" />
     <ClCompile Include="src\TGE\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\TGE\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="src\TGE\Renderer\SceneCamera.cpp" />
     <ClCompile Include="src\TGE\Renderer\Shader.cpp" />
     <ClCompile Include="src\TGE\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="src\TGE\Renderer\Texture.cpp" />
     <ClCompile Include="src\TGE\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\TGE\Scene\Entity.cpp" />
+    <ClCompile Include="src\TGE\Scene\Scene.cpp" />
     <ClCompile Include="src\tgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

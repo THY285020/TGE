@@ -1,7 +1,7 @@
 #pragma once
-#include"TGE.h"
-#include"TGE/Core/Layer.h"
-
+#include "TGE.h"
+#include "TGE/Core/Layer.h"
+#include "SceneHierarchyPanel.h"
 namespace TGE
 {
 	class EditorLayer :public Layer
@@ -28,6 +28,7 @@ namespace TGE
 
 		Ref<Scene> m_ActiveScene;
 		Entity m_SquareEntity;
+		Entity m_SquareEntity2;
 		Entity m_Camera;
 		Entity m_Camera2;
 		bool m_Primary = true;
@@ -36,6 +37,8 @@ namespace TGE
 		glm::vec2 m_ViewportSize;
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
+
+		SceneHierarchyPanel m_SHP;
 	};
 }
 

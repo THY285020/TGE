@@ -1,6 +1,6 @@
 workspace "TGE"
 	architecture "x64"
-	startproject "Sandbox"
+	startproject "TGE-Editor"
 
 	configurations
 	{

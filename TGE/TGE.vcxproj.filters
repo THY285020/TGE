@@ -28,6 +28,9 @@
     <Filter Include="src\TGE\Renderer">
       <UniqueIdentifier>{62B5B805-4EAE-D757-77E0-BCDC6338B763}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\TGE\Scene">
+      <UniqueIdentifier>{59D81824-C598-945A-8ED3-DDD7FA52D936}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -132,6 +135,9 @@
     <ClInclude Include="src\TGE\Renderer\Buffer.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\TGE\Renderer\Camera.h">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\TGE\Renderer\FrameBuffer.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
@@ -159,6 +165,9 @@
     <ClInclude Include="src\TGE\Renderer\RendererAPI.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\TGE\Renderer\SceneCamera.h">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\TGE\Renderer\Shader.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
@@ -170,6 +179,18 @@
     </ClInclude>
     <ClInclude Include="src\TGE\Renderer\VertexArray.h">
       <Filter>src\TGE\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Scene\Component.h">
+      <Filter>src\TGE\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Scene\Entity.h">
+      <Filter>src\TGE\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Scene\Scene.h">
+      <Filter>src\TGE\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Scene\ScriptableEntity.h">
+      <Filter>src\TGE\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\tgpch.h">
       <Filter>src</Filter>
@@ -933,11 +954,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\TGE\Scene\Scene.h" />
-    <ClInclude Include="src\TGE\Scene\Component.h" />
-    <ClInclude Include="src\TGE\Scene\Entity.h" />
-    <ClInclude Include="src\TGE\Renderer\Camera.h" />
-    <ClInclude Include="src\TGE\Renderer\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -1012,6 +1028,9 @@
     <ClCompile Include="src\TGE\Renderer\RendererAPI.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\TGE\Renderer\SceneCamera.cpp">
+      <Filter>src\TGE\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\TGE\Renderer\Shader.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
@@ -1024,14 +1043,17 @@
     <ClCompile Include="src\TGE\Renderer\VertexArray.cpp">
       <Filter>src\TGE\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\TGE\Scene\Entity.cpp">
+      <Filter>src\TGE\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TGE\Scene\Scene.cpp">
+      <Filter>src\TGE\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\tgpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\TGE\Scene\Scene.cpp" />
-    <ClCompile Include="src\TGE\Scene\Entity.cpp" />
-    <ClCompile Include="src\TGE\Renderer\SceneCamera.cpp" />
   </ItemGroup>
 </Project>

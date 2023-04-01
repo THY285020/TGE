@@ -20,19 +20,57 @@ namespace TGE
 		m_FrameBuffer = TGE::FrameBuffer::Create(fbSpec);
 
 		//Entity
-		m_ActiveScene = std::make_shared<Scene>();//创建registry
-		m_SquareEntity = m_ActiveScene->CreateEntity("Square");//创建entity
-		m_SquareEntity.AddComponent<TransformComponent>();
+		m_ActiveScene = std::make_shared<Scene>(fbSpec.Width, fbSpec.Height);//创建registry
+
+		m_SquareEntity = m_ActiveScene->CreateEntity("Square Green");//创建entity
+		m_SquareEntity.AddComponent<TransformComponent>(glm::vec3(-1.f, 0.0f, 0.f));
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0, 1.0, 0.0, 1.0 });
 
-		m_Camera = m_ActiveScene->CreateEntity("Camera Entity");
-		m_Camera.AddComponent<CameraComponent>();//glm::ortho(-16.f, 16.f, -9.f, 9.f, -1.f, 1.f)
-		m_Camera.AddComponent<TransformComponent>();
+		m_SquareEntity2 = m_ActiveScene->CreateEntity("Square Red");//创建entity
+		m_SquareEntity2.AddComponent<TransformComponent>(glm::vec3(0.5f, 0.0f, 0.f));
+		m_SquareEntity2.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0, 0.0, 0.0, 1.0 });
 
-		m_Camera2 = m_ActiveScene->CreateEntity("Camera Entity2");
+		m_Camera = m_ActiveScene->CreateEntity("Camera EntityA");
+		m_Camera.AddComponent<CameraComponent>();//glm::ortho(-16.f, 16.f, -9.f, 9.f, -1.f, 1.f)
+		m_Camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.0f));//初始化位置
+		m_Camera.GetComponent<CameraComponent>().camera.SetPerspective(glm::radians(45.0f), 0.0f, 1000.f);
+
+
+		m_Camera2 = m_ActiveScene->CreateEntity("Camera EntityB");
 		auto& cc = m_Camera2.AddComponent<CameraComponent>();//glm::ortho(-1.f, 1.f, -1.f, 1.f, -1.f, 1.f)
 		cc.Primary = false;
 		m_Camera2.AddComponent<TransformComponent>();
+
+		class CameraController :public ScriptableEntity
+		{
+		public:
+			void OnCreate()
+			{
+				std::cout << "CameraComtroller:OnCreate!" << std::endl;
+			}
+			void OnDestroy()
+			{
+			}
+			void OnUpdate(TimeStep ts)
+			{
+				auto& translation = GetComponent<TransformComponent>().Translate;
+
+				float speed = 5.0f;
+				if (Input::IsKeyPressed(TGE_KEY_A))
+					translation.x += speed * ts;
+				if (Input::IsKeyPressed(TGE_KEY_D))
+					translation.x -= speed * ts;
+				if (Input::IsKeyPressed(TGE_KEY_W))
+					translation.y += speed * ts;
+				if (Input::IsKeyPressed(TGE_KEY_S))
+					translation.y -= speed * ts;
+			}
+		};
+
+		//绑定OnUpdate等函数
+		m_Camera2.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+		m_SHP.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -116,8 +154,11 @@ namespace TGE
 
 				ImGui::EndMenuBar();
 			}
-			//----------------Settings包含在dock的Begin和End之间，使之能够dock
-			ImGui::Begin("Settings");
+
+			m_SHP.OnImGuiRenderer();//多级菜单
+
+			//--------------------------Statistics菜单
+			ImGui::Begin("Statistics");
 
 			auto stats = TGE::Renderer2D::GetStats();
 			ImGui::Text("Renderer2D Stats:");
@@ -125,35 +166,36 @@ namespace TGE
 			ImGui::Text("Quads : %d", stats.QuadCount);
 			ImGui::Text("Vertices : %d", stats.GetTotalVertexCount());
 			ImGui::Text("Indices : %d", stats.GetTotalIndexCount());
+
 			//调整颜色
-			if (m_SquareEntity)
-			{
-				ImGui::Separator();
-				auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-				auto& SquareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-				ImGui::Text("%s", tag.c_str());
-				ImGui::ColorEdit4("Square Color", glm::value_ptr(SquareColor));
-				ImGui::Separator();
-			}
+			//if (m_SquareEntity)
+			//{
+			//	ImGui::Separator();
+			//	auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+			//	auto& SquareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+			//	ImGui::Text("%s", tag.c_str());
+			//	ImGui::ColorEdit4("Square Color", glm::value_ptr(SquareColor));
+			//	ImGui::Separator();
+			//}
 			//transform and CheckBox
-			ImGui::DragFloat3("Camera Transform",
-				glm::value_ptr(m_Camera.GetComponent<TransformComponent>().Transform[3]));
-			if (ImGui::Checkbox("Camera A", &m_Primary))
-			{
-				m_Camera2.GetComponent<CameraComponent>().Primary = !m_Primary;
-				m_Camera.GetComponent<CameraComponent>().Primary = m_Primary;
-			}
+			//ImGui::DragFloat3("Camera Transform",
+			//	glm::value_ptr(m_Camera.GetComponent<TransformComponent>().Transform[3]));
+			//if (ImGui::Checkbox("Camera A", &m_Primary))
+			//{
+			//	m_Camera2.GetComponent<CameraComponent>().Primary = !m_Primary;
+			//	m_Camera.GetComponent<CameraComponent>().Primary = m_Primary;
+			//}
 			
 			//orthoSize
-			{
-				auto& cc = m_Camera2.GetComponent<CameraComponent>().camera;
-				float orthoSize = cc.GetOrthographicSize();
-				if (ImGui::DragFloat("Camera2 OrthoSize", &orthoSize))
-					cc.SetOrthographicSize(orthoSize);
-			}
+			//{
+			//	auto& cc = m_Camera2.GetComponent<CameraComponent>().camera;
+			//	float orthoSize = cc.GetOrthographicSize();
+			//	if (ImGui::DragFloat("Camera2 OrthoSize", &orthoSize))
+			//		cc.SetOrthographicSize(orthoSize);
+			//}
 
 			ImGui::End();
-			//----------------Settings End
+			//----------------Statistics End
 			//----------------Viewport
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));//间隔缩小为0
 			ImGui::Begin("ViewPort");
@@ -215,7 +257,7 @@ namespace TGE
 		{
 			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
-			m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+			m_ActiveScene->OnViewportResize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
 		}
 		//------------------Renderer---------------
 		TGE::Renderer2D::ResetStats();

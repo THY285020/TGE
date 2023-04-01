@@ -14,7 +14,7 @@ namespace TGE {
 		virtual void OnAttach();
 		virtual void OnDetach();
 		//virtual void OnImGuiRender() override;
-		/*	void OnUpdate();*/
+		//void OnUpdate();
 	    void OnEvent(Event& e) override;
 	//private:
 	//	bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);

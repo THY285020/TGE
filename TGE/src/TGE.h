@@ -14,6 +14,7 @@
 #include "TGE/Scene/Scene.h"
 #include "TGE/Scene/Component.h"
 #include "TGE/Scene/Entity.h"
+#include "TGE/Scene/ScriptableEntity.h"
 
 //---Renderer---
 #include "TGE/Renderer/Renderer.h"

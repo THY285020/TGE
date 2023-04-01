@@ -166,6 +166,42 @@ void Sandbox2D::OnImGuiRender()
 
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(SquareColor));
 
+		//--------------test-------------------
+		bool testbool = false;
+		int initI = 10;
+		float initF = 5.5f;
+		char Input_username;
+		char Input_password;
+		std::string username = "AAA";
+		std::string password = "1234";
+
+		ImGui::Begin("Test");
+			/*ImGui::Checkbox("check1", &testbool);*/
+			/*ImGui::Text("Aa");*/
+			//if (ImGui::Button("Click me!"))
+			//{
+			//	testbool = true;
+			//}
+			//ImGui::SliderInt("Number Int", &initI, 1, 20);
+			//ImGui::SliderFloat("Number Float", &initF, 0, 10);
+			//ImGui::SetCursorPos(ImVec2(50, 50));
+			//ImGui::Button("Test1", ImVec2(50, 50));
+			//ImGui::SetCursorPos(ImVec2(100, 100));
+			//ImGui::Button("Test2", ImVec2(50, 50));
+		ImGui::Text("UserName:");
+		ImGui::InputText("##Input_username", &Input_username, MAXCHAR);
+		ImGui::Text("PassWord:");
+		ImGui::InputText("##Input_password", &Input_password, MAXCHAR, ImGuiInputTextFlags_Password);
+
+		if (ImGui::Button("Login"))
+		{
+			if (&Input_username == username && &Input_password == password)
+			{
+				//...
+			}
+		}
+		ImGui::End();
+
 		ImGui::End();
 	}
 }

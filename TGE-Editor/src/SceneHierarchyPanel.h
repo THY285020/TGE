@@ -1,0 +1,24 @@
+#pragma once
+#include "TGE/Core/core.h"
+#include "TGE/Scene/Scene.h"
+#include "TGE/Scene/Entity.h"
+namespace TGE
+{
+	class SceneHierarchyPanel
+	{
+	public:
+		SceneHierarchyPanel() = default;
+		SceneHierarchyPanel(const Ref<Scene>& context);
+		void SetContext(const Ref<Scene>& context);
+		void OnImGuiRenderer();
+		static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0, float columnWidth = 0.0);
+	private:
+		void DrawEntityNode(Entity entity);
+		void DrawComponents(Entity entity);
+	private:
+		Ref<Scene> m_Context;
+		Entity m_SelectionContext;
+	};
+}
+
+
