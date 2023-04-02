@@ -16,18 +16,10 @@ namespace TGE {
 		//virtual void OnImGuiRender() override;
 		//void OnUpdate();
 	    void OnEvent(Event& e) override;
-	//private:
-	//	bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
-	//	bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
-	//	bool OnMouseScrolledEvent(MouseScrolledEvent& e);
-	//	bool OnKeyPressedEvent(KeyPressedEvent& e);
-	//	bool OnKeyReleasedEvent(KeyReleasedEvent& e);
-	//	bool OnKeyTypedEvent(KeyTypedEvent& e);
-	//	bool OnMouseMovedEvent(MouseMovedEvent& e);
-	//	bool OnWindowResizeEvent(WindowResizeEvent& e);
 		void Begin();
 		void End();
 		void BlockEvents(bool b) { m_BlockEvents = b; }
+		void SetThemeColor();
 	private:
 		float m_Time = 0.0f;
 		bool m_BlockEvents = false;

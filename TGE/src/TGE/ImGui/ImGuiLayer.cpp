@@ -24,37 +24,6 @@ namespace TGE {
 
 	void ImGuiLayer::OnAttach()
 	{
-		//ImGui::CreateContext();
-		//ImGui::StyleColorsDark();
-
-		//ImGuiIO& io = ImGui::GetIO();
-		////或运算取大 与运算取小 异或运算减法
-		//io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-		//io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-
-		//io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
-  //      io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
-		//io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
-		//io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
-		//io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
-		//io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
-		//io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
-		//io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
-		//io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
-		//io.KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
-		//io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
-		//io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
-		//io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
-		//io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-		//io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
-		//io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
-		//io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
-		//io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
-		//io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
-		//io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
-		//io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
-
-		//ImGui_ImplOpenGL3_Init("#version 410");
 		//-----------------------------------------------------
 		//from C:\Engine\TGE\vendor\imgui\examples\example_glfw_opengl3\main.cpp
 		// Setup Dear ImGui context
@@ -69,6 +38,10 @@ namespace TGE {
 		//io.ConfigViewportsNoAutoMerge = true;
 		//io.ConfigViewportsNoTaskBarIcon = true;
 
+		io.Fonts->AddFontFromFileTTF("C:/Engine/TGE-Editor/assets/fonts/PTSans/PTSans-Regular.ttf", 18.0f);
+		io.Fonts->AddFontFromFileTTF("C:/Engine/TGE-Editor/assets/fonts/PTSans/PTSans-Bold.ttf", 18.0f);
+		io.FontDefault = io.Fonts->Fonts[0];
+		
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsClassic();
@@ -81,6 +54,7 @@ namespace TGE {
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 			//style.Colors[ImGuiCol_WindowBg] = ImVec4(0.8, 1.0, 0.2, 1.0);
 		}
+		SetThemeColor();
 		//Setup Platform/Renderer bindings
 		Application& app = Application::Get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
@@ -132,84 +106,44 @@ namespace TGE {
 		}
 	}
 
+	void ImGuiLayer::SetThemeColor()
+	{
+		auto& colors = ImGui::GetStyle().Colors;
+		colors[ImGuiCol_WindowBg] = ImVec4{0.1f, 0.105f, 0.11f, 1.0f};
+
+		//Headers
+		colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		colors[ImGuiCol_Header] = ImVec4{ 0.15f, 0.15f, 0.151f, 1.0f };
+
+		//Buttons
+		colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.15f, 0.151f, 1.0f };
+
+		//FramesBG
+		colors[ImGuiCol_FrameBg] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+		colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.15f, 0.15f, 0.151f, 1.0f };
+
+		//Tabs
+		colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.15f, 0.151f, 1.0f };
+		colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.308f, 0.381f, 1.0f };
+		colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.208f, 0.281f, 1.0f };
+		colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.15f, 0.151f, 1.0f };
+		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+		
+		//Title
+		colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.15f, 0.151f, 1.0f };
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.95f, 0.1505f, 0.951f, 1.0f};
+		colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.15f, 0.151f, 1.0f };
+
+	}
+
 	//void ImGuiLayer::OnUpdate() 
 	//{
 
 	//}
 
-	//void ImGuiLayer::OnEvent(Event& event)
-	//{
-	//	EventDispatcher dispatcher(event);
-	//	dispatcher.Dispatch<MouseButtonPressedEvent>(TGE_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));
-	//	dispatcher.Dispatch<MouseButtonReleasedEvent>(TGE_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonReleasedEvent));
-	//	dispatcher.Dispatch<MouseScrolledEvent>(TGE_BIND_EVENT_FN(ImGuiLayer::OnMouseScrolledEvent));
-	//	dispatcher.Dispatch<MouseMovedEvent>(TGE_BIND_EVENT_FN(ImGuiLayer::OnMouseMovedEvent));
-	//	dispatcher.Dispatch<KeyPressedEvent>(TGE_BIND_EVENT_FN(ImGuiLayer::OnKeyPressedEvent));
-	//	dispatcher.Dispatch<KeyReleasedEvent>(TGE_BIND_EVENT_FN(ImGuiLayer::OnKeyReleasedEvent));
-	//	dispatcher.Dispatch<KeyTypedEvent>(TGE_BIND_EVENT_FN(ImGuiLayer::OnKeyTypedEvent));
-	//	dispatcher.Dispatch<WindowResizeEvent>(TGE_BIND_EVENT_FN(ImGuiLayer::OnWindowResizeEvent));
-
-	//}
-	//bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e)
-	//{
-	//	ImGuiIO& io = ImGui::GetIO();
-	//	io.MouseDown[e.GetMouseButton()] = true;
-	//	return false;
-	//}
-	//bool ImGuiLayer::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e)
-	//{
-	//	ImGuiIO& io = ImGui::GetIO();
-	//	io.MouseDown[e.GetMouseButton()] = false;
-	//	return false;
-	//}
-	//bool ImGuiLayer::OnMouseScrolledEvent(MouseScrolledEvent& e)
-	//{
-	//	ImGuiIO& io = ImGui::GetIO();
-	//	io.MouseWheelH += e.GetXOffset();
-	//	io.MouseWheel += e.GetYOffset();
-	//	return false;
-	//}
-	//bool ImGuiLayer::OnKeyPressedEvent(KeyPressedEvent& e)
-	//{
-	//	ImGuiIO& io = ImGui::GetIO();
-	//	io.KeysDown[e.GetKeyCode()] = true;
-
-	//	io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-	//	io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
-	//	io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-	//	io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
-	//	return false;
-	//}
-	//bool ImGuiLayer::OnKeyReleasedEvent(KeyReleasedEvent& e)
-	//{
-	//	ImGuiIO& io = ImGui::GetIO();
-	//	io.KeysDown[e.GetKeyCode()] = false;
-	//	return false;
-	//}
-	//bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e)
-	//{
-	//	ImGuiIO& io = ImGui::GetIO();
-	//	int keycode = e.GetKeyCode();
-	//	if (keycode > 0 && keycode < 0x10000)
-	//		io.AddInputCharacter((unsigned short)keycode);
-	//	return false;
-	//}
-	////bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e)
-	////{
-	////	return false;
-	////}
-	//bool ImGuiLayer::OnMouseMovedEvent(MouseMovedEvent& e)
-	//{
-	//	ImGuiIO& io = ImGui::GetIO();
-	//	io.MousePos = ImVec2(e.GetX(), e.GetY());
-	//	return false;
-	//}
-	//bool ImGuiLayer::OnWindowResizeEvent(WindowResizeEvent& e)
-	//{
-	//	ImGuiIO& io = ImGui::GetIO();
-	//	io.DisplaySize = ImVec2(e.GetWidth(), e.GetHeight());
-	//	io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
-	//	glViewport(0, 0, e.GetWidth(), e.GetHeight());
-	//	return false;
-	//}
+	
 }
