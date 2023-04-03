@@ -18,11 +18,14 @@ IncludeDir["ImGui"] = "TGE/vendor/imgui"
 IncludeDir["glm"] = "TGE/vendor/glm"
 IncludeDir["stb_image"] = "TGE/vendor/stb_image"
 IncludeDir["entt"] = "TGE/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "TGE/vendor/yaml-cpp/include"
+
 
 --�����������premake5
 include "TGE/vendor/GLFW"
 include "TGE/vendor/Glad"
 include "TGE/vendor/imgui"
+include "TGE/vendor/yaml-cpp"
 
 project "TGE"
 	location "TGE"
@@ -55,13 +58,15 @@ project "TGE"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}"
 	}
 	
 	links{
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib"
 	}
 

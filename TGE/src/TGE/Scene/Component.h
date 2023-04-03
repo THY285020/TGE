@@ -35,12 +35,6 @@ namespace TGE
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}
-		//void Displacement(glm::vec3 displacement)
-		//{
-		//	Translate.x = Translate.x + displacement.x;
-		//	Translate.y = Translate.y + displacement.y;
-		//	Translate.z = Translate.z + displacement.z;
-		//}
 	};
 
 	struct SpriteRendererComponent

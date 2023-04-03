@@ -17,6 +17,11 @@ namespace TGE
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
+	private:
 		TGE::OrthoCameraController m_CameraController;
 		//Temp
 		Ref<VertexArray> m_VA;

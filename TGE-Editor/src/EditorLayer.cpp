@@ -3,6 +3,9 @@
 #include "imgui/imgui.h"
 //#include "Platform/Opengl/OpenGLShader.h"
 #include <glm/gtc/type_ptr.hpp>
+#include "TGE/Scene/Serializer.h"
+
+#include "TGE/Utils/PlatformUtils.h"
 
 namespace TGE
 {
@@ -21,7 +24,7 @@ namespace TGE
 
 		//Entity
 		m_ActiveScene = std::make_shared<Scene>(fbSpec.Width, fbSpec.Height);//创建registry
-
+#if 0
 		m_SquareEntity = m_ActiveScene->CreateEntity("Square Green");//创建entity
 		m_SquareEntity.AddComponent<TransformComponent>(glm::vec3(-1.f, 0.0f, 0.f));
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0, 1.0, 0.0, 1.0 });
@@ -69,7 +72,7 @@ namespace TGE
 
 		//绑定OnUpdate等函数
 		m_Camera2.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
+#endif
 		m_SHP.SetContext(m_ActiveScene);
 	}
 
@@ -135,7 +138,7 @@ namespace TGE
 
 			if (ImGui::BeginMenuBar())
 			{
-				if (ImGui::BeginMenu("Options"))
+				if (ImGui::BeginMenu("File"))
 				{
 					// Disabling fullscreen would allow the window to be moved to the front of other windows,
 					// which we can't undo at the moment without finer window depth/z control.
@@ -143,12 +146,21 @@ namespace TGE
 					ImGui::MenuItem("Padding", NULL, &opt_padding);
 					ImGui::Separator();//分割线
 
-					if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-					if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-					if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-					if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-					if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-					ImGui::Separator();
+					//if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
+					//if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
+					//if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
+					//if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
+					//if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
+					//ImGui::Separator();
+
+					if (ImGui::MenuItem("New", "Ctrl+N"))
+						NewScene();
+
+					if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+						SaveSceneAs();
+
+					if (ImGui::MenuItem("Open...", "Ctrl+O"))
+						OpenScene();
 
 					//if (ImGui::MenuItem("Close", NULL, false, dockspaceOpen != NULL))
 					//	dockspaceOpen = false;
@@ -357,13 +369,76 @@ namespace TGE
 	void EditorLayer::OnEvent(TGE::Event& event)
 	{
 		m_CameraController.OnEvent(event);
+
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<KeyPressedEvent>(TGE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+
 	}
 
 	void EditorLayer::OnDetach()
 	{
 	}
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+	{
+		//shortcuts
+		if (e.GetRepeatCount() > 0)
+			return false;
+		bool control = Input::IsKeyPressed(TGE_KEY_LEFT_CONTROL) || Input::IsKeyPressed(TGE_KEY_RIGHT_CONTROL);
+		bool shift = Input::IsKeyPressed(TGE_KEY_LEFT_SHIFT) || Input::IsKeyPressed(TGE_KEY_RIGHT_SHIFT);
+		switch (e.GetKeyCode())
+		{
+			case TGE_KEY_N:
+			{
+				if (control)
+				{
+					NewScene();
+				}
+				break;
+			}
+			case TGE_KEY_O:
+			{
+				if (control)
+				{
+					OpenScene();
+				}
+				break;
+			}
+			case TGE_KEY_S:
+			{
+				if (control && shift)
+				{
+					SaveSceneAs();
+				}
+				break;
+			}
+		}
+	}
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = std::make_shared<Scene>();
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SHP.SetContext(m_ActiveScene);
+	}
+	void EditorLayer::OpenScene()
+	{
+		std::string filepath = FileDialogs::OpenFile("TGE Scene (*.tge)\0*.tge\0");//传入filter
+		if (!filepath.empty())
+		{
+			m_ActiveScene = std::make_shared<Scene>();
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SHP.SetContext(m_ActiveScene);
+
+			Serializer serializer(m_ActiveScene);
+			serializer.DeSerialize(filepath);
+		}
+	}
+	void EditorLayer::SaveSceneAs()
+	{
+		std::string filepath = FileDialogs::SaveFile("TGE Scene (*.tge)\0*.tge\0");
+		if (!filepath.empty())
+		{
+			Serializer serializer(m_ActiveScene);
+			serializer.Serialize(filepath);
+		}
+	}
 }
-
-
-
-
