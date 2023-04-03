@@ -1,0 +1,3 @@
+[submodule "TGE/vendor/yaml-cpp"]
+	path = TGE/vendor/yaml-cpp
+	url = https://github.com/TheCherno/yaml-cpp
