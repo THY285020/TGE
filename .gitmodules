@@ -1,3 +1,6 @@
 [submodule "TGE/vendor/yaml-cpp"]
 	path = TGE/vendor/yaml-cpp
 	url = https://github.com/TheCherno/yaml-cpp
+[submodule "TGE/vendor/ImGuizmo"]
+	path = TGE/vendor/ImGuizmo
+	url = https://github.com/TheCherno/ImGuizmo.git
