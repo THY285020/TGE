@@ -1,14 +1,18 @@
 #include "tgpch.h"
 #include "EditorLayer.h"
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 //#include "Platform/Opengl/OpenGLShader.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 #include "TGE/Scene/Serializer.h"
-
 #include "TGE/Utils/PlatformUtils.h"
+#include "ImGuizmo.h"
+#include "TGE/Math/Math.h"
 
 namespace TGE
 {
+
 	EditorLayer::EditorLayer() :Layer("EditorLayer"), m_CameraController(1280.f / 720.f, true)
 	{
 	}
@@ -24,6 +28,7 @@ namespace TGE
 
 		//Entity
 		m_ActiveScene = std::make_shared<Scene>(fbSpec.Width, fbSpec.Height);//创建registry
+
 #if 0
 		m_SquareEntity = m_ActiveScene->CreateEntity("Square Green");//创建entity
 		m_SquareEntity.AddComponent<TransformComponent>(glm::vec3(-1.f, 0.0f, 0.f));
@@ -78,147 +83,113 @@ namespace TGE
 
 	void EditorLayer::OnImGuiRender()
 	{
-		static bool dockingEnable = true;
-		if (dockingEnable)
+		static bool dockspaceOpen = true;
+		static bool opt_fullscreen = true;
+		static bool opt_padding = false;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+		// because it would be confusing to have two docking targets within each others.
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		if (opt_fullscreen)
 		{
-			static bool dockspaceOpen = true;
-			static bool opt_fullscreen = true;
-			static bool opt_padding = false;
-			static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->WorkPos);
+			ImGui::SetNextWindowSize(viewport->WorkSize);
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		}
+		else
+		{
+			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+		}
 
-			// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-			// because it would be confusing to have two docking targets within each others.
-			ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-			if (opt_fullscreen)
+		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+		// and handle the pass-thru hole, so we ask Begin() to not render a background.
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
+
+		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+		// all active windows docked into it will lose their parent and become undocked.
+		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+		if (!opt_padding)
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+		if (!opt_padding)
+			ImGui::PopStyleVar();
+
+		if (opt_fullscreen)
+			ImGui::PopStyleVar(2);
+
+		// Submit the DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		}
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("Files"))
 			{
-				const ImGuiViewport* viewport = ImGui::GetMainViewport();
-				ImGui::SetNextWindowPos(viewport->WorkPos);
-				ImGui::SetNextWindowSize(viewport->WorkSize);
-				ImGui::SetNextWindowViewport(viewport->ID);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-				window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-				window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+				// Disabling fullscreen would allow the window to be moved to the front of other windows,
+				// which we can't undo at the moment without finer window depth/z control.
+				ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+				//ImGui::MenuItem("Padding", NULL, &opt_padding);
+				ImGui::Separator();
+
+				//if (ImGui::MenuItem("Close", NULL, false, dockspaceOpen != NULL))
+				//	dockspaceOpen = false;
+
+				if (ImGui::MenuItem("New", "Ctrl+N"))
+					NewScene();
+
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+					SaveSceneAs();
+
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
+					OpenScene();
+
+				if (ImGui::MenuItem("Exit")) 
+					TGE::Application::Get().Close();
+				ImGui::EndMenu();
 			}
-			else
-			{
-				dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-			}
-
-			// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-			// and handle the pass-thru hole, so we ask Begin() to not render a background.
-			if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-				window_flags |= ImGuiWindowFlags_NoBackground;
-
-			// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-			// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-			// all active windows docked into it will lose their parent and become undocked.
-			// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-			// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-			if (!opt_padding)
-				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-			ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
-			if (!opt_padding)
-				ImGui::PopStyleVar();
-
-			if (opt_fullscreen)
-				ImGui::PopStyleVar(2);
-
-			// Submit the DockSpace
-			ImGuiIO& io = ImGui::GetIO();
-			//ImGuiStyle& style = ImGui::GetStyle();
-			//float WinMinSizeX = style.WindowMinSize.x;
-			//style.WindowMinSize.x = 370.f;
-			if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-			{
-				ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-			}
-			//style.WindowMinSize.x = WinMinSizeX;
-
-			if (ImGui::BeginMenuBar())
-			{
-				if (ImGui::BeginMenu("File"))
-				{
-					// Disabling fullscreen would allow the window to be moved to the front of other windows,
-					// which we can't undo at the moment without finer window depth/z control.
-					ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-					ImGui::MenuItem("Padding", NULL, &opt_padding);
-					ImGui::Separator();//分割线
-
-					//if (ImGui::MenuItem("Flag: NoSplit", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoSplit; }
-					//if (ImGui::MenuItem("Flag: NoResize", "", (dockspace_flags & ImGuiDockNodeFlags_NoResize) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoResize; }
-					//if (ImGui::MenuItem("Flag: NoDockingInCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_NoDockingInCentralNode) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_NoDockingInCentralNode; }
-					//if (ImGui::MenuItem("Flag: AutoHideTabBar", "", (dockspace_flags & ImGuiDockNodeFlags_AutoHideTabBar) != 0)) { dockspace_flags ^= ImGuiDockNodeFlags_AutoHideTabBar; }
-					//if (ImGui::MenuItem("Flag: PassthruCentralNode", "", (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0, opt_fullscreen)) { dockspace_flags ^= ImGuiDockNodeFlags_PassthruCentralNode; }
-					//ImGui::Separator();
-
-					if (ImGui::MenuItem("New", "Ctrl+N"))
-						NewScene();
-
-					if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-						SaveSceneAs();
-
-					if (ImGui::MenuItem("Open...", "Ctrl+O"))
-						OpenScene();
-
-					//if (ImGui::MenuItem("Close", NULL, false, dockspaceOpen != NULL))
-					//	dockspaceOpen = false;
-					if (ImGui::MenuItem("Exit")) TGE::Application::Get().Close();
-					ImGui::EndMenu();
-				}
-
-				ImGui::EndMenuBar();
-			}
-
+			ImGui::EndMenuBar();
+		}
 			m_SHP.OnImGuiRenderer();//多级菜单
 
-			//--------------------------Statistics菜单
 			ImGui::Begin("Statistics");
+				auto stats = TGE::Renderer2D::GetStats();
+				ImGui::Text("Renderer2D Stats:");
+				ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+				ImGui::Text("Quads : %d", stats.QuadCount);
+				ImGui::Text("Vertices : %d", stats.GetTotalVertexCount());
+				ImGui::Text("Indices : %d", stats.GetTotalIndexCount());
+					//ImGui::Text(ImGuizmo::IsOver() ? "Over gizmo" : "");
 
-			auto stats = TGE::Renderer2D::GetStats();
-			ImGui::Text("Renderer2D Stats:");
-			ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-			ImGui::Text("Quads : %d", stats.QuadCount);
-			ImGui::Text("Vertices : %d", stats.GetTotalVertexCount());
-			ImGui::Text("Indices : %d", stats.GetTotalIndexCount());
+					//ImGui::Text(ImGuizmo::IsOver(ImGuizmo::TRANSLATE) ? "Over translate gizmo" : "");
 
-			//调整颜色
-			//if (m_SquareEntity)
-			//{
-			//	ImGui::Separator();
-			//	auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-			//	auto& SquareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-			//	ImGui::Text("%s", tag.c_str());
-			//	ImGui::ColorEdit4("Square Color", glm::value_ptr(SquareColor));
-			//	ImGui::Separator();
-			//}
-			//transform and CheckBox
-			//ImGui::DragFloat3("Camera Transform",
-			//	glm::value_ptr(m_Camera.GetComponent<TransformComponent>().Transform[3]));
-			//if (ImGui::Checkbox("Camera A", &m_Primary))
-			//{
-			//	m_Camera2.GetComponent<CameraComponent>().Primary = !m_Primary;
-			//	m_Camera.GetComponent<CameraComponent>().Primary = m_Primary;
-			//}
-			
-			//orthoSize
-			//{
-			//	auto& cc = m_Camera2.GetComponent<CameraComponent>().camera;
-			//	float orthoSize = cc.GetOrthographicSize();
-			//	if (ImGui::DragFloat("Camera2 OrthoSize", &orthoSize))
-			//		cc.SetOrthographicSize(orthoSize);
-			//}
+					//ImGui::Text(ImGuizmo::IsOver(ImGuizmo::ROTATE) ? "Over rotate gizmo" : "");
 
+					//ImGui::Text(ImGuizmo::IsOver(ImGuizmo::SCALE) ? "Over scale gizmo" : "");
+					//if (ImGuizmo::IsUsing())
+					//{
+					//	ImGui::Text("Using gizmo");
+					//}
 			ImGui::End();
-			//----------------Statistics End
-			//----------------Viewport
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));//间隔缩小为0
+			//----------------Viewport--------------------
+
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0, 0.0));//间隔缩小为0
 			ImGui::Begin("ViewPort");
 			//点击选中或悬停都会更新界面
 			m_ViewportFocused = ImGui::IsWindowFocused();
 			m_ViewportHovered = ImGui::IsWindowHovered();
-			Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused || !m_ViewportHovered);
+			Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
 
 			//Resize此处更新会闪屏
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
@@ -226,32 +197,78 @@ namespace TGE
 			{
 				m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			}
+
 			uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment();
 			ImGui::Image((void*)m_TextureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+			//Gizmo
+			Entity selectedEntity = m_SHP.GetSelectedEntity();
+			if (selectedEntity && m_GizmoType != -1)
+			{
+				
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
+
+				float windowWidth = (float)ImGui::GetWindowWidth();
+				float windowHeight = (float)ImGui::GetWindowHeight();
+				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+				// Camera
+				 auto cameraEntity = m_ActiveScene->GetPrimaryCamera();
+				 const auto& Camera = cameraEntity.GetComponent<CameraComponent>().camera;
+				 const glm::mat4& cameraProjection = Camera.GetProjection();
+				 glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+				// Entity transform
+				auto& tc = selectedEntity.GetComponent<TransformComponent>();
+				glm::mat4 transform = tc.GetTransform();
+
+				// Snapping
+				bool snap = Input::IsKeyPressed(TGE_KEY_LEFT_CONTROL);
+				float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+				// Snap to 45 degrees for rotation
+				if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+					snapValue = 45.0f;
+
+				float snapValues[3] = { snapValue, snapValue, snapValue };
+
+				//传入camera的view和projection矩阵，以及transform
+				//拖动的时候是true
+				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+					(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+					NULL, snap ? snapValues : NULL);
+
+				if (ImGuizmo::IsUsing())
+				{
+					glm::vec3 translation, rotation, scale;
+					Math::DecomposeTransform(transform, translation, rotation, scale);
+
+					glm::vec3 deltaRotation = rotation - tc.Rotation;
+					tc.Translate = translation;
+					tc.Rotation += deltaRotation;
+					tc.Scale = scale;
+
+					//float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+					//ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform), matrixTranslation, matrixRotation, matrixScale);
+					//glm::vec3 deltaRotation = glm::vec3(matrixRotation[0], matrixRotation[1], matrixRotation[2]) - tc.Rotation;
+					//tc.Translate = glm::vec3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]);
+					//tc.Rotation += deltaRotation;
+					//tc.Scale = glm::vec3(matrixScale[0], matrixScale[1], matrixScale[2]);
+					//ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, glm::value_ptr(transform));
+
+					//glm::vec3 translation, scale, skew;
+					//glm::quat rotation;
+					//glm::vec4 perspective;
+					//glm::decompose(transform, scale, rotation, translation, skew, perspective);
+					//tc.Rotation = glm::eulerAngles(rotation);
+					//tc.Translate = translation;
+					//tc.Scale = scale;
+				}
+			}
 			ImGui::End();
 			ImGui::PopStyleVar();
-
-			ImGui::End();
-		}
-		else
-		{
-			ImGui::Begin("Settings");
-
-			auto stats = TGE::Renderer2D::GetStats();
-			ImGui::Text("Renderer2D Stats:");
-			ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-			ImGui::Text("Quads : %d", stats.QuadCount);
-			ImGui::Text("Vertices : %d", stats.GetTotalVertexCount());
-			ImGui::Text("Indices : %d", stats.GetTotalIndexCount());
-
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(SquareColor));
-			uint32_t m_TextureID = m_Texture->GetRendererID();
-			/*uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment();*/
-			//将图像传入到setting页面 后俩用于颠倒操作
-			ImGui::Image((void*)m_TextureID, ImVec2{ 1280.f, 720.f }, ImVec2{ 0, 1 }, ImVec2{1, 0});
-
-			ImGui::End();
-		}
+			//----------------Viewport End---------------------
+		ImGui::End();
 	}
 
 	void EditorLayer::OnUpdate(TimeStep& ts)
@@ -411,7 +428,29 @@ namespace TGE
 				}
 				break;
 			}
+			//Gizmos
+			case TGE_KEY_Q:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::BOUNDS;
+				break;
+			}
+			case TGE_KEY_W:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+			}
+			case TGE_KEY_E:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
+			}
+			case TGE_KEY_R:
+			{
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			}
 		}
+		return true;
 	}
 	void EditorLayer::NewScene()
 	{

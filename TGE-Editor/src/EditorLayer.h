@@ -44,6 +44,8 @@ namespace TGE
 		bool m_ViewportHovered = false;
 
 		SceneHierarchyPanel m_SHP;
+
+		int m_GizmoType = -1;
 	};
 }
 

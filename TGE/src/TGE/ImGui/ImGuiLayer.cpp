@@ -3,13 +3,17 @@
 
 #include "imgui.h"
 //#include "Platform/Opengl/ImGuiOpenGL.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+//#include <examples/imgui_impl_glfw.h>
+//#include <examples/imgui_impl_opengl3.h>
+#include "backends/imgui_impl_glfw.cpp"
+#include "backends/imgui_impl_opengl3.cpp"
 
 #include "TGE/Core/Application.h"
 
-#include "GLFW/glfw3.h"
-#include "glad/glad.h"
+//#include "GLFW/glfw3.h"
+//#include "glad/glad.h"
+
+#include "ImGuizmo.h"
 
 namespace TGE {
 	ImGuiLayer::ImGuiLayer():Layer("ImGuiLayer")
@@ -87,6 +91,7 @@ namespace TGE {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()

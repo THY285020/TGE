@@ -19,6 +19,7 @@ IncludeDir["glm"] = "TGE/vendor/glm"
 IncludeDir["stb_image"] = "TGE/vendor/stb_image"
 IncludeDir["entt"] = "TGE/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "TGE/vendor/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "TGE/vendor/ImGuizmo"
 
 
 --�����������premake5
@@ -47,6 +48,8 @@ project "TGE"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
 	}
 
 	includedirs
@@ -59,7 +62,8 @@ project "TGE"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 	
 	links{
@@ -69,6 +73,9 @@ project "TGE"
 		"yaml-cpp",
 		"opengl32.lib"
 	}
+
+	filter "files:TGE/vendor/ImGuizmo/**.cpp"
+	flags{"NoPCH"}
 
 	filter "system:windows"
 		systemversion "latest"
@@ -167,7 +174,8 @@ project "TGE-Editor"
 		"TGE/src",
 		"TGE/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 	
 	links

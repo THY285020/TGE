@@ -25,14 +25,23 @@
     <Filter Include="src\TGE\ImGui">
       <UniqueIdentifier>{66E06823-D2A0-E459-9BDB-2DD7075B2936}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\TGE\Math">
+      <UniqueIdentifier>{9558A02F-81BB-2FD4-2A41-688A1683FB56}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\TGE\Renderer">
       <UniqueIdentifier>{62B5B805-4EAE-D757-77E0-BCDC6338B763}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\TGE\Scene">
       <UniqueIdentifier>{59D81824-C598-945A-8ED3-DDD7FA52D936}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\TGE\Utils">
+      <UniqueIdentifier>{9C6C4624-082D-C25A-D167-0BD83DE70637}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGuizmo">
+      <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
@@ -132,6 +141,9 @@
     <ClInclude Include="src\TGE\ImGui\ImGuiLayer.h">
       <Filter>src\TGE\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\TGE\Math\Math.h">
+      <Filter>src\TGE\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\TGE\Renderer\Buffer.h">
       <Filter>src\TGE\Renderer</Filter>
     </ClInclude>
@@ -192,8 +204,17 @@
     <ClInclude Include="src\TGE\Scene\ScriptableEntity.h">
       <Filter>src\TGE\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\TGE\Scene\Serializer.h">
+      <Filter>src\TGE\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TGE\Utils\PlatformUtils.h">
+      <Filter>src\TGE\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\tgpch.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
+      <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -954,8 +975,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\TGE\Scene\Serializer.h" />
-    <ClInclude Include="src\TGE\Utils\PlatformUtils.h" />
+    <ClInclude Include="vendor\imgui\imgui.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -982,6 +1002,9 @@
     <ClCompile Include="src\Platform\Windows\WindowInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1002,6 +1025,9 @@
     </ClCompile>
     <ClCompile Include="src\TGE\ImGui\ImGuiLayer.cpp">
       <Filter>src\TGE\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TGE\Math\Math.cpp">
+      <Filter>src\TGE\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\Renderer\Buffer.cpp">
       <Filter>src\TGE\Renderer</Filter>
@@ -1051,13 +1077,18 @@
     <ClCompile Include="src\TGE\Scene\Scene.cpp">
       <Filter>src\TGE\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\TGE\Scene\Serializer.cpp">
+      <Filter>src\TGE\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\tgpch.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
+      <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\TGE\Scene\Serializer.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
+    <ClCompile Include="vendor\imgui\imgui.cpp" />
   </ItemGroup>
 </Project>
