@@ -21,6 +21,8 @@ namespace TGE
 		void NewScene();
 		void OpenScene();
 		void SaveSceneAs();
+		void EditTransform(float* cameraView, float* cameraProjection, float* transform, int& m_GizmoType);
+		//void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition);
 	private:
 		TGE::OrthoCameraController m_CameraController;
 		//Temp
@@ -45,7 +47,8 @@ namespace TGE
 
 		SceneHierarchyPanel m_SHP;
 
-		int m_GizmoType = -1;
+		int m_GizmoType = 7;
+		int m_lastUsing = 0;
 	};
 }
 

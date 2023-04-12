@@ -1,6 +1,6 @@
 #pragma once
 #include "Event.h"
-//#include <sstream>
+#include <sstream>
 
 namespace TGE {
 	class TGE_API WindowResizeEvent : public Event {

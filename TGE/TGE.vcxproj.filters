@@ -976,6 +976,10 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imgui\imgui.h" />
+    <ClInclude Include="vendor\ImGuizmo\GraphEditor.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -1090,5 +1094,8 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imgui\imgui.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImSequencer.cpp" />
   </ItemGroup>
 </Project>

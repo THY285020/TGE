@@ -1,7 +1,7 @@
 #pragma once
 #include "TGE/Core/core.h"
 //#include <string>
-//#include <functional>
+#include <functional>
 
 namespace TGE {
 	enum class TGE_API EventType{
