@@ -5,6 +5,10 @@
 #include "imgui/imgui_internal.h"
 #include "ImGuizmo.h"
 
+#include <glm/gtx/matrix_decompose.hpp>
+#include <math.h>
+#include <vector>
+#include <algorithm>
 #include "EditorLayer.h"
 #include "TGE/Utils/PlatformUtils.h"
 #include "TGE/Scene/Serializer.h"
