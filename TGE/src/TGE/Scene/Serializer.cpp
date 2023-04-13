@@ -191,14 +191,17 @@ namespace TGE
 					name = tagComponent["Tag"].as<std::string>();
 				TGE_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-				//创建实例
-				Entity deserializedEntity = m_Scene->CreateEntity(name);
 
+				//创建实例
 				auto transformComponent = entity["TransformComponent"];
+				Entity deserializedEntity = m_Scene->CreateEntity(name, transformComponent["Translate"].as<glm::vec3>());
+
+				//auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
-					auto& tc = deserializedEntity.AddComponent<TransformComponent>();
-					tc.Translate = transformComponent["Translate"].as<glm::vec3>();
+					//auto& tc = deserializedEntity.AddComponent<TransformComponent>();
+					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
+					//tc.Translate = transformComponent["Translate"].as<glm::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
 					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
 				}

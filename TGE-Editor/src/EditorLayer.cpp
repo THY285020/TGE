@@ -1,36 +1,8 @@
-// https://github.com/CedricGuillemet/ImGuizmo
-// v 1.89 WIP
-//
-// The MIT License(MIT)
-//
-// Copyright(c) 2021 Cedric Guillemet
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions :
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
-//#define IMGUI_DEFINE_MATH_OPERATORS
 #include "tgpch.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
-//#define IMAPP_IMPL
 
 #include "ImGuizmo.h"
-//#include "imzoomslider.h"
 
 #include <glm/gtx/matrix_decompose.hpp>
 #include <math.h>
@@ -40,29 +12,6 @@
 #include "TGE/Utils/PlatformUtils.h"
 #include "TGE/Scene/Serializer.h"
 #include "TGE/Math/Math.h"
-
-
-float objectMatrix[4][16] = {
-  { 1.f, 0.f, 0.f, 0.f,
-    0.f, 1.f, 0.f, 0.f,
-    0.f, 0.f, 1.f, 0.f,
-    0.f, 0.f, 0.f, 1.f },
-
-  { 1.f, 0.f, 0.f, 0.f,
-  0.f, 1.f, 0.f, 0.f,
-  0.f, 0.f, 1.f, 0.f,
-  2.f, 0.f, 0.f, 1.f },
-
-  { 1.f, 0.f, 0.f, 0.f,
-  0.f, 1.f, 0.f, 0.f,
-  0.f, 0.f, 1.f, 0.f,
-  2.f, 0.f, 2.f, 1.f },
-
-  { 1.f, 0.f, 0.f, 0.f,
-  0.f, 1.f, 0.f, 0.f,
-  0.f, 0.f, 1.f, 0.f,
-  0.f, 0.f, 2.f, 1.f }
-};
 
 
 TGE::EditorLayer::EditorLayer() :Layer("EditorLayer"), m_CameraController(1280.f / 720.f, true)
@@ -81,17 +30,15 @@ void TGE::EditorLayer::OnAttach()
 
     //Entity
     m_ActiveScene = std::make_shared<Scene>(fbSpec.Width, fbSpec.Height);//创建registry
-
-    m_Camera = m_ActiveScene->CreateEntity("Camera EntityA", glm::vec3(0.f, 0.f, 5.0f));
-    m_Camera.AddComponent<CameraComponent>();//glm::ortho(-16.f, 16.f, -9.f, 9.f, -1.f, 1.f)
-    //m_Camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.0f));//初始化位置
-    m_Camera.GetComponent<CameraComponent>().camera.SetPerspective(glm::radians(45.0f), 0.1f, 100.f);
-
-    m_SquareEntity = m_ActiveScene->CreateEntity("Square Green", glm::vec3(-1.f, 0.0f, 0.f));//创建entity
-    //m_SquareEntity.AddComponent<TransformComponent>(glm::vec3(-1.f, 0.0f, 0.f));
-    m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0, 1.0, 0.0, 1.0 });
-
 #if 0
+
+    //m_Camera = m_ActiveScene->CreateEntity("Camera EntityA", glm::vec3(0.f, 0.f, 5.0f));
+    //m_Camera.AddComponent<CameraComponent>();//glm::ortho(-16.f, 16.f, -9.f, 9.f, -1.f, 1.f)
+    //m_Camera.GetComponent<CameraComponent>().camera.SetPerspective(glm::radians(45.0f), 0.1f, 100.f);
+
+    //m_SquareEntity = m_ActiveScene->CreateEntity("Square Green", glm::vec3(-1.f, 0.0f, 0.f));//创建entity
+    //m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0, 1.0, 0.0, 1.0 });
+
     m_SquareEntity = m_ActiveScene->CreateEntity("Square Green");//创建entity
     m_SquareEntity.AddComponent<TransformComponent>(glm::vec3(-1.f, 0.0f, 0.f));
     m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0, 1.0, 0.0, 1.0 });
@@ -145,7 +92,7 @@ void TGE::EditorLayer::OnAttach()
 }
 
 void TGE::EditorLayer::EditTransform(float* cameraView, float* cameraProjection, float* matrix, int& m_GizmoType)
-{//cameraView, cameraProjection, objectMatrix[matId], lastUsing == matId
+{
     static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
     //static bool useSnap = false;
     //static float snap[3] = { 1.f, 1.f, 1.f };
@@ -163,23 +110,23 @@ void TGE::EditorLayer::EditTransform(float* cameraView, float* cameraProjection,
         //if (ImGui::IsKeyPressed(ImGuiKey_R)) // r Key
         //    m_GizmoType = ImGuizmo::SCALE;
 
-        if (ImGui::RadioButton("Translate", m_GizmoType == ImGuizmo::TRANSLATE))
-            m_GizmoType = ImGuizmo::TRANSLATE;
-        ImGui::SameLine();
-        if (ImGui::RadioButton("Rotate", m_GizmoType == ImGuizmo::ROTATE))
-            m_GizmoType = ImGuizmo::ROTATE;
-        ImGui::SameLine();
-        if (ImGui::RadioButton("Scale", m_GizmoType == ImGuizmo::SCALE))
-            m_GizmoType = ImGuizmo::SCALE;
-        if (ImGui::RadioButton("Universal", m_GizmoType == ImGuizmo::UNIVERSAL))
-            m_GizmoType = ImGuizmo::UNIVERSAL;
+        //if (ImGui::RadioButton("Translate", m_GizmoType == ImGuizmo::TRANSLATE))
+        //    m_GizmoType = ImGuizmo::TRANSLATE;
+        //ImGui::SameLine();
+        //if (ImGui::RadioButton("Rotate", m_GizmoType == ImGuizmo::ROTATE))
+        //    m_GizmoType = ImGuizmo::ROTATE;
+        //ImGui::SameLine();
+        //if (ImGui::RadioButton("Scale", m_GizmoType == ImGuizmo::SCALE))
+        //    m_GizmoType = ImGuizmo::SCALE;
+        //if (ImGui::RadioButton("Universal", m_GizmoType == ImGuizmo::UNIVERSAL))
+        //    m_GizmoType = ImGuizmo::UNIVERSAL;
 
-        float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-        ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
-        ImGui::InputFloat3("Tr", matrixTranslation);
-        ImGui::InputFloat3("Rt", matrixRotation);
-        ImGui::InputFloat3("Sc", matrixScale);
-        ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+        //float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+        //ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
+        //ImGui::InputFloat3("Tr", matrixTranslation);
+        //ImGui::InputFloat3("Rt", matrixRotation);
+        //ImGui::InputFloat3("Sc", matrixScale);
+        //ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
 
         //if (mCurrentGizmoOperation != ImGuizmo::SCALE)
         //{
@@ -189,6 +136,15 @@ void TGE::EditorLayer::EditTransform(float* cameraView, float* cameraProjection,
         //    if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
         //        mCurrentGizmoMode = ImGuizmo::WORLD;
         //}
+        
+        //SNAP
+        bool snap = Input::IsKeyPressed(TGE_KEY_LEFT_CONTROL);
+        float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+        // Snap to 45 degrees for rotation
+        if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+            snapValue = 30.0f;
+
+        float snapValues[3] = { snapValue, snapValue, snapValue };
         //if (ImGui::IsKeyPressed(ImGuiKey_S))
         //    useSnap = !useSnap;
         //ImGui::Checkbox("##UseSnap", &useSnap);
@@ -238,13 +194,9 @@ void TGE::EditorLayer::EditTransform(float* cameraView, float* cameraProjection,
 
     //ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
     //ImGuizmo::DrawCubes(cameraView, cameraProjection, &objectMatrix[0][0], 1);
-    ImGuizmo::Manipulate(cameraView, cameraProjection, (ImGuizmo::OPERATION)m_GizmoType, mCurrentGizmoMode, matrix);//matrix
+    ImGuizmo::Manipulate(cameraView, cameraProjection, (ImGuizmo::OPERATION)m_GizmoType, mCurrentGizmoMode, matrix, NULL, snap ? snapValues : NULL);//matrix
 
-    //ImGuizmo::ViewManipulate(cameraView, 8.f, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
-
-    //ImGui::End();
-    //ImGui::PopStyleColor(1);
-    
+    //ImGuizmo::ViewManipulate(cameraView, 8.f, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);    
 }
 
 
@@ -468,8 +420,8 @@ void TGE::EditorLayer::OnImGuiRender()
         {
             // Disabling fullscreen would allow the window to be moved to the front of other windows,
             // which we can't undo at the moment without finer window depth/z control.
-            ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-            //ImGui::MenuItem("Padding", NULL, &opt_padding);
+            //ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
+            ImGui::MenuItem("Padding", NULL, &opt_padding);
             ImGui::Separator();
 
             //if (ImGui::MenuItem("Close", NULL, false, dockspaceOpen != NULL))
@@ -495,21 +447,6 @@ void TGE::EditorLayer::OnImGuiRender()
     //if (ImGui::RadioButton("Full view", !useWindow)) useWindow = false;
     //ImGui::SameLine();
     //if (ImGui::RadioButton("Window", useWindow)) useWindow = true;
-
-    //ImGui::Text("Camera");
-    //bool viewDirty = false;
-    //if (ImGui::RadioButton("Perspective", isPerspective)) isPerspective = true;
-    //ImGui::SameLine();
-    //if (ImGui::RadioButton("Orthographic", !isPerspective)) isPerspective = false;
-    //if (isPerspective)
-    //{
-    //    ImGui::SliderFloat("Fov", &fov, 20.f, 110.f);
-    //}
-    //else
-    //{
-    //    ImGui::SliderFloat("Ortho width", &viewWidth, 1, 20);
-    //}
-    //ImGui::End();
 
     m_SHP.OnImGuiRenderer();//多级菜单
 
@@ -545,41 +482,43 @@ void TGE::EditorLayer::OnImGuiRender()
     
     //auto cameraEntity = m_Camera;
     auto cameraEntity = m_ActiveScene->GetPrimaryCamera();
-    auto& cc = cameraEntity.GetComponent<CameraComponent>().camera;
-    glm::mat4 cameraProjection = cc.GetProjection();
-    glm::mat4 cameraView = glm::lookAt((cameraEntity.GetComponent<TransformComponent>().Translate),
-        glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.f, 1.f, 0.f));
-
-    if (selectedEntity)
+    if (cameraEntity)
     {
-        auto& tc = selectedEntity.GetComponent<TransformComponent>();
-        glm::mat4 transform = tc.GetTransform();
-        float* matrix = glm::value_ptr(transform);
+        auto& cc = cameraEntity.GetComponent<CameraComponent>().camera;
+        glm::mat4 cameraProjection = cc.GetProjection();
+        glm::mat4 cameraView = glm::lookAt((cameraEntity.GetComponent<TransformComponent>().Translate),
+            glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.f, 1.f, 0.f));
 
-        ImGuizmo::SetOrthographic(false);
-        ImGuizmo::BeginFrame();
-
-        EditTransform(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), matrix, m_GizmoType);
-
-        if (ImGuizmo::IsUsing())
+        if (selectedEntity)
         {
-            //glm::vec3 translation, rotation, scale;
-            //Math::DecomposeTransform(transform, translation, rotation, scale);
+            auto& tc = selectedEntity.GetComponent<TransformComponent>();
+            glm::mat4 transform = tc.GetTransform();
 
-            //glm::vec3 deltaRotation = rotation - tc.Rotation;
-            //tc.Translate = translation;
-            //tc.Rotation += deltaRotation;
-            //tc.Scale = scale;
+            ImGuizmo::SetOrthographic(bool(cc.GetProjectionType()));
+            ImGuizmo::BeginFrame();
 
-            glm::vec3 translation, scale, skew;
-            glm::quat rotation;
-            glm::vec4 perspective;
-            glm::decompose(transform, scale, rotation, translation, skew, perspective);
-            tc.Rotation = glm::eulerAngles(rotation);
-            tc.Translate = translation;
-            tc.Scale = scale;
+            EditTransform(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), glm::value_ptr(transform), m_GizmoType);
+
+            if (ImGuizmo::IsUsing())
+            {
+                //glm::vec3 translation, rotation, scale;
+                //Math::DecomposeTransform(transform, translation, rotation, scale);
+
+                //glm::vec3 deltaRotation = rotation - tc.Rotation;
+                //tc.Translate = translation;
+                //tc.Rotation += deltaRotation;
+                //tc.Scale = scale;
+
+                glm::vec3 translation, scale, skew;
+                glm::quat rotation;
+                glm::vec4 perspective;
+                glm::decompose(transform, scale, rotation, translation, skew, perspective);
+                tc.Rotation = glm::eulerAngles(rotation);
+                tc.Translate = translation;
+                tc.Scale = scale;
+            }
+
         }
-
     }
     ImGui::End();
     ImGui::PopStyleVar();
