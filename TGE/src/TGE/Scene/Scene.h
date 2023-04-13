@@ -14,7 +14,7 @@ namespace TGE
 			:m_ViewportWidth(Width), m_ViewportHeight(Height)
 		{}
 		~Scene();
-		Entity CreateEntity(const std::string& name);
+		Entity CreateEntity(const std::string& name, glm::vec3 translation = glm::vec3(0.f, 0.f, 0.f));
 		void DestroyEntity(Entity entity);
 		void OnUpdate(TimeStep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);

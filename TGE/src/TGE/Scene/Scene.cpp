@@ -134,7 +134,7 @@ namespace TGE
 		}
 		return {};
 	}
-	Entity Scene::CreateEntity(const std::string& name)
+	Entity Scene::CreateEntity(const std::string& name, glm::vec3 translation)
 	{
 		Entity entity = { m_Registry.create(), this };
 		if (name.empty())
@@ -145,6 +145,7 @@ namespace TGE
 		{
 			entity.AddComponent<TagComponent>(name);
 		}
+		entity.AddComponent<TransformComponent>(translation);
 		return entity;
 	}
 	void Scene::DestroyEntity(Entity entity)

@@ -32,12 +32,14 @@
 #include "ImGuizmo.h"
 //#include "imzoomslider.h"
 
+#include <glm/gtx/matrix_decompose.hpp>
 #include <math.h>
 #include <vector>
 #include <algorithm>
 #include "EditorLayer.h"
 #include "TGE/Utils/PlatformUtils.h"
 #include "TGE/Scene/Serializer.h"
+#include "TGE/Math/Math.h"
 
 
 float objectMatrix[4][16] = {
@@ -80,10 +82,14 @@ void TGE::EditorLayer::OnAttach()
     //Entity
     m_ActiveScene = std::make_shared<Scene>(fbSpec.Width, fbSpec.Height);//创建registry
 
-    m_Camera = m_ActiveScene->CreateEntity("Camera EntityA");
+    m_Camera = m_ActiveScene->CreateEntity("Camera EntityA", glm::vec3(0.f, 0.f, 5.0f));
     m_Camera.AddComponent<CameraComponent>();//glm::ortho(-16.f, 16.f, -9.f, 9.f, -1.f, 1.f)
-    m_Camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.0f));//初始化位置
+    //m_Camera.AddComponent<TransformComponent>(glm::vec3(0.f, 0.f, 5.0f));//初始化位置
     m_Camera.GetComponent<CameraComponent>().camera.SetPerspective(glm::radians(45.0f), 0.1f, 100.f);
+
+    m_SquareEntity = m_ActiveScene->CreateEntity("Square Green", glm::vec3(-1.f, 0.0f, 0.f));//创建entity
+    //m_SquareEntity.AddComponent<TransformComponent>(glm::vec3(-1.f, 0.0f, 0.f));
+    m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0, 1.0, 0.0, 1.0 });
 
 #if 0
     m_SquareEntity = m_ActiveScene->CreateEntity("Square Green");//创建entity
@@ -231,14 +237,11 @@ void TGE::EditorLayer::EditTransform(float* cameraView, float* cameraProjection,
     
 
     //ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
-    ImGuizmo::DrawCubes(cameraView, cameraProjection, &objectMatrix[0][0], 1);
+    //ImGuizmo::DrawCubes(cameraView, cameraProjection, &objectMatrix[0][0], 1);
     ImGuizmo::Manipulate(cameraView, cameraProjection, (ImGuizmo::OPERATION)m_GizmoType, mCurrentGizmoMode, matrix);//matrix
 
-    ImGuizmo::ViewManipulate(cameraView, 8.f, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
-    if (ImGuizmo::IsUsing())
-    {
+    //ImGuizmo::ViewManipulate(cameraView, 8.f, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
 
-    }
     //ImGui::End();
     //ImGui::PopStyleColor(1);
     
@@ -535,30 +538,49 @@ void TGE::EditorLayer::OnImGuiRender()
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
     }//
 
-    //uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment();
-    //ImGui::Image((void*)m_TextureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+    uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment();
+    ImGui::Image((void*)m_TextureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-    /*Entity selectedEntity = m_SHP.GetSelectedEntity();
+    Entity selectedEntity = m_SHP.GetSelectedEntity();
     
+    //auto cameraEntity = m_Camera;
+    auto cameraEntity = m_ActiveScene->GetPrimaryCamera();
+    auto& cc = cameraEntity.GetComponent<CameraComponent>().camera;
+    glm::mat4 cameraProjection = cc.GetProjection();
+    glm::mat4 cameraView = glm::lookAt((cameraEntity.GetComponent<TransformComponent>().Translate),
+        glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.f, 1.f, 0.f));
 
     if (selectedEntity)
-    {*/
-        //glm::mat4 transform = selectedEntity.GetComponent<TransformComponent>().GetTransform();
-
-        auto cameraEntity = m_Camera;
-        //auto cameraEntity = m_ActiveScene->GetPrimaryCamera();
-        auto& cc = cameraEntity.GetComponent<CameraComponent>().camera;
-        glm::mat4 cameraProjection = cc.GetProjection();
-        glm::mat4 cameraView = glm::lookAt((cameraEntity.GetComponent<TransformComponent>().Translate),
-           glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.f, 1.f, 0.f));
-
+    {
+        auto& tc = selectedEntity.GetComponent<TransformComponent>();
+        glm::mat4 transform = tc.GetTransform();
+        float* matrix = glm::value_ptr(transform);
 
         ImGuizmo::SetOrthographic(false);
         ImGuizmo::BeginFrame();
 
+        EditTransform(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), matrix, m_GizmoType);
 
-        EditTransform(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), objectMatrix[0], m_GizmoType);
-    //}
+        if (ImGuizmo::IsUsing())
+        {
+            //glm::vec3 translation, rotation, scale;
+            //Math::DecomposeTransform(transform, translation, rotation, scale);
+
+            //glm::vec3 deltaRotation = rotation - tc.Rotation;
+            //tc.Translate = translation;
+            //tc.Rotation += deltaRotation;
+            //tc.Scale = scale;
+
+            glm::vec3 translation, scale, skew;
+            glm::quat rotation;
+            glm::vec4 perspective;
+            glm::decompose(transform, scale, rotation, translation, skew, perspective);
+            tc.Rotation = glm::eulerAngles(rotation);
+            tc.Translate = translation;
+            tc.Scale = scale;
+        }
+
+    }
     ImGui::End();
     ImGui::PopStyleVar();
     //----------------Viewport--------------------
