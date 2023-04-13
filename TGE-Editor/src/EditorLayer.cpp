@@ -10,7 +10,6 @@
 #include "TGE/Scene/Serializer.h"
 #include "TGE/Math/Math.h"
 
-
 namespace TGE
 {
     EditorLayer::EditorLayer() :Layer("EditorLayer"), m_CameraController(1280.f / 720.f, true)
