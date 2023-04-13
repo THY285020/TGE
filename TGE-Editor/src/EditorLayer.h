@@ -1,6 +1,7 @@
 #pragma once
 #include "TGE.h"
 #include "TGE/Core/Layer.h"
+#include "TGE/Renderer/EditorCamera.h"
 #include "SceneHierarchyPanel.h"
 namespace TGE
 {
@@ -38,6 +39,7 @@ namespace TGE
 		Entity m_SquareEntity2;
 		Entity m_Camera;
 		Entity m_Camera2;
+		EditorCamera m_EditorCamera;
 		bool m_Primary = true;
 
 		double time_temp = 0.0;

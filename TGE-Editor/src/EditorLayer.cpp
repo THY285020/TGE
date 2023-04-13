@@ -5,10 +5,6 @@
 #include "imgui/imgui_internal.h"
 #include "ImGuizmo.h"
 
-#include <glm/gtx/matrix_decompose.hpp>
-#include <math.h>
-#include <vector>
-#include <algorithm>
 #include "EditorLayer.h"
 #include "TGE/Utils/PlatformUtils.h"
 #include "TGE/Scene/Serializer.h"
@@ -89,7 +85,7 @@ namespace TGE
         绑定OnUpdate等函数
             m_Camera2.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 #endif
-
+        m_EditorCamera = EditorCamera(30.f, fbSpec.Width / fbSpec.Height, 0.1, 1000.f);
         m_SHP.SetContext(m_ActiveScene);
     }
 
@@ -482,21 +478,26 @@ namespace TGE
 
         Entity selectedEntity = m_SHP.GetSelectedEntity();
 
-        //auto cameraEntity = m_Camera;
-        auto cameraEntity = m_ActiveScene->GetPrimaryCamera();
-        if (cameraEntity)
-        {
-            auto& cc = cameraEntity.GetComponent<CameraComponent>().camera;
-            glm::mat4 cameraProjection = cc.GetProjection();
-            glm::mat4 cameraView = glm::lookAt((cameraEntity.GetComponent<TransformComponent>().Translate),
-                glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.f, 1.f, 0.f));
+        //RunTime Camera
+        //auto cameraEntity = m_ActiveScene->GetPrimaryCamera();
+        //if (cameraEntity)
+        //{
+            //auto& cc = cameraEntity.GetComponent<CameraComponent>().camera;
+            //glm::mat4 cameraProjection = cc.GetProjection();
+            //glm::mat4 cameraView = glm::lookAt((cameraEntity.GetComponent<TransformComponent>().Translate),
+            //    glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.f, 1.f, 0.f));*/
+
+            //EditorCamera
+            glm::mat4 cameraProjection = m_EditorCamera.GetProjection();
+            glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
             if (selectedEntity)
             {
                 auto& tc = selectedEntity.GetComponent<TransformComponent>();
                 glm::mat4 transform = tc.GetTransform();
 
-                ImGuizmo::SetOrthographic(bool(cc.GetProjectionType()));
+                //ImGuizmo::SetOrthographic(bool(cc.GetProjectionType()));
+                ImGuizmo::SetOrthographic(false);
                 ImGuizmo::BeginFrame();
 
                 EditTransform(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), glm::value_ptr(transform), m_GizmoType);
@@ -521,7 +522,7 @@ namespace TGE
                 }
 
             }
-        }
+        //}
         ImGui::End();
         ImGui::PopStyleVar();
         //----------------Viewport--------------------
@@ -541,13 +542,17 @@ namespace TGE
         }
         //--------------------Camera----------------
         if (m_ViewportFocused)//没focuse则不更新相机
-            m_CameraController.OnUpdate(ts);
+        {
+            m_CameraController.OnUpdate(ts);    
+        }
+        m_EditorCamera.OnUpdate(ts);
         //------------------Resize-----------------
         FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
         if (m_ViewportSize.x > 0 && m_ViewportSize.y > 0 && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
         {
             m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
+            m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
         }
         //------------------Renderer---------------
@@ -559,7 +564,8 @@ namespace TGE
 
         //--------------------Scene----------------
         /*Renderer2D::BeginScene(m_CameraController.GetCamera());*/
-        m_ActiveScene->OnUpdate(ts);
+        //m_ActiveScene->OnUpdateRunTime(ts);
+        m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
         //Renderer2D::EndScene();
 
         m_FrameBuffer->UnBind();
@@ -568,6 +574,7 @@ namespace TGE
     void EditorLayer::OnEvent(Event& event)
     {
         m_CameraController.OnEvent(event);
+        m_EditorCamera.OnEvent(event);
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(TGE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));

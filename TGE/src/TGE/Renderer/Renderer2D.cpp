@@ -127,6 +127,23 @@ namespace TGE
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 	}
 
+	void Renderer2D::BeginScene(const EditorCamera& camera)
+	{
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("ViewProj", camera.GetViewProjection());
+		//reset
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		//s_Data.CircleIndexCount = 0;
+		//s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+
+		//s_Data.LineVertexCount = 0;
+		//s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
+		//s_Data.TextureSlotIndex = 1;
+	}
+
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4 transform)
 	{
 		s_Data.TextureShader->Bind();

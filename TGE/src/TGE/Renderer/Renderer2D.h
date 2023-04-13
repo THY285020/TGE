@@ -4,7 +4,9 @@
 #include "TGE/Renderer/Texture.h"
 #include "TGE/Renderer/SubTexture2D.h"
 #include "TGE/Renderer/Camera.h"
+#include "TGE/Renderer/EditorCamera.h"
 namespace TGE {
+	class EditorCamera;
 	class Renderer2D
 	{
 	public:
@@ -12,6 +14,7 @@ namespace TGE {
 		static void shutdown();
 
 		static void BeginScene(const OrthoCamera& camera);
+		static void BeginScene(const EditorCamera& camera);
 		static void BeginScene(const Camera& camera, const glm::mat4 transform);
 		static void EndScene();
 

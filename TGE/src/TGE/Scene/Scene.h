@@ -2,8 +2,11 @@
 #include "entt.hpp"
 #include "TGE/Core/TimeStep.h"
 #include "TGE/Scene/Component.h"
+#include "TGE/Renderer/EditorCamera.h"
+
 namespace TGE
 {
+	class EditorCamera;
 	class Serializer;
 	class Entity;
 	class Scene
@@ -16,7 +19,8 @@ namespace TGE
 		~Scene();
 		Entity CreateEntity(const std::string& name, glm::vec3 translation = glm::vec3(0.f, 0.f, 0.f));
 		void DestroyEntity(Entity entity);
-		void OnUpdate(TimeStep ts);
+		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
+		void OnUpdateRunTime(TimeStep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);
 
 		Entity GetPrimaryCamera();

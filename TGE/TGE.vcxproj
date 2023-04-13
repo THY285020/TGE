@@ -140,6 +140,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\TGE\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLContext.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLFrameBuffer.h" />
@@ -461,6 +462,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\TGE\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLFrameBuffer.cpp" />

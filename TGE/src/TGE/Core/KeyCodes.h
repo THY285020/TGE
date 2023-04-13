@@ -1,5 +1,4 @@
 #pragma once
-
 //from glfw3.h
 #define TGE_KEY_SPACE              32
 #define TGE_KEY_APOSTROPHE         39  /* ' */

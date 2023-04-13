@@ -253,7 +253,7 @@ void Sandbox2D::OnUpdate(TGE::TimeStep& ts)
 #endif
 
 	//Particle
-	if (TGE::Input::IsMosueButtonPressed(TGE_MOUSE_BUTTON_LEFT))
+	if (TGE::Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_LEFT))
 	{
 		auto [x, y] = TGE::Input::GetMousePosition();
 		auto width = TGE::Application::Get().GetWindow().GetWidth();

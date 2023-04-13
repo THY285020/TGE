@@ -46,7 +46,23 @@ namespace TGE
 	Scene::~Scene()
 	{
 	}
-	void Scene::OnUpdate(TimeStep ts)
+
+	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+		//遍历同时带有两个组件的group
+		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : group)
+		{
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+		}
+		Renderer2D::EndScene();
+
+	}
+
+	void Scene::OnUpdateRunTime(TimeStep ts)
 	{
 		//Update Script
 		{
