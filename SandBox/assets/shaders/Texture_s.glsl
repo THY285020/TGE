@@ -1,5 +1,5 @@
 #type vertex
-#version 330 core
+#version 450 core
 layout(location = 0) in vec3 Position;
 layout(location = 1) in vec2 TexCoord;
 layout(location = 2) in vec4 Color;
@@ -23,7 +23,10 @@ void main() {
 }
 
 #type fragment
-#version 330 core
+#version 450 core
+
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out vec4 FragColor2;
 
 in vec2 v_TexCoord;
 in vec4 v_Color;
@@ -32,10 +35,10 @@ in float v_TilingFactor;
 //uniform vec4 Color;
 uniform sampler2D Textures[32];
 
-out vec4 FragColor;
 
 void main() {
 	//FragColor = vec4(f_TexCoord, 0.0f, 1.0f);
 	FragColor = texture(Textures[int(v_TexIndex)], v_TexCoord * v_TilingFactor) * v_Color;
+	FragColor2 = vec4(1.0, 0.2, 0.2, 1.0);
 	//FragColor = v_Color;
 }

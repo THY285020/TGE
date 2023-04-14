@@ -146,7 +146,7 @@ void Sandbox2D::OnImGuiRender()
 		ImGui::Text("Indices : %d", stats.GetTotalIndexCount());
 
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(SquareColor));
-		uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment();
+		uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment(0);
 		ImGui::Image((void*)m_TextureID, ImVec2{ 1280.f, 720.f });//将图像传入到setting页面
 
 		ImGui::End();

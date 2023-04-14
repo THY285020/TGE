@@ -22,6 +22,7 @@ namespace TGE
         //m_Texture = Texture2D::Create("assets/textures/wood.png");
 
         FrameBufferSpecification fbSpec;
+        fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::Depth };
         fbSpec.Width = Application::Get().GetWindow().GetWidth();//Application::Get().GetWindow().GetWidth();
         fbSpec.Height = Application::Get().GetWindow().GetHeight();//Application::Get().GetWindow().GetHeight();
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
@@ -460,7 +461,7 @@ namespace TGE
         //----------------Viewport--------------------
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0, 0.0));//间隔缩小为0
         ImGui::Begin("ViewPort");
-
+        
         //点击选中或悬停都会更新界面
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
@@ -473,11 +474,17 @@ namespace TGE
             m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
         }//
 
-        uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment();
+        uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment(0);
         ImGui::Image((void*)m_TextureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-        Entity selectedEntity = m_SHP.GetSelectedEntity();
+        //ViewportBounds ImGui从左上(0,0)到右下
+        auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        auto viewportOffset = ImGui::GetWindowPos();
+        m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+        m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
+        Entity selectedEntity = m_SHP.GetSelectedEntity();
         //RunTime Camera
         //auto cameraEntity = m_ActiveScene->GetPrimaryCamera();
         //if (cameraEntity)
@@ -567,6 +574,21 @@ namespace TGE
         //m_ActiveScene->OnUpdateRunTime(ts);
         m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
         //Renderer2D::EndScene();
+
+        //-------------------MousePos-------------------
+        auto [mx, my] = ImGui::GetMousePos();
+        mx -= m_ViewportBounds[0].x;
+        my -= m_ViewportBounds[0].y;
+        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+        my = viewportSize.y - my;//翻转y轴以匹配纹理坐标
+        int mouseX = (int)mx;
+        int mouseY = (int)my;
+
+        if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_ViewportSize.x && mouseY < (int)m_ViewportSize.y)
+        {
+            int pixel = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
+            TGE_CORE_TRACE("{0}", pixel);
+        }
 
         m_FrameBuffer->UnBind();
     }

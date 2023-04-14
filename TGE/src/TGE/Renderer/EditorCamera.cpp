@@ -30,6 +30,7 @@ namespace TGE
 	}
 	std::pair<float, float> EditorCamera::PanSpeed() const
 	{
+		//移动速度，经验设置
 		float x = std::min(m_ViewportWidth / 1000.f, 2.4f);
 		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
 
@@ -58,9 +59,9 @@ namespace TGE
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
 
-			if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_MIDDLE))
+			if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_MIDDLE))//移动
 				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_LEFT))
+			else if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_LEFT))//视角转动
 				MouseRotate(delta);
 			else if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_RIGHT))
 				MouseZoom(delta.y);
