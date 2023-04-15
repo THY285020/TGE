@@ -70,6 +70,18 @@ namespace TGE
 			}
 			return false;
 		}
+
+		static GLenum FBTextureFormat2GL(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FramebufferTextureFormat::RGBA8:
+				return GL_RGBA8;
+			case FramebufferTextureFormat::RED_INT:
+				return GL_RED_INTEGER;
+			}
+			return 0;
+		}
 	}
 
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
@@ -181,6 +193,12 @@ namespace TGE
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+
+		//Clear Attachments
+		int value = -1;
+		//(texture level format type value)
+		glClearTexImage(m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &value);
+		//ClearAttachment(1, -1);
 	}
 
 	void OpenGLFrameBuffer::UnBind()
@@ -202,12 +220,22 @@ namespace TGE
 
 	int OpenGLFrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	{
-		TGE_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "ColorAttachments' size overflow!");
+		TGE_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "ColorAttachments' size overflow in ReadPixel!");
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 		int pixelData;
 		//x, y, width, height format type data
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
 		return pixelData;
+	}
+
+	void OpenGLFrameBuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{
+		TGE_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "ColorAttachments' size overflow in ClearAttachment!");
+		auto& spec = m_ColorAttachmentSpec[attachmentIndex];
+
+		glClearTexImage(m_ColorAttachments[attachmentIndex], 0, 
+			Utils::FBTextureFormat2GL(spec.TextureFormat),
+			GL_INT, &value);
 	}
 
 }

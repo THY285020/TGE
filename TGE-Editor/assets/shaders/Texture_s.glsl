@@ -34,11 +34,11 @@ in float v_TexIndex;
 in float v_TilingFactor;
 //uniform vec4 Color;
 uniform sampler2D Textures[32];
-
+uniform int entity_id;
 
 void main() {
 	//FragColor = vec4(f_TexCoord, 0.0f, 1.0f);
 	FragColor = texture(Textures[int(v_TexIndex)], v_TexCoord * v_TilingFactor) * v_Color;
-	Entity_ID = 1;
+	Entity_ID = entity_id;
 	//FragColor = v_Color;
 }

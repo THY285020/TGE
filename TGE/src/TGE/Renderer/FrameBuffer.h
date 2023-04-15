@@ -52,6 +52,8 @@ namespace TGE
 
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
+
 		virtual const FrameBufferSpecification& GetSpecification() const = 0;
 		virtual uint32_t GetColorAttachment(uint32_t index) const = 0;
 

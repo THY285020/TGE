@@ -40,6 +40,7 @@ namespace TGE
 		Entity m_Camera;
 		Entity m_Camera2;
 		EditorCamera m_EditorCamera;
+		Entity m_HoveredEntity;
 		bool m_Primary = true;
 
 		double time_temp = 0.0;

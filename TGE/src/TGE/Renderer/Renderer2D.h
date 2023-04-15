@@ -5,6 +5,7 @@
 #include "TGE/Renderer/SubTexture2D.h"
 #include "TGE/Renderer/Camera.h"
 #include "TGE/Renderer/EditorCamera.h"
+#include "TGE/Scene/Component.h"
 namespace TGE {
 	class EditorCamera;
 	class Renderer2D
@@ -17,6 +18,8 @@ namespace TGE {
 		static void BeginScene(const EditorCamera& camera);
 		static void BeginScene(const Camera& camera, const glm::mat4 transform);
 		static void EndScene();
+
+		static void SetEntity(int id);
 
 		static void Flush();
 
@@ -35,6 +38,8 @@ namespace TGE {
 
 		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
 		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, const float tilingFactor);
+		
+		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id = -1);
 		//Statistics
 		struct Statistics
 		{

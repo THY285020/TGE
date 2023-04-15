@@ -221,17 +221,17 @@ namespace TGE
 			ImGui::OpenPopup("AddComponent");
 		if (ImGui::BeginPopup("AddComponent"))
 		{
-			if (ImGui::MenuItem("Transform"))
+			if (!entity.HasComponent<TransformComponent>() && ImGui::MenuItem("Transform"))
 			{
 				m_SelectionContext.AddComponent<TransformComponent>();
 				ImGui::CloseCurrentPopup();
 			}
-			if (ImGui::MenuItem("Sprite Renderer"))
+			if (!entity.HasComponent<SpriteRendererComponent>() && ImGui::MenuItem("Sprite Renderer"))
 			{
 				m_SelectionContext.AddComponent<SpriteRendererComponent>();
 				ImGui::CloseCurrentPopup();
 			}
-			if (ImGui::MenuItem("Camera"))
+			if (!entity.HasComponent<CameraComponent>() && ImGui::MenuItem("Camera"))
 			{
 				m_SelectionContext.AddComponent<CameraComponent>();
 				ImGui::CloseCurrentPopup();

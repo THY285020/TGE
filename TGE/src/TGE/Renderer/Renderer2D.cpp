@@ -46,14 +46,7 @@ namespace TGE
 
 	void Renderer2D::Init()
 	{
-		s_Data.QuadVertexArray = VertexArray::Create();
-		//float squareVertices[4 * 5] = {
-		//	//Position		   //TexCoord/
-		//	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,//左下
-		//	 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,//右下
-		//	 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,//右上
-		//	-0.5f,  0.5f, 0.0f, 0.0f, 1.0f //左上
-		//};					   
+		s_Data.QuadVertexArray = VertexArray::Create();					   
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));//申请空间
 		s_Data.QuadVertexBuffer->SetLayout({
 			{ ShaderDataType::Float3, "Position" },
@@ -162,6 +155,11 @@ namespace TGE
 		Flush();
 	}
 
+	void Renderer2D::SetEntity(int id)
+	{
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetInt("entity_id", id);
+	}
 	void Renderer2D::Flush()
 	{
 		//BindTexture
