@@ -461,13 +461,25 @@ namespace TGE
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(TGE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(TGE_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 
     }
 
     void EditorLayer::OnDetach()
     {
     }
-
+    bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        if (e.GetMouseButton() == TGE_MOUSE_BUTTON_LEFT)
+        {
+            if (m_ViewportHovered && !ImGuizmo::IsOver())
+            {
+                m_SHP.SetSelectedEntity(m_HoveredEntity);
+                return true;
+            }
+        }
+        return false;
+    }
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
     {
         //shortcuts

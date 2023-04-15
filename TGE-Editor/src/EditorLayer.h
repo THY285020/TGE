@@ -18,6 +18,7 @@ namespace TGE
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 	private:
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
 		void NewScene();
 		void OpenScene();
@@ -51,7 +52,7 @@ namespace TGE
 
 		SceneHierarchyPanel m_SHP;
 
-		int m_GizmoType = 7;
+		int m_GizmoType = (1u << 0);
 		int m_lastUsing = 0;
 	};
 }

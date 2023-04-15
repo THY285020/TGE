@@ -12,6 +12,8 @@ namespace TGE
 		void SetContext(const Ref<Scene>& context);
 		void OnImGuiRenderer();
 		static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0, float columnWidth = 80.0);
+		
+		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; }
 		Entity GetSelectedEntity()const { return m_SelectionContext; }
 	private:
 		void DrawEntityNode(Entity entity);
