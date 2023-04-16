@@ -40,6 +40,13 @@ namespace TGE
 		glm::vec4 QuadVertexPositions[4];
 
 		Renderer2D::Statistics Stats;
+
+		//struct CameraBuffer
+		//{
+		//	glm::mat4 viewProjection;
+		//};
+		//CameraBuffer cameraBuffer;
+		//Ref<UniformBuffer> CameraUniformBuffer;
 	};
 
 	static Renderer2DData s_Data;
@@ -92,9 +99,9 @@ namespace TGE
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; ++i)
 			samplers[i] = i;
 
-		s_Data.TextureShader = Shader::Create("assets/shaders/Texture_s.glsl");
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("Textures", s_Data.MaxTextureSlots, samplers);
+		s_Data.TextureShader = Shader::Create("assets/shaders/Texture_t.glsl");
+		//s_Data.TextureShader->Bind();
+		//s_Data.TextureShader->SetIntArray("Textures", s_Data.MaxTextureSlots, samplers);
 
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
@@ -111,19 +118,24 @@ namespace TGE
 
 	void Renderer2D::BeginScene(const OrthoCamera& camera)
 	{
-		//s_Data.FlatColorShader->Bind();
-		//s_Data.FlatColorShader->SetMat4("ViewProj", camera.GetViewProjectionMatrix());
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("ViewProj", camera.GetViewProjectionMatrix());
+		//future
+		//s_Data.cameraBuffer.viewProjection = camera.GetViewProjectionMatrix();
+		//s_Data.CameraUniformBuffer->SetData(&s_Data.cameraBuffer, sizeof(Renderer2DData::CameraBuffer));
 		//reset
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("ViewProj", camera.GetViewProjection());
+		//s_Data.cameraBuffer.viewProjection = camera.GetViewProjectionMatrix();
+		//s_Data.CameraUniformBuffer->SetData(&s_Data.cameraBuffer, sizeof(Renderer2DData::CameraBuffer));
 		//reset
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;

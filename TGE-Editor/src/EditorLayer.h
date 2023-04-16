@@ -2,7 +2,8 @@
 #include "TGE.h"
 #include "TGE/Core/Layer.h"
 #include "TGE/Renderer/EditorCamera.h"
-#include "SceneHierarchyPanel.h"
+#include "Panel/SceneHierarchyPanel.h"
+#include "Panel/ContentBrowserPanel.h"
 namespace TGE
 {
 	class EditorLayer :public Layer
@@ -51,6 +52,7 @@ namespace TGE
 		glm::vec2 m_ViewportBounds[2];
 
 		SceneHierarchyPanel m_SHP;
+		ContentBrowserPanel m_CBP;
 
 		int m_GizmoType = (1u << 0);
 		int m_lastUsing = 0;

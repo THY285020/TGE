@@ -302,6 +302,7 @@ namespace TGE
         //if (ImGui::RadioButton("Window", useWindow)) useWindow = true;
 
         m_SHP.OnImGuiRenderer();//多级菜单
+        m_CBP.OnImGuiRenderer();//资产菜单
 
         ImGui::Begin("Statistics");
 

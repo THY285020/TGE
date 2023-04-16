@@ -4,9 +4,20 @@
 #include <fstream>
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>//glm::value_ptr需要
+#include <filesystem>
 
 namespace TGE
 {
+	static const char* GetCacheDirectory()
+	{
+		return "assets/cache/shader/opengl";
+	}
+	static void CreateCacheDirectoryIfNedded()
+	{
+		std::string cacheDirectory = GetCacheDirectory();
+		if (!std::filesystem::exists(cacheDirectory))
+			std::filesystem::create_directories(cacheDirectory);
+	}
 	static GLenum ShaderTypeFromString(const std::string& type)
 	{
 		if (type == "vertex") 
@@ -285,9 +296,18 @@ namespace TGE
 
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 	{
+		CreateCacheDirectoryIfNedded();
+
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
+		//{
+		//	Timer timer;
+		//	CompileOrGetVulkanBinaries(shaderSources);
+		//	CompileOrGetOpenGLBinaries();
+		//	CreatePrograme();
+		//}
+
 
 		//从filepath中提取文件名
 		auto last_slash = filepath.find_last_of("/\\");
@@ -491,7 +511,5 @@ namespace TGE
 		glUniformMatrix4fv(glGetUniformLocation(Shader_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
-
-
-
+	//void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<GLenum,>)
 }
