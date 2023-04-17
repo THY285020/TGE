@@ -23,6 +23,7 @@ namespace TGE
 		bool OnKeyPressed(KeyPressedEvent& e);
 		void NewScene();
 		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
 		void EditTransform(float* cameraView, float* cameraProjection, float* transform, int& m_GizmoType);
 		//void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition);

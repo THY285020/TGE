@@ -12,6 +12,8 @@
 
 namespace TGE
 {
+    //extern const std::filesystem::path s_Assetpath;
+
     EditorLayer::EditorLayer() :Layer("EditorLayer"), m_CameraController(1280.f / 720.f, true)
     {
     }
@@ -198,21 +200,6 @@ namespace TGE
         //ImGuizmo::ViewManipulate(cameraView, 8.f, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);    
     }
 
-
-    //template <typename T, std::size_t N>
-    //struct Array
-    //{
-    //    T data[N];
-    //    const size_t size() const { return N; }
-    //
-    //    const T operator [] (size_t index) const { return data[index]; }
-    //    operator T* () {
-    //        T* p = new T[N];
-    //        memcpy(p, data, sizeof(data));
-    //        return p;
-    //    }
-    //};
-
     void EditorLayer::OnImGuiRender()
     {
 
@@ -338,6 +325,16 @@ namespace TGE
         uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment(0);
         ImGui::Image((void*)m_TextureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
+        //接收拖动资源的载荷数据
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+            {
+                const wchar_t* path = (const wchar_t*)payload->Data;
+                OpenScene(std::filesystem::path(path));//s_Assetpath/path
+            }
+            ImGui::EndDragDropTarget();
+        }
         //ViewportBounds ImGui从左上(0,0)到右下
         auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
         auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -549,13 +546,17 @@ namespace TGE
         std::string filepath = FileDialogs::OpenFile("TGE Scene (*.tge)\0*.tge\0");//传入filter
         if (!filepath.empty())
         {
-            m_ActiveScene = std::make_shared<Scene>();
-            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-            m_SHP.SetContext(m_ActiveScene);
-
-            Serializer serializer(m_ActiveScene);
-            serializer.DeSerialize(filepath);
+            OpenScene(filepath);
         }
+    }
+    void EditorLayer::OpenScene(const std::filesystem::path& path)
+    {
+        m_ActiveScene = std::make_shared<Scene>();
+        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        m_SHP.SetContext(m_ActiveScene);
+
+        Serializer serializer(m_ActiveScene);
+        serializer.DeSerialize(path.string());
     }
     void EditorLayer::SaveSceneAs()
     {

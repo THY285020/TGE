@@ -14,4 +14,8 @@
   <ItemGroup>
     <None Include="assets\shaders\Texture_t.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\textures\docsW.png" />
+    <Image Include="assets\textures\folderW.png" />
+  </ItemGroup>
 </Project>
