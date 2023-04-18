@@ -38,6 +38,8 @@ namespace TGE {
 
 		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
 		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, const float tilingFactor);
+
+		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, glm::vec4 color, const float tilingFactor);
 		
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id = -1);
 		//Statistics

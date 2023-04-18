@@ -1,8 +1,10 @@
 #include "SceneHierarchyPanel.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
+#include <filesystem>
 #include "TGE/Scene/Component.h"
 #include "glm/gtc/type_ptr.hpp"
+
 namespace TGE
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
@@ -253,104 +255,7 @@ namespace TGE
 				DrawVec3Control("Scale", component.Scale, 1.0f);
 			});
 
-		//if (entity.HasComponent<TransformComponent>())
-		//{
-		//	bool open = ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), treeNodeFlags, "Transform");
-		//	
-		//	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 0,0 });
-		//	ImGui::SameLine(ImGui::GetWindowWidth() - 35.0f);
-		//	if (ImGui::Button("+", ImVec2{ 15, 15 }))
-		//	{
-		//		ImGui::OpenPopup("ComponentSettings");
-		//	}
-		//	ImGui::PopStyleVar();
-
-		//	bool removeComponent = false;
-		//	if (ImGui::BeginPopup("ComponentSettings"))
-		//	{
-		//		if (ImGui::MenuItem("Remove component"))
-		//			removeComponent = true;
-		//		ImGui::EndPopup();
-		//	}
-
-		//	if(open)
-		//	{
-		//		auto& tc = entity.GetComponent<TransformComponent>();
-
-		//		DrawVec3Control("Translation", tc.Translate);
-
-		//		auto rotation = glm::degrees(tc.Rotation);
-		//		DrawVec3Control("Rotation", rotation);
-		//		tc.Rotation = glm::radians(rotation);
-
-		//		DrawVec3Control("Scale", tc.Scale, 1.0);
-		//		/*ImGui::DragFloat3("Position", glm::value_ptr(tc.Translate), 0.1f);*/
-		//	
-		//	ImGui::TreePop();
-		//	} 
-		//	if (removeComponent)
-		//		entity.RemoveComponent<TransformComponent>();
-		//}
-
-		//if (entity.HasComponent<CameraComponent>())
-		//{
-		//	if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), treeNodeFlags, "Camera"))
-		//	{
-		//		auto& cameraComponent = entity.GetComponent<CameraComponent>();
-		//		auto& camera = cameraComponent.camera;
-
-		//		ImGui::Checkbox("Primary", &cameraComponent.Primary);
-
-		//		const char* projectionType[] = { "Perspective", "Orthographic" };
-		//		const char* currentProjectionTypeString = projectionType[(int)camera.GetProjectionType()];
-		//		if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
-		//		{
-		//			for (int i = 0; i < 2; ++i)
-		//			{
-		//				bool isSelected = currentProjectionTypeString == projectionType[i];
-		//				if (ImGui::Selectable(projectionType[i], isSelected))
-		//				{
-		//					currentProjectionTypeString = projectionType[i];
-		//					camera.SetProjectionType((SceneCamera::ProjectionType)i);
-		//				}
-		//				if (isSelected)
-		//					ImGui::SetItemDefaultFocus();
-		//			}
-		//			ImGui::EndCombo();
-		//		}
-
-		//		if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-		//		{
-		//			float orthoSize = camera.GetOrthographicSize();
-		//			if (ImGui::DragFloat("Size", &orthoSize))
-		//				camera.SetOrthographicSize(orthoSize);
-
-		//			float orthoNear = camera.GetOrthographicNearClip();
-		//			if (ImGui::DragFloat("Near", &orthoNear))
-		//				camera.SetOrthographicNearClip(orthoNear);
-
-		//			float orthoFar = camera.GetOrthographicFarClip();
-		//			if (ImGui::DragFloat("Far", &orthoFar))
-		//				camera.SetOrthographicFarClip(orthoFar);
-		//		}
-
-		//		if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
-		//		{
-		//			float persFOV = glm::degrees(camera.GetPerspectiveFOV());
-		//			if (ImGui::DragFloat("FOV", &persFOV))
-		//				camera.SetPerspectiveFOV(glm::radians(persFOV));
-
-		//			float persNear = camera.GetPerspectiveNearClip();
-		//			if (ImGui::DragFloat("Near", &persNear))
-		//				camera.SetPerspectiveNearClip(persNear);
-
-		//			float persFar = camera.GetPerspectiveFarClip();
-		//			if (ImGui::DragFloat("Far", &persFar))
-		//				camera.SetPerspectiveFarClip(persFar);
-		//		}
-		//		ImGui::TreePop();
-		//	}
-		//}
+		
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component) 
 			{
 				auto& camera = component.camera;
@@ -408,6 +313,19 @@ namespace TGE
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 			{
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::Button("Texture", ImVec2(100.f, 0.f));
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath = std::filesystem::path(path);
+						component.Texture = Texture2D::Create(texturePath.string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+				//Texture
+				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.f);
 			});
 
 		//if (entity.HasComponent<SpriteRendererComponent>())

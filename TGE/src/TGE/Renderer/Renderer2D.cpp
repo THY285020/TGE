@@ -504,7 +504,7 @@ namespace TGE
 	{
 		DrawQuad(glm::vec3(pos, 0.0f), size, texture, tilingFactor);
 	}
-	void  Renderer2D::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<SubTexture2D> subtexture, const float tilingFactor)
+	void  Renderer2D::DrawQuad(const glm::vec2& pos, const glm::vec2& size, Ref<SubTexture2D> subtexture, const float tilingFactor = 1.0f)
 	{
 		DrawQuad(glm::vec3(pos, 0.0f), size, subtexture, tilingFactor);
 	}
@@ -531,7 +531,7 @@ namespace TGE
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 	}
-	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, const float tilingFactor)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, const float tilingFactor = 1.0f)
 	{
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			FlushAndReset();
@@ -569,6 +569,59 @@ namespace TGE
 		}
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
+	}
+	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, glm::vec4 color = glm::vec4(1.f, 1.f, 1.f, 1.f), const float tilingFactor = 1.0f)
+	{
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+			FlushAndReset();
+
+		//constexpr glm::vec4 color(1.0, 1.0, 1.0, 1.0);
+		float texIndex = 0.0f;
+		constexpr float QuadVertexCount = 4;
+		constexpr glm::vec2 TexCoords[4] = { { 0.0f, 0.0f},{ 1.0f, 0.0f },{ 1.0f, 1.0f },{ 0.0f, 1.0f } };
+
+		//第一轮传入texture后，便不再需要传递texture
+		for (uint32_t i = 1; i < s_Data.TextureSlots.size(); ++i)
+		{
+			if (s_Data.TextureSlots[i].get() && *s_Data.TextureSlots[i].get() == *texture.get())
+			{
+				texIndex = (float)i;
+				break;
+			}
+		}
+		//第一轮需要向数组传入texture
+		if (texIndex == 0.0)
+		{
+			texIndex = (float)s_Data.TextureSlotIndex;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+			s_Data.TextureSlotIndex++;
+		}
+
+		for (uint32_t i = 0; i < QuadVertexCount; ++i)
+		{
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+			s_Data.QuadVertexBufferPtr->TexCoord = TexCoords[i];
+			s_Data.QuadVertexBufferPtr->Color = color;
+			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr++;
+		}
+		s_Data.QuadIndexCount += 6;
+		s_Data.Stats.QuadCount++;
+	}
+	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id)
+	{
+		if (src.Texture)
+		{
+			DrawQuad(transform, src.Texture, src.Color, src.TilingFactor);
+			SetEntity(entity_id);
+		}
+		else
+		{
+			DrawQuad(transform, src.Color);
+			SetEntity(entity_id);
+		}
+
 	}
 	//Statistics
 	void Renderer2D::ResetStats()

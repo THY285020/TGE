@@ -56,8 +56,9 @@ namespace TGE
 		{
 			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-			Renderer2D::SetEntity(int(entity));//要放在后面因为DrawQuad会调用FlushAndReset()重置
+			Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+			//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			//Renderer2D::SetEntity(int(entity));//要放在后面因为DrawQuad会调用FlushAndReset()重置
 		}
 		Renderer2D::EndScene();
 
