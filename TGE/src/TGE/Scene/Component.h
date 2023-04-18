@@ -45,7 +45,8 @@ namespace TGE
 	{
 		glm::vec4 Color{1.f, 1.f, 1.f, 1.f};
 
-		Ref<Texture2D> Texture;
+		bool usingTexture = false;
+		Ref<Texture2D> Texture = Texture2D::Create();
 		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;

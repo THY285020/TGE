@@ -15,12 +15,15 @@ namespace TGE
 		
 		void SetSelectedEntity(Entity entity) { m_SelectionContext = entity; }
 		Entity GetSelectedEntity()const { return m_SelectionContext; }
+	//public:
+	//	Ref<Texture2D> m_UITexture;
 	private:
 		void DrawEntityNode(Entity entity);
 		void DrawComponents(Entity entity);
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+		Ref<Texture2D> m_UITexture;
 	};
 }
 

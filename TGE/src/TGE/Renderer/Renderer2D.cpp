@@ -611,7 +611,7 @@ namespace TGE
 	}
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id)
 	{
-		if (src.Texture)
+		if (src.usingTexture)
 		{
 			DrawQuad(transform, src.Texture, src.Color, src.TilingFactor);
 			SetEntity(entity_id);
