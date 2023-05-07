@@ -131,13 +131,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Panel\ContentBrowserPanel.h" />
     <ClInclude Include="src\EditorLayer.h" />
+    <ClInclude Include="src\Panel\ContentBrowserPanel.h" />
     <ClInclude Include="src\Panel\SceneHierarchyPanel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Panel\ContentBrowserPanel.cpp" />
     <ClCompile Include="src\EditorLayer.cpp" />
+    <ClCompile Include="src\Panel\ContentBrowserPanel.cpp" />
     <ClCompile Include="src\Panel\SceneHierarchyPanel.cpp" />
     <ClCompile Include="src\TGEEditor.cpp" />
   </ItemGroup>
@@ -145,13 +145,6 @@
     <ProjectReference Include="..\TGE\TGE.vcxproj">
       <Project>{A521880B-112B-887C-9AA6-9E7C06AF937C}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\shaders\Texture_t.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\textures\docsW.png" />
-    <Image Include="assets\textures\folderW.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,6 +3,11 @@
 #include "TGE/Renderer/Renderer2D.h"
 #include <glm/glm.hpp>
 #include "Entity.h"
+//Box2D
+#include "box2d/b2_world.h"
+#include "box2d/b2_fixture.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_polygon_shape.h"
 namespace TGE
 {
 	static void DoMaths(const glm::mat4& transform)
@@ -93,6 +98,29 @@ namespace TGE
 				nsc.Instance->OnUpdate(ts);
 			});
 		}
+
+		//Physics
+		{
+			const int32_t velocityIteration = 2;
+			const int32_t positionIteration = 6;
+			m_PhysicsWorld->Step(ts, velocityIteration, positionIteration);
+
+			//改变物体位置
+			auto view = m_Registry.view<RigidBody2DComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+				b2Body* body = (b2Body*)rb2d.RuntimeBody;
+				const auto& pos = body->GetPosition();
+				transform.Translate.x = pos.x;
+				transform.Translate.y = pos.y;
+				transform.Rotation.z = body->GetAngle();
+
+			}
+		}
 		//Render Scene
 		Camera* mainCamera = nullptr;
 		glm::mat4 mainTransform;
@@ -120,7 +148,8 @@ namespace TGE
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
 			}
 			Renderer2D::EndScene();
 		}
@@ -140,6 +169,49 @@ namespace TGE
 				cameraComponent.camera.SetViewportSize(width, height);
 			}
 		}
+	}
+	void Scene::OnRuntimeStart()
+	{
+		m_PhysicsWorld = new b2World({0.f, -9.8f});//重力加速度
+		auto view = m_Registry.view<RigidBody2DComponent>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			auto& tr = entity.GetComponent<TransformComponent>();
+			auto& rg2d = entity.GetComponent<RigidBody2DComponent>();
+
+			b2BodyDef bodyDef;
+			bodyDef.type = b2BodyType(rg2d.Type);
+			bodyDef.position.Set(tr.Translate.x, tr.Translate.y);
+			bodyDef.angle = tr.Rotation.z;
+
+			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+			body->SetFixedRotation(rg2d.FixedRotation);
+			rg2d.RuntimeBody = body;//存储
+
+			if (entity.HasComponent<BoxCollider2DComponent>())
+			{
+				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
+
+				b2PolygonShape pgShape;
+				pgShape.SetAsBox(bc2d.Size.x * tr.Scale.x, bc2d.Size.y * tr.Scale.y);
+
+				b2FixtureDef fd;
+				fd.shape = &pgShape;
+				fd.friction =	bc2d.Friction;
+				fd.density =	bc2d.Density;
+				fd.restitution = bc2d.Restitution;
+				fd.restitutionThreshold = bc2d.RestitutionThreshold;
+
+				body->CreateFixture(&fd);
+				bc2d.FixtureRuntime = &fd;//存储
+			}
+		}
+	}
+	void Scene::OnRuntimeStop()
+	{
+		delete m_PhysicsWorld;
+		m_PhysicsWorld = nullptr;
 	}
 	Entity Scene::GetPrimaryCamera()
 	{
@@ -197,6 +269,14 @@ namespace TGE
 	}
 	template<>
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<RigidBody2DComponent>(Entity entity, RigidBody2DComponent& component)
 	{
 	}
 }

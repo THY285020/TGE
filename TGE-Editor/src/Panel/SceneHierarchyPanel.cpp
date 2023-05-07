@@ -10,7 +10,6 @@ namespace TGE
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
-		m_UITexture = Texture2D::Create(50.f, 50.f);
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
@@ -239,6 +238,16 @@ namespace TGE
 				m_SelectionContext.AddComponent<CameraComponent>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (!entity.HasComponent<RigidBody2DComponent>() && ImGui::MenuItem("RigidBody 2D"))
+			{
+				m_SelectionContext.AddComponent<RigidBody2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!entity.HasComponent<BoxCollider2DComponent>() && ImGui::MenuItem("BoxCollider 2D"))
+			{
+				m_SelectionContext.AddComponent<BoxCollider2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
 			ImGui::EndPopup();
 		}
 
@@ -315,7 +324,6 @@ namespace TGE
 			{
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 				//ImGui::Button("Texture", ImVec2(100.f, 0.f));
-				
 				ImGui::Image((void*)component.Texture->GetRendererID(), ImVec2{ 50.f, 50.f }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 				if (ImGui::BeginDragDropTarget())
 				{
@@ -332,6 +340,39 @@ namespace TGE
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.f);
 			});
 
+		DrawComponent<RigidBody2DComponent>("RigidBody 2D", entity, [](RigidBody2DComponent& component)
+			{
+				const char* BodyType[] = { "Static", "Kinematic", "Dynamic"};
+				const char* currentBodyTypeString = BodyType[(int)component.Type];
+				if (ImGui::BeginCombo("BodyType", currentBodyTypeString))
+				{
+					for (int i = 0; i <= 2; ++i)
+					{
+						bool isSelected = currentBodyTypeString == BodyType[i];
+						if (ImGui::Selectable(BodyType[i], isSelected))
+						{
+							currentBodyTypeString = BodyType[i];
+							component.Type = (RigidBody2DComponent::BodyType)i;
+						}
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+
+				ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+			});
+
+		DrawComponent<BoxCollider2DComponent>("RigidBody 2D", entity, [](BoxCollider2DComponent& component)
+			{
+				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+				ImGui::DragFloat2("Size", glm::value_ptr(component.Size));
+				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+
+			});
 		//if (entity.HasComponent<SpriteRendererComponent>())
 		//{
 		//	bool open = ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), treeNodeFlags, "Sprite Renderer");

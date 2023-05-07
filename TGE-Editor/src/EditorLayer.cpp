@@ -13,7 +13,6 @@
 namespace TGE
 {
     //extern const std::filesystem::path s_Assetpath;
-
     EditorLayer::EditorLayer() :Layer("EditorLayer"), m_CameraController(1280.f / 720.f, true)
     {
     }
@@ -22,6 +21,8 @@ namespace TGE
     {
         ////Texture Init here
         //m_Texture = Texture2D::Create("assets/textures/wood.png");
+        m_IconPlay = Texture2D::Create("assets/Icons/PlayButton.png");
+        m_IconStop = Texture2D::Create("assets/Icons/StopButton.png");
 
         FrameBufferSpecification fbSpec;
         fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INT, FramebufferTextureFormat::Depth };
@@ -192,12 +193,52 @@ namespace TGE
         ImGuiWindow* window = ImGui::GetCurrentWindow();
         gizmoWindowFlags = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(window->InnerRect.Min, window->InnerRect.Max) ? ImGuiWindowFlags_NoMove : 0;
 
-
         //ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
         //ImGuizmo::DrawCubes(cameraView, cameraProjection, &objectMatrix[0][0], 1);
         ImGuizmo::Manipulate(cameraView, cameraProjection, (ImGuizmo::OPERATION)m_GizmoType, mCurrentGizmoMode, matrix, NULL, snap ? snapValues : NULL);//matrix
 
         //ImGuizmo::ViewManipulate(cameraView, 8.f, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);    
+    }
+
+    void EditorLayer::UI_Toolbar()
+    {
+        //style
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        auto& colors = ImGui::GetStyle().Colors;
+        const auto& buttonHovered = colors[ImGuiCol_ButtonHovered];
+        const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+        ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration| ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
+        float size = ImGui::GetWindowHeight();
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5 - size * 0.5);
+        if (ImGui::ImageButton((ImTextureID) icon ->GetRendererID(), ImVec2(size, size), ImVec2(0,0), ImVec2(1, 1), 0))
+        {
+            if (m_SceneState == SceneState::Play)
+                OnSceneStop();
+            else if (m_SceneState == SceneState::Edit)
+                OnScenePlay();
+        }
+
+        ImGui::PopStyleColor(3);
+        ImGui::PopStyleVar(2);
+        ImGui::End();
+    }
+
+    void EditorLayer::OnScenePlay()
+    {
+        m_SceneState = SceneState::Play;
+        m_ActiveScene->OnRuntimeStart();
+    }
+
+    void EditorLayer::OnSceneStop()
+    {
+        m_SceneState = SceneState::Edit;
+        m_ActiveScene->OnRuntimeStop();
     }
 
     void EditorLayer::OnImGuiRender()
@@ -353,6 +394,8 @@ namespace TGE
             //    glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.f, 1.f, 0.f));*/
 
             //EditorCamera
+        if (m_SceneState == SceneState::Edit)
+        {
             glm::mat4 cameraProjection = m_EditorCamera.GetProjection();
             glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
@@ -385,13 +428,14 @@ namespace TGE
                     tc.Translate = translation;
                     tc.Scale = scale;
                 }
-
             }
+        }
         //}
         ImGui::End();
         ImGui::PopStyleVar();
         //----------------Viewport--------------------
 
+        UI_Toolbar();
         ImGui::End();
     }
 
@@ -406,11 +450,8 @@ namespace TGE
             time_temp += ts.GetTimeSeconds();
         }
         //--------------------Camera----------------
-        if (m_ViewportFocused)//没focuse则不更新相机
-        {
-            m_CameraController.OnUpdate(ts);    
-        }
-        m_EditorCamera.OnUpdate(ts);
+
+
         //------------------Resize-----------------
         FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
         if (m_ViewportSize.x > 0 && m_ViewportSize.y > 0 && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
@@ -427,11 +468,25 @@ namespace TGE
         RenderCommand::SetClearColor({ 0.1f, 0.2f, 0.3f, 1.0f });
         RenderCommand::Clear();
         
-        m_FrameBuffer->ClearAttachment(1, -1);
+        m_FrameBuffer->ClearAttachment(1, -1);//刷新帧缓冲1的slot为-1
         //--------------------Scene----------------
         /*Renderer2D::BeginScene(m_CameraController.GetCamera());*/
+        switch (m_SceneState)
+        {
+            case SceneState::Edit:
+                if (m_ViewportFocused)//没focuse则不更新相机
+                {
+                    m_CameraController.OnUpdate(ts);
+                }
+                m_EditorCamera.OnUpdate(ts);//鼠标控制
+                m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+                break;
+            case SceneState::Play:
+                m_ActiveScene->OnUpdateRunTime(ts);
+                break;
+        }
         //m_ActiveScene->OnUpdateRunTime(ts);
-        m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+        //m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
         //Renderer2D::EndScene();
 
         //-------------------MousePos-------------------
@@ -445,7 +500,7 @@ namespace TGE
 
         if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)m_ViewportSize.x && mouseY < (int)m_ViewportSize.y)
         {
-            int pixel = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
+            int pixel = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);//读取鼠标处的缓冲值
             m_HoveredEntity = pixel == -1 ? Entity() : Entity((entt::entity)pixel, m_ActiveScene.get());
         }
 

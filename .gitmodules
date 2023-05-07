@@ -4,3 +4,6 @@
 [submodule "TGE/vendor/ImGuizmo"]
 	path = TGE/vendor/ImGuizmo
 	url = https://github.com/TheCherno/ImGuizmo.git
+[submodule "TGE/vendor/Box2D"]
+	path = TGE/vendor/Box2D
+	url = https://github.com/TheCherno/box2d

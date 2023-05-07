@@ -614,6 +614,7 @@ namespace TGE
 		if (src.usingTexture)
 		{
 			DrawQuad(transform, src.Texture, src.Color, src.TilingFactor);
+			//DrawQuad(transform, src.Texture, src.TilingFactor);
 			SetEntity(entity_id);
 		}
 		else

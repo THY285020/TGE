@@ -10,7 +10,8 @@ namespace TGE {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//混合因子，混合方法
 
 		//glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LINE_SMOOTH);
+		//glEnable(GL_LINE_SMOOTH);//传统AA
+		glEnable(GL_MULTISAMPLE);//MSAA
 	}
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{

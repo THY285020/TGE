@@ -9,8 +9,8 @@ namespace TGE
 	ContentBrowserPanel::ContentBrowserPanel()
 		:m_CurrentDirectory(s_Assetpath)
 	{
-		m_DirectoryIcon = Texture2D::Create("assets/textures/folderW.png");
-		m_DocumentIcon = Texture2D::Create("assets/textures/docsW.png");
+		m_DirectoryIcon = Texture2D::Create("assets/Icons/folderW.png");
+		m_DocumentIcon = Texture2D::Create("assets/Icons/docsW.png");
 	}
 	void ContentBrowserPanel::OnImGuiRenderer()
 	{
@@ -25,7 +25,7 @@ namespace TGE
 		}
 
 		static float padding = 16.0f;
-		static float iconSize = 128.f;
+		static float iconSize = 64.f;
 		float cellSize = iconSize + padding;
 
 		float panelWidth = ImGui::GetContentRegionAvail().x;

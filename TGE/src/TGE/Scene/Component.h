@@ -88,4 +88,34 @@ namespace TGE
 			//OnDestroyFunc = [](ScriptableEntity* instance) { ((T*)instance)->OnDestroy(); };
 		}
 	};
+
+	struct RigidBody2DComponent
+	{
+		enum class BodyType { Static = 0, Kinematic, Dynamic};
+		BodyType Type = BodyType::Static;
+
+		bool FixedRotation = false;
+		//存储b2Body对象
+		void* RuntimeBody = nullptr;
+
+		RigidBody2DComponent() = default;
+		RigidBody2DComponent(const RigidBody2DComponent&) = default;
+	};
+
+	struct BoxCollider2DComponent
+	{
+		glm::vec2 Offset = { 0.f, 0.f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+
+		float Density = 1.f;
+		float Friction = 0.5f;
+		//形变
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+		//存储
+		void* FixtureRuntime = nullptr;
+
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
+	};
 }

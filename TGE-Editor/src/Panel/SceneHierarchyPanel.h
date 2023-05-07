@@ -23,7 +23,6 @@ namespace TGE
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
-		Ref<Texture2D> m_UITexture;
 	};
 }
 

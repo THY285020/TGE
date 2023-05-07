@@ -20,13 +20,17 @@ IncludeDir["stb_image"] = "TGE/vendor/stb_image"
 IncludeDir["entt"] = "TGE/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "TGE/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "TGE/vendor/ImGuizmo"
+IncludeDir["Box2D"] = "TGE/vendor/Box2D/include"
 
 
 --�����������premake5
-include "TGE/vendor/GLFW"
-include "TGE/vendor/Glad"
-include "TGE/vendor/imgui"
-include "TGE/vendor/yaml-cpp"
+group "Dependencies"
+	include "TGE/vendor/GLFW"
+	include "TGE/vendor/Glad"
+	include "TGE/vendor/imgui"
+	include "TGE/vendor/yaml-cpp"
+	include "TGE/vendor/Box2D"
+group ""
 
 project "TGE"
 	location "TGE"
@@ -52,8 +56,7 @@ project "TGE"
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
 	}
 
-	includedirs
-	{
+	includedirs{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
@@ -63,7 +66,8 @@ project "TGE"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.Box2D}"
 	}
 	
 	links{
@@ -71,7 +75,8 @@ project "TGE"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
-		"opengl32.lib"
+		"opengl32.lib",
+		"Box2D"
 	}
 
 	filter "files:TGE/vendor/ImGuizmo/**.cpp"

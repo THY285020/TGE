@@ -1,11 +1,15 @@
 #pragma once
 
 #include "core.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/string_cast.hpp"
+
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"//在事件中记录自定义类型
 
 namespace TGE {
-	class TGE_API log
+	class log
 	{
 	public:
 		static void Init();

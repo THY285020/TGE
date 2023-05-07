@@ -26,15 +26,21 @@ namespace TGE
 		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
 		void EditTransform(float* cameraView, float* cameraProjection, float* transform, int& m_GizmoType);
+		void UI_Toolbar();
+
+		void OnScenePlay();
+		void OnSceneStop();
 		//void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition);
 	private:
-		TGE::OrthoCameraController m_CameraController;
+		OrthoCameraController m_CameraController;
 		//Temp
 		Ref<VertexArray> m_VA;
 		Ref<Shader> m_FlatColorShader;
 		Ref<FrameBuffer> m_FrameBuffer;
 
 		Ref<Texture2D> m_Texture;
+		Ref<Texture2D> m_IconPlay;
+		Ref<Texture2D> m_IconStop;
 		glm::vec4 SquareColor = glm::vec4(0.2, 0.3, 0.8, 1.0f);
 
 		Ref<Scene> m_ActiveScene;
@@ -55,8 +61,14 @@ namespace TGE
 		SceneHierarchyPanel m_SHP;
 		ContentBrowserPanel m_CBP;
 
-		int m_GizmoType = (1u << 0);
+		int m_GizmoType = (1u << 0)| (1u << 1)| (1u << 2);
 		int m_lastUsing = 0;
+
+		enum class SceneState
+		{
+			Edit = 0, Play = 1
+		};
+		SceneState m_SceneState = SceneState::Edit;
 	};
 }
 
