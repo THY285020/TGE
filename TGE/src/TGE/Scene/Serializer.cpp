@@ -183,7 +183,7 @@ namespace TGE
 			auto& src = entity.GetComponent<SpriteRendererComponent>();
 
 			out << YAML::Key << "Color" << YAML::Value << src.Color;
-			//out << YAML::Key << "Texture" << YAML::Value << src.Texture.;
+			out << YAML::Key << "Path" << YAML::Value << &(src.Texture->GetPath());
 			out << YAML::EndMap;//SpriteRendererComponent
 		}
 
@@ -308,6 +308,16 @@ namespace TGE
 				{
 					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+					//For Texture
+					if (spriteRendererComponent["Path"])
+					{
+						std::string& p = spriteRendererComponent["Path"].as<std::string>();
+						if (p != "")
+						{
+							src.usingTexture = true;
+							src.Texture = Texture2D::Create(p);
+						}
+					}
 				}
 
 				auto rigidBody2DComponent = entity["RigidBody2DComponent"];
