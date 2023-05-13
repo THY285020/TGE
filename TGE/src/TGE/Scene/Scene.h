@@ -1,6 +1,7 @@
 #pragma once
 #include "entt.hpp"
 #include "TGE/Core/TimeStep.h"
+#include "TGE/Core/UUID.h"
 #include "TGE/Scene/Component.h"
 #include "TGE/Renderer/EditorCamera.h"
 
@@ -19,6 +20,7 @@ namespace TGE
 		{}
 		~Scene();
 		Entity CreateEntity(const std::string& name, glm::vec3 translation = glm::vec3(0.f, 0.f, 0.f));
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name, glm::vec3 translation = glm::vec3(0.f, 0.f, 0.f));
 		void DestroyEntity(Entity entity);
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
 		void OnUpdateRunTime(TimeStep ts);

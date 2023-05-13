@@ -191,6 +191,7 @@
     <ClInclude Include="src\TGE\Scene\Serializer.h" />
     <ClInclude Include="src\TGE\Utils\PlatformUtils.h" />
     <ClInclude Include="src\tgpch.h" />
+    <ClInclude Include="src\TGE\Core\UUID.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -485,6 +486,7 @@
     <ClCompile Include="src\tgpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\TGE\Core\UUID.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

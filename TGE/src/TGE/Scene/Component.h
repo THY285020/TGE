@@ -4,13 +4,25 @@
 #include "glm/gtc/matrix_transform.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+
 #include "TGE/Renderer/SceneCamera.h"
 #include "TGE/Core/TimeStep.h"
 #include "ScriptableEntity.h"
 #include "TGE/Renderer/Texture.h"
+#include "TGE/Core/UUID.h"
 
 namespace TGE
 {
+	struct IDComponent
+	{
+		UUID ID;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+		IDComponent(uint64_t id) :ID(id)
+		{
+		}
+	};
 	struct TagComponent
 	{
 		std::string Tag;

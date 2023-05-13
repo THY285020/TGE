@@ -42,7 +42,7 @@ namespace TGE
 		float m_OrthographicFar = 1.0f;
 
 		float m_PerspectiveFOV = glm::radians(45.0f);
-		float m_PerspectiveNear = -1.0f;
+		float m_PerspectiveNear = 0.01f;
 		float m_PerspectiveFar = 1000.0f;
 
 		float m_AspectRatio = 0.0f;

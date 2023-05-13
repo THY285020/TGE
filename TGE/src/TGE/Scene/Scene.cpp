@@ -226,6 +226,22 @@ namespace TGE
 	}
 	Entity Scene::CreateEntity(const std::string& name, glm::vec3 translation)
 	{
+		//Entity entity = { m_Registry.create(), this };
+		//if (name.empty())
+		//{
+		//	entity.AddComponent<TagComponent>("Entity");
+		//}
+		//else
+		//{
+		//	entity.AddComponent<TagComponent>(name);
+		//}
+		//entity.AddComponent<IDComponent>();
+		//entity.AddComponent<TransformComponent>(translation);
+		//return entity;
+		return CreateEntityWithUUID(UUID(), name, translation);
+	}
+	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name, glm::vec3 translation)
+	{
 		Entity entity = { m_Registry.create(), this };
 		if (name.empty())
 		{
@@ -235,6 +251,7 @@ namespace TGE
 		{
 			entity.AddComponent<TagComponent>(name);
 		}
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>(translation);
 		return entity;
 	}
@@ -247,7 +264,10 @@ namespace TGE
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
 		static_assert(false);
-
+	}
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
 	}
 	template<>
 	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)

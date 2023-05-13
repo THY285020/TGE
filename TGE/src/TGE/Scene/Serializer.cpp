@@ -129,7 +129,8 @@ namespace TGE
 	{
 		out << YAML::BeginMap;//Entity
 		out << YAML::Key << "Entity";
-		out << YAML::Value << uint32_t(entity);
+		//out << YAML::Value << uint32_t(entity);
+		out << YAML::Value << entity.GetComponent<IDComponent>().ID;
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -183,7 +184,12 @@ namespace TGE
 			auto& src = entity.GetComponent<SpriteRendererComponent>();
 
 			out << YAML::Key << "Color" << YAML::Value << src.Color;
-			out << YAML::Key << "Path" << YAML::Value << &(src.Texture->GetPath());
+
+			if (src.usingTexture)
+			{
+				out << YAML::Key << "Path" << YAML::Value << &(src.Texture->GetPath());
+			}
+
 			out << YAML::EndMap;//SpriteRendererComponent
 		}
 
@@ -271,7 +277,8 @@ namespace TGE
 
 				//´´½¨ÊµÀý
 				auto transformComponent = entity["TransformComponent"];
-				Entity deserializedEntity = m_Scene->CreateEntity(name, transformComponent["Translate"].as<glm::vec3>());
+				//Entity deserializedEntity = m_Scene->CreateEntity(name, transformComponent["Translate"].as<glm::vec3>());
+				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name, transformComponent["Translate"].as<glm::vec3>());
 
 				//auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
