@@ -202,6 +202,7 @@ namespace TGE
 
     void EditorLayer::UI_Toolbar()
     {
+        //运行，停止按钮
         //style
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
         ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
@@ -232,13 +233,29 @@ namespace TGE
     void EditorLayer::OnScenePlay()
     {
         m_SceneState = SceneState::Play;
+
+        m_ActiveScene = Scene::Copy(m_EditorScene);
         m_ActiveScene->OnRuntimeStart();
+        m_SHP.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnSceneStop()
     {
         m_SceneState = SceneState::Edit;
         m_ActiveScene->OnRuntimeStop();
+        m_ActiveScene = m_EditorScene;
+        m_SHP.SetContext(m_ActiveScene);
+    }
+
+    void EditorLayer::DuplicateEntity()
+    {
+        if (m_SceneState != SceneState::Edit)
+            return;
+        Entity m_selectedEntity = m_SHP.GetSelectedEntity();
+        if (m_selectedEntity)
+        {
+            m_ActiveScene->DuplicateEntity(m_selectedEntity);
+        }
     }
 
     void EditorLayer::OnImGuiRender()
@@ -542,51 +559,59 @@ namespace TGE
         bool shift = Input::IsKeyPressed(TGE_KEY_LEFT_SHIFT) || Input::IsKeyPressed(TGE_KEY_RIGHT_SHIFT);
         switch (e.GetKeyCode())
         {
-        case TGE_KEY_N:
-        {
-            if (control)
+            case TGE_KEY_N:
             {
-                NewScene();
+                if (control)
+                {
+                    NewScene();
+                }
+                break;
             }
-            break;
-        }
-        case TGE_KEY_O:
-        {
-            if (control)
+            case TGE_KEY_O:
             {
-                OpenScene();
+                if (control)
+                {
+                    OpenScene();
+                }
+                break;
             }
-            break;
-        }
-        case TGE_KEY_S:
-        {
-            if (control && shift)
+            case TGE_KEY_S:
             {
-                SaveSceneAs();
+                if (control && shift)
+                {
+                    SaveSceneAs();
+                }
+                break;
             }
-            break;
-        }
-        //Gizmos
-        case TGE_KEY_Q:
-        {
-            m_GizmoType = ImGuizmo::OPERATION::BOUNDS;
-            break;
-        }
-        case TGE_KEY_W:
-        {
-            m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
-            break;
-        }
-        case TGE_KEY_E:
-        {
-            m_GizmoType = ImGuizmo::OPERATION::SCALE;
-            break;
-        }
-        case TGE_KEY_R:
-        {
-            m_GizmoType = ImGuizmo::OPERATION::ROTATE;
-            break;
-        }
+            //Gizmos
+            case TGE_KEY_Q:
+            {
+                m_GizmoType = ImGuizmo::OPERATION::BOUNDS;
+                break;
+            }
+            case TGE_KEY_W:
+            {
+                m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+                break;
+            }
+            case TGE_KEY_E:
+            {
+                m_GizmoType = ImGuizmo::OPERATION::SCALE;
+                break;
+            }
+            case TGE_KEY_R:
+            {
+                m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+                break;
+            }
+            case TGE_KEY_D:
+            {
+                if (control)
+                {
+                    DuplicateEntity();
+                }
+                break;
+            }
         }
         return true;
     }
@@ -606,12 +631,23 @@ namespace TGE
     }
     void EditorLayer::OpenScene(const std::filesystem::path& path)
     {
-        m_ActiveScene = std::make_shared<Scene>();
-        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-        m_SHP.SetContext(m_ActiveScene);
+        if (m_SceneState != SceneState::Edit)
+        {
+            OnSceneStop();
+        }
 
-        Serializer serializer(m_ActiveScene);
-        serializer.DeSerialize(path.string());
+        Ref<Scene> newScene = std::make_shared<Scene>();
+        Serializer serializer(newScene);
+        //需要先调用OnViewportResize计算aspectRatio再计算glm::perspective
+        m_EditorScene = newScene;
+        m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+        if (serializer.DeSerialize(path.string()))
+        {
+            //m_EditorScene = newScene;
+            //m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_ActiveScene = m_EditorScene;
+            m_SHP.SetContext(m_ActiveScene);
+        }
     }
     void EditorLayer::SaveSceneAs()
     {

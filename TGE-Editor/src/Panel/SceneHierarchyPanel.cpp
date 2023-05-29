@@ -363,7 +363,7 @@ namespace TGE
 				ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
 			});
 
-		DrawComponent<BoxCollider2DComponent>("RigidBody 2D", entity, [](BoxCollider2DComponent& component)
+		DrawComponent<BoxCollider2DComponent>("<BoxCollider 2D", entity, [](BoxCollider2DComponent& component)
 			{
 				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
 				ImGui::DragFloat2("Size", glm::value_ptr(component.Size));

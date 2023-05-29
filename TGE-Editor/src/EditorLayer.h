@@ -30,6 +30,8 @@ namespace TGE
 
 		void OnScenePlay();
 		void OnSceneStop();
+
+		void DuplicateEntity();
 		//void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition);
 	private:
 		OrthoCameraController m_CameraController;
@@ -44,6 +46,7 @@ namespace TGE
 		glm::vec4 SquareColor = glm::vec4(0.2, 0.3, 0.8, 1.0f);
 
 		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
 		Entity m_SquareEntity;
 		Entity m_SquareEntity2;
 		Entity m_Camera;

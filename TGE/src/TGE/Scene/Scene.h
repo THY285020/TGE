@@ -19,9 +19,13 @@ namespace TGE
 			:m_ViewportWidth(Width), m_ViewportHeight(Height)
 		{}
 		~Scene();
+
+		static Ref<Scene> Copy(Ref<Scene> other);
+
 		Entity CreateEntity(const std::string& name, glm::vec3 translation = glm::vec3(0.f, 0.f, 0.f));
-		Entity CreateEntityWithUUID(UUID uuid, const std::string& name, glm::vec3 translation = glm::vec3(0.f, 0.f, 0.f));
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = "Empty Entity", glm::vec3 translation = glm::vec3(0.f, 0.f, 0.f));
 		void DestroyEntity(Entity entity);
+		void DuplicateEntity(Entity entity);
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
 		void OnUpdateRunTime(TimeStep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);

@@ -52,6 +52,61 @@ namespace TGE
 	{
 	}
 
+	template<typename Component>
+	static void CopyComponent(entt::registry& src, entt::registry& dst, std::unordered_map<UUID, entt::entity> enttMap)
+	{
+		auto view = src.view<Component>();
+		for (auto e : view)
+		{
+			//根据uuid寻找实例
+			UUID uuid  = src.get<IDComponent>(e).ID;
+			TGE_CORE_ASSERT(enttMap.find(uuid) != enttMap.end(), "CopyError!");
+			//寻找id相同的实例
+			entt::entity dstEnttID = enttMap.at(uuid);
+			//替换component
+			auto& component = src.get<Component>(e);
+			dst.emplace_or_replace<Component>(dstEnttID, component);
+		}
+	}
+
+	template<typename Component>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		if (src.HasComponent<Component>())
+		{
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+		}
+	}
+	Ref<Scene> Scene::Copy(Ref<Scene> other)
+	{
+		Ref<Scene> newScene = std::make_shared<Scene>();
+
+		newScene->m_ViewportHeight = other->m_ViewportHeight;
+		newScene->m_ViewportWidth = other->m_ViewportWidth;
+
+		std::unordered_map<UUID, entt::entity> enttMap;
+
+		auto& srcSceneRegistry = other->m_Registry;
+		auto& dstSceneRegistry = newScene->m_Registry;
+		//遍历获取每个实例，并创建新实例（ID，Tag相同）
+		auto idView = srcSceneRegistry.view<IDComponent>();
+		for (auto e : idView)
+		{
+			UUID uuid = srcSceneRegistry.get<IDComponent>(e).ID;
+			const auto& name = srcSceneRegistry.get<TagComponent>(e).Tag;
+			const auto& trs = srcSceneRegistry.get<TransformComponent>(e).Translate;
+			enttMap[uuid] = newScene->CreateEntityWithUUID(uuid, name, trs);
+		}
+		// Copy components (except IDComponent and TagComponent)
+		CopyComponent<TransformComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<SpriteRendererComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<CameraComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<RigidBody2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<BoxCollider2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<NativeScriptComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		return newScene;
+	}
+
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
@@ -258,6 +313,17 @@ namespace TGE
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+	}
+
+	void Scene::DuplicateEntity(Entity entity)
+	{
+		Entity newEntity = CreateEntity(entity.GetComponent<TagComponent>().Tag);
+		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
+		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 	}
 
 	template<typename T>

@@ -1,7 +1,9 @@
 #pragma once
-#include "entt.hpp"
 #include "TGE/Scene/Scene.h"
 #include "TGE/Core/log.h"
+#include "Component.h"
+
+#include "entt.hpp"
 namespace TGE
 {
 	class Scene;
@@ -25,6 +27,13 @@ namespace TGE
 			m_Scene->OnComponentAdded<T>(*this, component);
 			return component;
 		}
+		template<typename T, typename... Args>
+		T& AddOrReplaceComponent(Args&&... args)
+		{
+			T& component = m_Scene->m_Registry.emplace_or_replace<T>(m_id, std::forward<Args>(args)...);
+			m_Scene->OnComponentAdded<T>(*this, component);
+			return component;
+		}
 		template<typename T>
 		T& GetComponent()
 		{
@@ -41,6 +50,9 @@ namespace TGE
 		operator bool()const { return m_id != entt::null; }
 		operator uint32_t()const { return uint32_t(m_id); }
 		operator entt::entity() const { return m_id; }//”√”⁄Sene::Destroy(Entity)
+
+		//UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+		//const std::string& GetName() {return GetComponent<TagComponent>().Tag;}
 
 		bool operator ==(const Entity& other) const 
 		{
