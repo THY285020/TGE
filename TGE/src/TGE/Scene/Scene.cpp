@@ -315,7 +315,7 @@ namespace TGE
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::DuplicateEntity(Entity entity)
+	Entity Scene::DuplicateEntity(Entity entity)
 	{
 		Entity newEntity = CreateEntity(entity.GetComponent<TagComponent>().Tag);
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
@@ -324,6 +324,7 @@ namespace TGE
 		CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
+		return newEntity;
 	}
 
 	template<typename T>

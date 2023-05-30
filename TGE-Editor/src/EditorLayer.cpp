@@ -254,7 +254,8 @@ namespace TGE
         Entity m_selectedEntity = m_SHP.GetSelectedEntity();
         if (m_selectedEntity)
         {
-            m_ActiveScene->DuplicateEntity(m_selectedEntity);
+            m_selectedEntity = m_ActiveScene->DuplicateEntity(m_selectedEntity);
+            m_SHP.SetSelectedEntity(m_selectedEntity);
         }
     }
 
@@ -577,9 +578,12 @@ namespace TGE
             }
             case TGE_KEY_S:
             {
-                if (control && shift)
+                if (control)
                 {
-                    SaveSceneAs();
+                    if (shift)
+                        SaveSceneAs();
+                    else
+                        SaveScene();
                 }
                 break;
             }
@@ -620,6 +624,7 @@ namespace TGE
         m_ActiveScene = std::make_shared<Scene>();
         m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
         m_SHP.SetContext(m_ActiveScene);
+        m_EditorScenePath = std::filesystem::path();
     }
     void EditorLayer::OpenScene()
     {
@@ -627,6 +632,7 @@ namespace TGE
         if (!filepath.empty())
         {
             OpenScene(filepath);
+            m_EditorScenePath = filepath;
         }
     }
     void EditorLayer::OpenScene(const std::filesystem::path& path)
@@ -647,6 +653,7 @@ namespace TGE
             //m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_ActiveScene = m_EditorScene;
             m_SHP.SetContext(m_ActiveScene);
+            m_EditorScenePath = path;
         }
     }
     void EditorLayer::SaveSceneAs()
@@ -654,8 +661,21 @@ namespace TGE
         std::string filepath = FileDialogs::SaveFile("TGE Scene (*.tge)\0*.tge\0");
         if (!filepath.empty())
         {
-            Serializer serializer(m_ActiveScene);
-            serializer.Serialize(filepath);
+            SceneSerialize(m_ActiveScene, filepath);
         }
+    }
+    void EditorLayer::SaveScene()
+    {
+        if (!m_EditorScenePath.empty())
+        {
+            SceneSerialize(m_ActiveScene, m_EditorScenePath);
+        }
+        else
+            SaveSceneAs();
+    }
+    void EditorLayer::SceneSerialize(Ref<Scene> scene, std::filesystem::path path)
+    {
+        Serializer serializer(scene);
+        serializer.Serialize(path.string());
     }
 }

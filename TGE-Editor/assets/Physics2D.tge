@@ -39,7 +39,7 @@ Entities:
       RestitutionThreshold: 0.5
   - Entity: 0
     TagComponent:
-      Tag: Empty Entity
+      Tag: Floor
     TransformComponent:
       Translate: [0, -1.27103615, 0]
       Rotation: [0, -0, 0]

@@ -242,6 +242,7 @@ namespace TGE
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();//输出到文件
+		TGE_CORE_TRACE("Serialize Scene as '{0}'!", filepath);
 	}
 	void Serializer::SerializeRuntime(const std::string& filepath)
 	{

@@ -25,6 +25,8 @@ namespace TGE
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
+		void SaveScene();
+		void SceneSerialize(Ref<Scene> scene, std::filesystem::path path);
 		void EditTransform(float* cameraView, float* cameraProjection, float* transform, int& m_GizmoType);
 		void UI_Toolbar();
 
@@ -63,6 +65,7 @@ namespace TGE
 
 		SceneHierarchyPanel m_SHP;
 		ContentBrowserPanel m_CBP;
+		std::filesystem::path m_EditorScenePath;
 
 		int m_GizmoType = (1u << 0)| (1u << 1)| (1u << 2);
 		int m_lastUsing = 0;
