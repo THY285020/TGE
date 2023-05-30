@@ -15,7 +15,15 @@ namespace TGE
 		glm::vec4 Color;
 		float TexIndex;
 		float TilingFactor;//参数越大，越密集
-		//TODO: color,texid
+	};
+
+	struct CircleVertex
+	{
+		glm::vec3 WorldPosition;
+		glm::vec3 LocalPosition;
+		glm::vec4 Color;
+		float Thickness;
+		float Fade;//参数越大，越密集
 	};
 
 	struct Renderer2DData
@@ -27,12 +35,20 @@ namespace TGE
 
 		Ref<VertexArray> QuadVertexArray;
 		Ref<VertexBuffer> QuadVertexBuffer;
-		Ref<Shader> TextureShader;
+		Ref<Shader> QuadShader;
 		Ref<Texture> WhiteTexture;
+
+		Ref<VertexArray> CircleVertexArray;
+		Ref<VertexBuffer> CircleVertexBuffer;
+		Ref<Shader> CircleShader;
 
 		uint32_t QuadIndexCount = 0;
 		QuadVertex* QuadVertexBufferBase = nullptr;//顶点数组的开头
 		QuadVertex* QuadVertexBufferPtr = nullptr;
+
+		uint32_t CircleIndexCount = 0;
+		CircleVertex* CircleVertexBufferBase = nullptr;//顶点数组的开头
+		CircleVertex* CircleVertexBufferPtr = nullptr;
 
 		std::array<Ref<Texture>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1;				//WhiteTexture占用0号
@@ -88,6 +104,22 @@ namespace TGE
 		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
 
+		//Circle
+		s_Data.CircleVertexArray = VertexArray::Create();
+		s_Data.CircleVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));//申请空间
+		s_Data.CircleVertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "WorldPosition" },
+			{ ShaderDataType::Float3, "LocalPosition" },
+			{ ShaderDataType::Float4, "Color" },
+			{ ShaderDataType::Float,  "Thickness" },
+			{ ShaderDataType::Float,  "Fade"}
+			});
+
+		s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
+		s_Data.CircleVertexArray->SetIndexBuffer(quadIB);//Use quadIB
+		s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
+			
+
 		//创建透明纹理
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t WhiteTextureData = 0xffffffff;//透明纹理
@@ -99,7 +131,8 @@ namespace TGE
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; ++i)
 			samplers[i] = i;
 
-		s_Data.TextureShader = Shader::Create("assets/shaders/Texture_t.glsl");
+		s_Data.QuadShader = Shader::Create("assets/shaders/Quad_2D.glsl");
+		s_Data.CircleShader = Shader::Create("assets/shaders/Circle_2D.glsl");
 		//s_Data.TextureShader->Bind();
 		//s_Data.TextureShader->SetIntArray("Textures", s_Data.MaxTextureSlots, samplers);
 
@@ -118,8 +151,8 @@ namespace TGE
 
 	void Renderer2D::BeginScene(const OrthoCamera& camera)
 	{
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("ViewProj", camera.GetViewProjectionMatrix());
+		s_Data.QuadShader->Bind();
+		s_Data.QuadShader->SetMat4("ViewProj", camera.GetViewProjectionMatrix());
 		//future
 		//s_Data.cameraBuffer.viewProjection = camera.GetViewProjectionMatrix();
 		//s_Data.CameraUniformBuffer->SetData(&s_Data.cameraBuffer, sizeof(Renderer2DData::CameraBuffer));
@@ -127,18 +160,30 @@ namespace TGE
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 
+		s_Data.CircleShader->Bind();
+		s_Data.CircleShader->SetMat4("ViewProj", camera.GetViewProjectionMatrix());
+		//reset
+		s_Data.CircleIndexCount = 0;
+		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+
 
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("ViewProj", camera.GetViewProjection());
+		s_Data.QuadShader->Bind();
+		s_Data.QuadShader->SetMat4("ViewProj", camera.GetViewProjection());
 		//s_Data.cameraBuffer.viewProjection = camera.GetViewProjectionMatrix();
 		//s_Data.CameraUniformBuffer->SetData(&s_Data.cameraBuffer, sizeof(Renderer2DData::CameraBuffer));
 		//reset
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.CircleShader->Bind();
+		s_Data.CircleShader->SetMat4("ViewProj", camera.GetViewProjection());
+		//reset
+		s_Data.CircleIndexCount = 0;
+		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
 
 		//s_Data.CircleIndexCount = 0;
 		//s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
@@ -151,43 +196,62 @@ namespace TGE
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4 transform)
 	{
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("ViewProj", camera.GetProjection()*glm::inverse(transform));
+		s_Data.QuadShader->Bind();
+		s_Data.QuadShader->SetMat4("ViewProj", camera.GetProjection()*glm::inverse(transform));
 		//reset
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.CircleShader->Bind();
+		s_Data.CircleShader->SetMat4("ViewProj", camera.GetProjection() * glm::inverse(transform));
+		//reset
+		s_Data.CircleIndexCount = 0;
+		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
 	}
 
 	void Renderer2D::EndScene()
-	{
-		//计算顶点数
-		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);//此时才把数据输入VBO
-		
+	{		
 		Flush();
 	}
 
 	void Renderer2D::SetEntity(int id)
 	{
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetInt("entity_id", id);
+		s_Data.QuadShader->Bind();
+		s_Data.QuadShader->SetInt("entity_id", id);
 	}
 	void Renderer2D::Flush()
 	{
-		//BindTexture
-		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
+		if (s_Data.QuadIndexCount)
 		{
-			s_Data.TextureSlots[i]->Bind(i);
+			//计算顶点数
+			uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);//此时才把数据输入VBO
+			//BindTexture
+			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
+			{
+				s_Data.TextureSlots[i]->Bind(i);
+			}
+			//（VAO，索引数量）
+			s_Data.QuadShader->Bind();
+			RenderCommand::DrawIndex(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+			s_Data.Stats.DrawCalls++;
 		}
-		//（VAO，索引数量）
-		RenderCommand::DrawIndex(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
-		s_Data.Stats.DrawCalls++;
+		if (s_Data.CircleIndexCount)
+		{
+			uint32_t dataSize = (uint8_t*)s_Data.CircleVertexBufferPtr - (uint8_t*)s_Data.CircleVertexBufferBase;
+			s_Data.CircleVertexBuffer->SetData(s_Data.CircleVertexBufferBase, dataSize);//此时才把数据输入VBO
+			s_Data.CircleShader->Bind();
+			RenderCommand::DrawIndex(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
+			s_Data.Stats.DrawCalls++;
+		}
 	}
 	void Renderer2D::FlushAndReset()
 	{
 		Renderer2D::EndScene();
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		s_Data.CircleIndexCount = 0;
+		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
 	}
 
 	//color
@@ -608,6 +672,24 @@ namespace TGE
 		}
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
+	}
+	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entity_id)
+	{
+
+		for (uint32_t i = 0; i < 4; ++i)
+		{
+			s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
+			s_Data.CircleVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
+			s_Data.CircleVertexBufferPtr->Color = color;
+			s_Data.CircleVertexBufferPtr->Thickness = thickness;
+			s_Data.CircleVertexBufferPtr->Fade = fade;
+			s_Data.CircleVertexBufferPtr++;
+		}
+		s_Data.CircleIndexCount += 6;
+		s_Data.Stats.QuadCount++;
+
+		s_Data.CircleShader->Bind();
+		s_Data.CircleShader->SetInt("entity_id", entity_id);
 	}
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id)
 	{

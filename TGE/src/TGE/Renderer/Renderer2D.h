@@ -24,6 +24,7 @@ namespace TGE {
 		static void Flush();
 
 		//premitives
+		//Quad
 		static void DrawQuad(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color);
 		static void DrawQuad(const glm::vec3& pos, const glm::vec2& size, Ref<Texture2D> texture, const float tilingFactor);
 		static void DrawQuad(const glm::vec3& pos, const glm::vec2& size, Ref<SubTexture2D> subtexture, const float tilingFactor);
@@ -40,7 +41,9 @@ namespace TGE {
 		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, const float tilingFactor);
 
 		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, glm::vec4 color, const float tilingFactor);
-		
+		//Circle
+		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness = 1.0f, float fade = 0.005f, int entity_id = -1);
+
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id = -1);
 		//Statistics
 		struct Statistics

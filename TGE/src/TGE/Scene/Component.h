@@ -67,6 +67,24 @@ namespace TGE
 			:Color(color) {}
 	};
 
+
+	struct CircleRendererComponent
+	{
+		glm::vec4 Color{ 1.f, 1.f, 1.f, 1.f };
+		//float Radius = 0.5f;//半径
+		float Thickness = 1.0f;//1.0是实心圆，0.5是圆环
+		float Fade = 0.005f;//淡化
+
+		//bool usingTexture = false;
+		//Ref<Texture2D> Texture = Texture2D::Create();
+		//float TilingFactor = 1.0f;
+
+		CircleRendererComponent() = default;
+		CircleRendererComponent(const CircleRendererComponent&) = default;
+		CircleRendererComponent(const glm::vec4& color)
+			:Color(color) {}
+	};
+
 	struct CameraComponent
 	{
 		SceneCamera camera;

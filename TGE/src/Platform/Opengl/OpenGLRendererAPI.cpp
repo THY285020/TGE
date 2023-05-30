@@ -31,8 +31,9 @@ namespace TGE {
 	{
 		uint32_t count = indexcount ? vertexArray->GetIndexBuffer()->GetCount():indexcount;
 		//(mode, count, type, offset)
+		vertexArray->Bind();
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);//不在使用索引缓冲对象的时候填入数组
-		glBindTexture(GL_TEXTURE_2D, 0);//解除绑定
+		//glBindTexture(GL_TEXTURE_2D, 0);//解除绑定
 	}
 }
 

@@ -24,4 +24,8 @@
     </ClCompile>
     <ClCompile Include="src\TGEEditor.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\Circle_2D.glsl" />
+    <None Include="assets\shaders\Quad_2D.glsl" />
+  </ItemGroup>
 </Project>

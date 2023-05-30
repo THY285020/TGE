@@ -100,6 +100,7 @@ namespace TGE
 		// Copy components (except IDComponent and TagComponent)
 		CopyComponent<TransformComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<SpriteRendererComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<CircleRendererComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<RigidBody2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
@@ -111,14 +112,27 @@ namespace TGE
 	{
 		Renderer2D::BeginScene(camera);
 		//遍历同时带有两个组件的group
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
 		{
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-			Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
-			//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-			//Renderer2D::SetEntity(int(entity));//要放在后面因为DrawQuad会调用FlushAndReset()重置
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				//Renderer2D::SetEntity(int(entity));//要放在后面因为DrawQuad会调用FlushAndReset()重置
+			}
+		}
+
+		{
+			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
+				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			}
 		}
 		Renderer2D::EndScene();
 
@@ -197,14 +211,25 @@ namespace TGE
 		if (mainCamera)
 		{
 			Renderer2D::BeginScene(*mainCamera, mainTransform);
-			//遍历同时带有两个组件的group
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
+			//DrawSprite
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+				for (auto entity : group)
+				{
+					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+				}
+			}
+			//DrawCircle
+			{
+				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
+				}
 			}
 			Renderer2D::EndScene();
 		}
@@ -320,6 +345,7 @@ namespace TGE
 		Entity newEntity = CreateEntity(entity.GetComponent<TagComponent>().Tag);
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
@@ -348,6 +374,11 @@ namespace TGE
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
 	{
 		
+	}
+	template<>
+	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
+	{
+
 	}
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
