@@ -46,9 +46,11 @@ layout(location = 1) out int Entity_ID;
 
 void main() {
 	//Calculate distance and fill circle with white
+	//length得到圆心距离，1-length反转使得圆心处为1（白色）
 	float distance = 1.0 - length(Input.LocalPosition);
-	float circleAlpha = smoothstep(0.0, Input.Fade, distance);
-	circleAlpha *= smoothstep(Input.Thickness + Input.Fade, Input.Thickness, distance);//距离大于厚度加淡化的长度为0，小于等于厚度的长度为1，
+	//step函数，step(a, x)大于a则为1
+	float circleAlpha = smoothstep(0.0, Input.Fade, distance);//淡化边界，从0.0到fade逐渐为1
+	circleAlpha *= smoothstep(Input.Thickness + Input.Fade, Input.Thickness, distance);//圆环：距离大于厚度加淡化的长度为0，小于则逐渐到1，
 
 	if (circleAlpha == 0)
 		discard;

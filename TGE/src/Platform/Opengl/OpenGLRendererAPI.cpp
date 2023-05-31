@@ -9,7 +9,7 @@ namespace TGE {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//混合因子，混合方法
 
-		//glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 		//glEnable(GL_LINE_SMOOTH);//传统AA
 		glEnable(GL_MULTISAMPLE);//MSAA
 	}
@@ -35,5 +35,17 @@ namespace TGE {
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);//不在使用索引缓冲对象的时候填入数组
 		//glBindTexture(GL_TEXTURE_2D, 0);//解除绑定
 	}
+
+	void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexcount)
+	{
+		vertexArray->Bind();
+		glDrawArrays(GL_LINES, 0, vertexcount);
+	}
+
+	void OpenGLRendererAPI::SetLineWidth(float thickness)
+	{
+		glLineWidth(thickness);
+	}
+
 }
 

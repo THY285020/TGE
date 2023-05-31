@@ -118,6 +118,7 @@ namespace TGE
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
+				//Renderer2D::DrawRect(transform.GetTransform(), sprite.Color, int(entity));
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
 				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 				//Renderer2D::SetEntity(int(entity));//要放在后面因为DrawQuad会调用FlushAndReset()重置
@@ -134,8 +135,12 @@ namespace TGE
 				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 			}
 		}
-		Renderer2D::EndScene();
 
+		Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.f, 0.f, 1.f, 1.f));
+
+		Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(1.f, 1.f, 1.f, 1.f));
+
+		Renderer2D::EndScene();
 	}
 
 	void Scene::OnUpdateRunTime(TimeStep ts)

@@ -234,8 +234,9 @@ namespace TGE
     {
         m_SceneState = SceneState::Play;
 
-        m_ActiveScene = Scene::Copy(m_EditorScene);
-        m_ActiveScene->OnRuntimeStart();
+        if(m_EditorScene != nullptr)
+            m_ActiveScene = Scene::Copy(m_EditorScene);
+        m_ActiveScene->OnRuntimeStart();//world2DŒÔ¿Ì
         m_SHP.SetContext(m_ActiveScene);
     }
 

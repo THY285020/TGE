@@ -12,5 +12,8 @@ namespace TGE {
 		virtual void Clear() override;
 
 		virtual void DrawIndex(const Ref<VertexArray>& vertexArray, uint32_t indexcount) override;
+		virtual void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t vertexcount) override;
+
+		virtual void SetLineWidth(float thickness) override;
 	};
 }

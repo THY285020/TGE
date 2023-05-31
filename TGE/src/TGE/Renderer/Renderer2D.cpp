@@ -26,11 +26,17 @@ namespace TGE
 		float Fade;//参数越大，越密集
 	};
 
+	struct LineVertex
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+	};
+
 	struct Renderer2DData
 	{
-		static const uint32_t MaxQuads = 1;
+		static const uint32_t MaxQuads = 2000;
 		static const uint32_t MaxVertices = MaxQuads * 4;//4个顶点
-		static const uint32_t MaxIndices = MaxQuads * 6; //6个索引
+		static const uint32_t MaxIndices =  6; //6个索引
 		static const uint32_t MaxTextureSlots = 32;//render caps
 
 		Ref<VertexArray> QuadVertexArray;
@@ -42,6 +48,10 @@ namespace TGE
 		Ref<VertexBuffer> CircleVertexBuffer;
 		Ref<Shader> CircleShader;
 
+		Ref<VertexArray> LineVertexArray;
+		Ref<VertexBuffer> LineVertexBuffer;
+		Ref<Shader> LineShader;
+
 		uint32_t QuadIndexCount = 0;
 		QuadVertex* QuadVertexBufferBase = nullptr;//顶点数组的开头
 		QuadVertex* QuadVertexBufferPtr = nullptr;
@@ -49,6 +59,12 @@ namespace TGE
 		uint32_t CircleIndexCount = 0;
 		CircleVertex* CircleVertexBufferBase = nullptr;//顶点数组的开头
 		CircleVertex* CircleVertexBufferPtr = nullptr;
+
+		uint32_t LineVertexCount = 0;
+		LineVertex* LineVertexBufferBase = nullptr;//顶点数组的开头
+		LineVertex* LineVertexBufferPtr = nullptr;
+
+		float LineWidth = 2.f;
 
 		std::array<Ref<Texture>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1;				//WhiteTexture占用0号
@@ -93,7 +109,7 @@ namespace TGE
 			quadIndices[i + 0] = offset + 0;
 			quadIndices[i + 1] = offset + 1;
 			quadIndices[i + 2] = offset + 2;
-
+			
 			quadIndices[i + 3] = offset + 2;
 			quadIndices[i + 4] = offset + 3;
 			quadIndices[i + 5] = offset + 0;
@@ -114,11 +130,19 @@ namespace TGE
 			{ ShaderDataType::Float,  "Thickness" },
 			{ ShaderDataType::Float,  "Fade"}
 			});
-
 		s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
 		s_Data.CircleVertexArray->SetIndexBuffer(quadIB);//Use quadIB
 		s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
-			
+		
+		//Lines	
+		s_Data.LineVertexArray = VertexArray::Create();
+		s_Data.LineVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(LineVertex));//申请空间
+		s_Data.LineVertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "Position" },
+			{ ShaderDataType::Float4, "Color" }
+		});
+		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
 
 		//创建透明纹理
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
@@ -133,6 +157,7 @@ namespace TGE
 
 		s_Data.QuadShader = Shader::Create("assets/shaders/Quad_2D.glsl");
 		s_Data.CircleShader = Shader::Create("assets/shaders/Circle_2D.glsl");
+		s_Data.LineShader = Shader::Create("assets/shaders/Line_2D.glsl");
 		//s_Data.TextureShader->Bind();
 		//s_Data.TextureShader->SetIntArray("Textures", s_Data.MaxTextureSlots, samplers);
 
@@ -166,7 +191,11 @@ namespace TGE
 		s_Data.CircleIndexCount = 0;
 		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
 
-
+		s_Data.LineShader->Bind();
+		s_Data.LineShader->SetMat4("ViewProj", camera.GetViewProjectionMatrix());
+		//reset
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
@@ -185,11 +214,11 @@ namespace TGE
 		s_Data.CircleIndexCount = 0;
 		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
 
-		//s_Data.CircleIndexCount = 0;
-		//s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
-
-		//s_Data.LineVertexCount = 0;
-		//s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+		s_Data.LineShader->Bind();
+		s_Data.LineShader->SetMat4("ViewProj", camera.GetViewProjection());
+		//reset
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 
 		//s_Data.TextureSlotIndex = 1;
 	}
@@ -207,6 +236,12 @@ namespace TGE
 		//reset
 		s_Data.CircleIndexCount = 0;
 		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+
+		s_Data.LineShader->Bind();
+		s_Data.LineShader->SetMat4("ViewProj", camera.GetProjection() * glm::inverse(transform));
+		//reset
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 	}
 
 	void Renderer2D::EndScene()
@@ -244,6 +279,15 @@ namespace TGE
 			RenderCommand::DrawIndex(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
+		if (s_Data.LineVertexCount)
+		{
+			uint32_t dataSize = (uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase;
+			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);//此时才把数据输入VBO
+			s_Data.LineShader->Bind();
+			RenderCommand::SetLineWidth(s_Data.LineWidth);
+			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+			s_Data.Stats.DrawCalls++;
+		}
 	}
 	void Renderer2D::FlushAndReset()
 	{
@@ -252,6 +296,8 @@ namespace TGE
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 		s_Data.CircleIndexCount = 0;
 		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 	}
 
 	//color
@@ -673,6 +719,21 @@ namespace TGE
 		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 	}
+	void Renderer2D::DrawLine(const glm::vec3 p0, glm::vec3 p1, const glm::vec4& color, int entity_id)
+	{
+		s_Data.LineVertexBufferPtr->Position = p0;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr++;
+
+		s_Data.LineVertexBufferPtr->Position = p1;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr++;
+
+		s_Data.LineVertexCount += 2;
+
+		s_Data.LineShader->Bind();
+		s_Data.LineShader->SetInt("entity_id", entity_id);
+	}
 	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entity_id)
 	{
 
@@ -705,6 +766,38 @@ namespace TGE
 			SetEntity(entity_id);
 		}
 
+	}
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entity_id)
+	{
+		glm::vec3 lineVertices[4];
+		for (size_t i = 0; i < 4; ++i)
+		{
+			lineVertices[i] = transform * s_Data.QuadVertexPositions[i];
+		}
+		DrawLine(lineVertices[0], lineVertices[1], color, entity_id);
+		DrawLine(lineVertices[1], lineVertices[2], color, entity_id);
+		DrawLine(lineVertices[2], lineVertices[3], color, entity_id);
+		DrawLine(lineVertices[3], lineVertices[0], color, entity_id);
+	}
+	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2 size, const glm::vec4& color, int entity_id)
+	{
+		glm::vec3 p0 = glm::vec3(position.x - 0.5f * size.x, position.y - 0.5f * size.y, position.z);
+		glm::vec3 p1 = glm::vec3(position.x + 0.5f * size.x, position.y - 0.5f * size.y, position.z);
+		glm::vec3 p2 = glm::vec3(position.x + 0.5f * size.x, position.y + 0.5f * size.y, position.z);
+		glm::vec3 p3 = glm::vec3(position.x - 0.5f * size.x, position.y + 0.5f * size.y, position.z);
+
+		DrawLine(p0, p1, color, entity_id);
+		DrawLine(p1, p2, color, entity_id);
+		DrawLine(p2, p3, color, entity_id);
+		DrawLine(p3, p0, color, entity_id);
+	}
+	float Renderer2D::GetLineWidth()
+	{
+		return s_Data.LineWidth;
+	}
+	void Renderer2D::SetLineWidth(float width)
+	{
+		s_Data.LineWidth = width;
 	}
 	//Statistics
 	void Renderer2D::ResetStats()

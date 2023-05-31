@@ -41,10 +41,18 @@ namespace TGE {
 		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, const float tilingFactor);
 
 		static void DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, glm::vec4 color, const float tilingFactor);
+		//Line
+		static void DrawLine(const glm::vec3 p0, glm::vec3 p1, const glm::vec4& color, int entity_id = -1);
 		//Circle
 		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness = 1.0f, float fade = 0.005f, int entity_id = -1);
-
+		//Quad
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entity_id = -1);
+		//Rectangle
+		static void DrawRect(const glm::mat4& transform, const glm::vec4& color, int entity_id = -1);
+		static void DrawRect(const glm::vec3& position, const glm::vec2 size, const glm::vec4& color, int entity_id = -1);
+
+		static float GetLineWidth();
+		static void SetLineWidth(float width);
 		//Statistics
 		struct Statistics
 		{
