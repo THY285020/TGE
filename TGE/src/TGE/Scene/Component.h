@@ -71,7 +71,6 @@ namespace TGE
 	struct CircleRendererComponent
 	{
 		glm::vec4 Color{ 1.f, 1.f, 1.f, 1.f };
-		//float Radius = 0.5f;//半径
 		float Thickness = 1.0f;//1.0是实心圆，0.5是圆环
 		float Fade = 0.005f;//淡化
 
@@ -140,7 +139,7 @@ namespace TGE
 		float Density = 1.f;
 		float Friction = 0.5f;
 		//形变
-		float Restitution = 0.0f;
+		float Restitution = 0.0f;//衡量弹性的恢复系数，完全弹性碰撞为1
 		float RestitutionThreshold = 0.5f;
 		//存储
 		void* FixtureRuntime = nullptr;
@@ -148,4 +147,22 @@ namespace TGE
 		BoxCollider2DComponent() = default;
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
+
+	struct CircleCollider2DComponent
+	{
+		glm::vec2 Offset = { 0.f, 0.f };
+		float Radius = 0.5f;
+
+		float Density = 1.f;
+		float Friction = 0.5f;
+		//形变
+		float Restitution = 0.0f;//衡量弹性的恢复系数，完全弹性碰撞为1
+		float RestitutionThreshold = 0.5f;
+		//存储
+		void* FixtureRuntime = nullptr;
+
+		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+	};
+
 }

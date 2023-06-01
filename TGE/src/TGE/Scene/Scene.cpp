@@ -8,6 +8,7 @@
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_circle_shape.h"
 namespace TGE
 {
 	static void DoMaths(const glm::mat4& transform)
@@ -104,6 +105,7 @@ namespace TGE
 		CopyComponent<CameraComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<RigidBody2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<CircleCollider2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		return newScene;
 	}
@@ -136,9 +138,9 @@ namespace TGE
 			}
 		}
 
-		Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.f, 0.f, 1.f, 1.f));
+		//Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.f, 0.f, 1.f, 1.f));
 
-		Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(1.f, 1.f, 1.f, 1.f));
+		//Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 		Renderer2D::EndScene();
 	}
@@ -291,6 +293,25 @@ namespace TGE
 				body->CreateFixture(&fd);
 				bc2d.FixtureRuntime = &fd;//´æ´¢
 			}
+
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2CircleShape circleShape;
+				circleShape.m_p.Set(cc2d.Offset.x, cc2d.Offset.y);
+				circleShape.m_radius = cc2d.Radius;
+
+				b2FixtureDef fd;
+				fd.shape = &circleShape;
+				fd.friction = cc2d.Friction;
+				fd.density = cc2d.Density;
+				fd.restitution = cc2d.Restitution;
+				fd.restitutionThreshold = cc2d.RestitutionThreshold;
+
+				body->CreateFixture(&fd);
+				cc2d.FixtureRuntime = &fd;//´æ´¢
+			}
 		}
 	}
 	void Scene::OnRuntimeStop()
@@ -354,6 +375,7 @@ namespace TGE
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<RigidBody2DComponent>(newEntity, entity);
 		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		return newEntity;
 	}
@@ -396,6 +418,10 @@ namespace TGE
 	}
 	template<>
 	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
 	{
 	}
 	template<>

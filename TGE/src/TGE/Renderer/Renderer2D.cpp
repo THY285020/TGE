@@ -721,6 +721,7 @@ namespace TGE
 	}
 	void Renderer2D::DrawLine(const glm::vec3 p0, glm::vec3 p1, const glm::vec4& color, int entity_id)
 	{
+
 		s_Data.LineVertexBufferPtr->Position = p0;
 		s_Data.LineVertexBufferPtr->Color = color;
 		s_Data.LineVertexBufferPtr++;
@@ -736,6 +737,8 @@ namespace TGE
 	}
 	void Renderer2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entity_id)
 	{
+		if (s_Data.CircleIndexCount >= Renderer2DData::MaxIndices)
+			FlushAndReset();
 
 		for (uint32_t i = 0; i < 4; ++i)
 		{
