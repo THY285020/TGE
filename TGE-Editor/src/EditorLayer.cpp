@@ -350,7 +350,7 @@ namespace TGE
 
         m_SHP.OnImGuiRenderer();//多级菜单
         m_CBP.OnImGuiRenderer();//资产菜单
-
+        //--------------Statistics-------------------
         ImGui::Begin("Statistics");
 
         std::string name = "None";
@@ -366,6 +366,12 @@ namespace TGE
         ImGui::Text("Indices : %d", stats.GetTotalIndexCount());
         ImGui::End();
 
+        //Physics Colliders
+        ImGui::Begin("Settings");
+        ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+
+        ImGui::End();
+
         //----------------Viewport--------------------
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0, 0.0));//间隔缩小为0
         ImGui::Begin("ViewPort");
@@ -373,7 +379,7 @@ namespace TGE
         //点击选中或悬停都会更新界面
         m_ViewportFocused = ImGui::IsWindowFocused();
         m_ViewportHovered = ImGui::IsWindowHovered();
-        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered || !m_ViewportFocused);
+        Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
 
         //Resize此处更新会闪屏
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
@@ -487,7 +493,7 @@ namespace TGE
         RenderCommand::SetClearColor({ 0.1f, 0.2f, 0.3f, 1.0f });
         RenderCommand::Clear();
         
-        m_FrameBuffer->ClearAttachment(1, -1);//刷新帧缓冲1的slot为-1
+        m_FrameBuffer->ClearAttachment(1, -1);//刷新帧缓冲1的slot为-1(entity)
         //--------------------Scene----------------
         /*Renderer2D::BeginScene(m_CameraController.GetCamera());*/
         switch (m_SceneState)
@@ -507,7 +513,7 @@ namespace TGE
         //m_ActiveScene->OnUpdateRunTime(ts);
         //m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
         //Renderer2D::EndScene();
-
+        OnOverlayRender();
         //-------------------MousePos-------------------
         auto [mx, my] = ImGui::GetMousePos();
         mx -= m_ViewportBounds[0].x;
@@ -619,6 +625,56 @@ namespace TGE
             }
         }
         return true;
+    }
+    void EditorLayer::OnOverlayRender()
+    {
+        //绘制圆圈组件
+        
+        if (m_SceneState == SceneState::Play)
+        {
+            auto camera = m_ActiveScene->GetPrimaryCamera();
+            Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().camera, camera.GetComponent<TransformComponent>().GetTransform());
+        }
+        else
+        {
+            Renderer2D::BeginScene(m_EditorCamera);
+        }
+        if (m_ShowPhysicsColliders)
+        {
+            //Box Colliders
+            {
+                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+                for (auto entity : view)
+                {
+                    auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+                    glm::vec3 translation = tc.Translate + glm::vec3(bc2d.Offset, 0.0f);
+                    glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f + 0.01f, 1.0f);
+
+                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(translation))
+                        * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0, 0.0, 1.0f))
+                        * glm::scale(glm::mat4(1.0f), scale);
+
+                    Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+                }
+            }
+            //Circle Colliders
+            {
+                auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+                for (auto entity : view)
+                {
+                    auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+                    glm::vec3 translation = tc.Translate + glm::vec3(cc2d.Offset, 0.0f);
+                    glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2.0f + 0.01f);
+
+                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(translation))
+                        * glm::scale(glm::mat4(1.0f), scale);
+
+                    Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.01f);
+                }
+            }
+        }
+
+        Renderer2D::EndScene();
     }
     void EditorLayer::NewScene()
     {

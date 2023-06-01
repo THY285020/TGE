@@ -21,6 +21,9 @@ namespace TGE
 	private:
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void OnOverlayRender();
+
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
@@ -75,6 +78,8 @@ namespace TGE
 			Edit = 0, Play = 1
 		};
 		SceneState m_SceneState = SceneState::Edit;
+
+		bool m_ShowPhysicsColliders = false;
 	};
 }
 

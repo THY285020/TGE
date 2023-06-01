@@ -64,7 +64,7 @@ namespace TGE
 		LineVertex* LineVertexBufferBase = nullptr;//顶点数组的开头
 		LineVertex* LineVertexBufferPtr = nullptr;
 
-		float LineWidth = 2.f;
+		float LineWidth = 1.0f;
 
 		std::array<Ref<Texture>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1;				//WhiteTexture占用0号
