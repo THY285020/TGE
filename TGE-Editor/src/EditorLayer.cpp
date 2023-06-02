@@ -22,6 +22,7 @@ namespace TGE
         ////Texture Init here
         //m_Texture = Texture2D::Create("assets/textures/wood.png");
         m_IconPlay = Texture2D::Create("assets/Icons/PlayButton.png");
+        m_IconSimulate = Texture2D::Create("assets/Icons/SimulateButton.png");
         m_IconStop = Texture2D::Create("assets/Icons/StopButton.png");
 
         FrameBufferSpecification fbSpec;
@@ -31,7 +32,9 @@ namespace TGE
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
         //Entity
-        m_ActiveScene = std::make_shared<Scene>(fbSpec.Width, fbSpec.Height);//创建registry
+        m_EditorScene = std::make_shared<Scene>();
+        m_ActiveScene = m_EditorScene;
+        //m_ActiveScene = std::make_shared<Scene>(fbSpec.Width, fbSpec.Height);//创建registry
 #if 0
 
     //m_Camera = m_ActiveScene->CreateEntity("Camera EntityA", glm::vec3(0.f, 0.f, 5.0f));
@@ -214,16 +217,30 @@ namespace TGE
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
         ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration| ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-        Ref<Texture2D> icon = m_SceneState == SceneState::Edit ? m_IconPlay : m_IconStop;
-        float size = ImGui::GetWindowHeight();
-        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5 - size * 0.5);
-        if (ImGui::ImageButton((ImTextureID) icon ->GetRendererID(), ImVec2(size, size), ImVec2(0,0), ImVec2(1, 1), 0))
+        float size = ImGui::GetWindowHeight()-4.0f;
         {
-            if (m_SceneState == SceneState::Play)
-                OnSceneStop();
-            else if (m_SceneState == SceneState::Edit)
-                OnScenePlay();
+            Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
+            ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5 - size * 0.5);
+            if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0) )
+            {
+                if (m_SceneState == SceneState::Play)
+                    OnSceneStop();
+                else if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+                    OnScenePlay();
+            }
         }
+        ImGui::SameLine();
+        {
+            Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
+            if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0) )
+            {
+                if (m_SceneState == SceneState::Simulate)
+                    OnSceneStop();
+                else if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
+                    OnSceneSimulate();
+            }
+        }
+
 
         ImGui::PopStyleColor(3);
         ImGui::PopStyleVar(2);
@@ -232,6 +249,8 @@ namespace TGE
 
     void EditorLayer::OnScenePlay()
     {
+        if (m_SceneState == SceneState::Simulate)
+            m_SceneState = SceneState::Edit;
         m_SceneState = SceneState::Play;
 
         if(m_EditorScene != nullptr)
@@ -240,13 +259,32 @@ namespace TGE
         m_SHP.SetContext(m_ActiveScene);
     }
 
+    void EditorLayer::OnSceneSimulate()
+    {
+        if (m_SceneState == SceneState::Play)
+            m_SceneState = SceneState::Edit;
+
+        m_SceneState = SceneState::Simulate;
+
+        if (m_EditorScene != nullptr)
+            m_ActiveScene = Scene::Copy(m_EditorScene);
+        m_ActiveScene->OnSimulationStart();//world2D物理
+        m_SHP.SetContext(m_ActiveScene);
+    }
+
     void EditorLayer::OnSceneStop()
     {
+        if(m_SceneState == SceneState::Play)
+            m_ActiveScene->OnRuntimeStop();
+        else if(m_SceneState == SceneState::Simulate)
+            m_ActiveScene->OnSimulationStop();
+
         m_SceneState = SceneState::Edit;
-        m_ActiveScene->OnRuntimeStop();
+
         m_ActiveScene = m_EditorScene;
         m_SHP.SetContext(m_ActiveScene);
     }
+
 
     void EditorLayer::DuplicateEntity()
     {
@@ -506,6 +544,10 @@ namespace TGE
                 m_EditorCamera.OnUpdate(ts);//鼠标控制
                 m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
                 break;
+            case SceneState::Simulate:
+                m_EditorCamera.OnUpdate(ts);
+                m_ActiveScene->OnUpdateSimulation(ts, m_EditorCamera);
+                break;
             case SceneState::Play:
                 m_ActiveScene->OnUpdateRunTime(ts);
                 break;
@@ -629,11 +671,12 @@ namespace TGE
     void EditorLayer::OnOverlayRender()
     {
         //绘制圆圈组件
-        
         if (m_SceneState == SceneState::Play)
         {
             auto camera = m_ActiveScene->GetPrimaryCamera();
-            Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().camera, camera.GetComponent<TransformComponent>().GetTransform());
+            if (!camera)//空白场景不报错
+                return;
+            Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().camera, camera.GetComponent<TransformComponent>().GetTransform()); 
         }
         else
         {
@@ -647,11 +690,12 @@ namespace TGE
                 for (auto entity : view)
                 {
                     auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
-                    glm::vec3 translation = tc.Translate + glm::vec3(bc2d.Offset, 0.0f);
-                    glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f + 0.01f, 1.0f);
+                    //glm::vec3 translation = tc.Translate + glm::vec3(bc2d.Offset, 0.001f);
+                    glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
 
-                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(translation))
-                        * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0, 0.0, 1.0f))
+                    glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translate)
+                        * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+                        * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
                         * glm::scale(glm::mat4(1.0f), scale);
 
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));

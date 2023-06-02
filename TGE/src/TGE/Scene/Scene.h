@@ -26,11 +26,17 @@ namespace TGE
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = "Empty Entity", glm::vec3 translation = glm::vec3(0.f, 0.f, 0.f));
 		void DestroyEntity(Entity entity);
 		Entity DuplicateEntity(Entity entity);
+
 		void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
+		void OnUpdateSimulation(TimeStep ts, EditorCamera& camera);
 		void OnUpdateRunTime(TimeStep ts);
+
 		void OnViewportResize(uint32_t width, uint32_t height);
+
 		void OnRuntimeStart();
 		void OnRuntimeStop();
+		void OnSimulationStart();
+		void OnSimulationStop();
 
 		Entity GetPrimaryCamera();
 
@@ -42,6 +48,9 @@ namespace TGE
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
+		void RenderScene(EditorCamera& camera);
+		void OnPhysics2DStart();
+		void OnPhysics2DStop();
 	private:
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;

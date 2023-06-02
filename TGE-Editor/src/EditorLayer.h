@@ -34,6 +34,7 @@ namespace TGE
 		void UI_Toolbar();
 
 		void OnScenePlay();
+		void OnSceneSimulate();
 		void OnSceneStop();
 
 		void DuplicateEntity();
@@ -47,6 +48,7 @@ namespace TGE
 
 		Ref<Texture2D> m_Texture;
 		Ref<Texture2D> m_IconPlay;
+		Ref<Texture2D> m_IconSimulate;
 		Ref<Texture2D> m_IconStop;
 		glm::vec4 SquareColor = glm::vec4(0.2, 0.3, 0.8, 1.0f);
 
@@ -75,7 +77,7 @@ namespace TGE
 
 		enum class SceneState
 		{
-			Edit = 0, Play = 1
+			Edit = 0, Play = 1, Simulate =2
 		};
 		SceneState m_SceneState = SceneState::Edit;
 

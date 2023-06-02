@@ -51,6 +51,7 @@ namespace TGE
 	}
 	Scene::~Scene()
 	{
+		delete m_PhysicsWorld;
 	}
 
 	template<typename Component>
@@ -112,56 +113,40 @@ namespace TGE
 
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);
-		//遍历同时带有两个组件的group
+		RenderScene(camera);
+	}
+	void Scene::OnUpdateSimulation(TimeStep ts, EditorCamera& camera)
+	{
+		//Physics
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			const int32_t velocityIteration = 2;
+			const int32_t positionIteration = 6;
+			m_PhysicsWorld->Step(ts, velocityIteration, positionIteration);
 
-				//Renderer2D::DrawRect(transform.GetTransform(), sprite.Color, int(entity));
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
-				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-				//Renderer2D::SetEntity(int(entity));//要放在后面因为DrawQuad会调用FlushAndReset()重置
+			//改变物体位置
+			auto view = m_Registry.view<RigidBody2DComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+				b2Body* body = (b2Body*)rb2d.RuntimeBody;
+				const auto& pos = body->GetPosition();
+				transform.Translate.x = pos.x;
+				transform.Translate.y = pos.y;
+				transform.Rotation.z = body->GetAngle();
+
 			}
 		}
-
-		{
-			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
-				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-			}
-		}
-
-		//Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(5.0f), glm::vec4(1.f, 0.f, 1.f, 1.f));
-
-		//Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec3(1.0f), glm::vec4(1.f, 1.f, 1.f, 1.f));
-
-		Renderer2D::EndScene();
+		//Render
+		RenderScene(camera);
 	}
 
 	void Scene::OnUpdateRunTime(TimeStep ts)
 	{
 		//Update Script
 		{
-			//auto view = m_Registry.view<NativeScriptComponent>();
-			//for (auto entity : view)
-			//{
-			//	auto& nsc = view.get<NativeScriptComponent>(entity);
-			//	if (!nsc.Instance)
-			//	{
-			//		nsc.Instance = nsc.InitScript();
-			//		/*nsc.Instance->m_Entity = &Entity{ entity, this };*/
-			//		nsc.Instance->OnCreate();
-			//	}
-			//	
-			//	nsc.Instance->OnUpdate(ts);
-			//}
 			m_Registry.view<NativeScriptComponent>().each([=](entt::entity entity, auto& nsc)
 			{
 				if (!nsc.Instance)
@@ -257,9 +242,74 @@ namespace TGE
 			}
 		}
 	}
+	
 	void Scene::OnRuntimeStart()
 	{
-		m_PhysicsWorld = new b2World({0.f, -9.8f});//重力加速度
+		OnPhysics2DStart();
+	}
+	void Scene::OnRuntimeStop()
+	{
+		OnPhysics2DStop();
+	}
+	
+	void Scene::OnSimulationStart()
+	{
+		OnPhysics2DStart();
+	}
+	void Scene::OnSimulationStop()
+	{
+		OnPhysics2DStop();
+	}
+	
+	Entity Scene::GetPrimaryCamera()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			const auto& camera = view.get<CameraComponent>(entity);
+			if (camera.Primary)
+				return Entity{ entity, this };
+		}
+		return {};
+	}
+	void Scene::RenderScene(EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+		//遍历同时带有两个组件的group
+		{
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			if(!group.empty())//空白场景不报错
+			{
+				for (auto entity : group)
+				{
+					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+					//Renderer2D::DrawRect(transform.GetTransform(), sprite.Color, int(entity));
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+					//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+					//Renderer2D::SetEntity(int(entity));//要放在后面因为DrawQuad会调用FlushAndReset()重置
+				}
+			}
+		}
+
+		{
+			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			if (view)//空白场景不报错
+			{
+				for (auto entity : view)
+				{
+					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
+				}
+			}
+		}
+		Renderer2D::EndScene();
+	}
+
+	void Scene::OnPhysics2DStart()
+	{
+		m_PhysicsWorld = new b2World({ 0.f, -9.8f });//重力加速度
 		auto view = m_Registry.view<RigidBody2DComponent>();
 		for (auto e : view)
 		{
@@ -285,8 +335,8 @@ namespace TGE
 
 				b2FixtureDef fd;
 				fd.shape = &pgShape;
-				fd.friction =	bc2d.Friction;
-				fd.density =	bc2d.Density;
+				fd.friction = bc2d.Friction;
+				fd.density = bc2d.Density;
 				fd.restitution = bc2d.Restitution;
 				fd.restitutionThreshold = bc2d.RestitutionThreshold;
 
@@ -314,21 +364,10 @@ namespace TGE
 			}
 		}
 	}
-	void Scene::OnRuntimeStop()
+	void Scene::OnPhysics2DStop()
 	{
 		delete m_PhysicsWorld;
 		m_PhysicsWorld = nullptr;
-	}
-	Entity Scene::GetPrimaryCamera()
-	{
-		auto view = m_Registry.view<CameraComponent>();
-		for (auto entity : view)
-		{
-			const auto& camera = view.get<CameraComponent>(entity);
-			if (camera.Primary)
-				return Entity{ entity, this };
-		}
-		return {};
 	}
 	Entity Scene::CreateEntity(const std::string& name, glm::vec3 translation)
 	{
