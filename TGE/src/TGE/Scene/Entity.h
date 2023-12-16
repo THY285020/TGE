@@ -44,6 +44,7 @@ namespace TGE
 		void RemoveComponent()
 		{
 			TGE_CORE_ASSERT(HasComponent<T>(), "Entity does not have this component!");
+
 			m_Scene->m_Registry.remove<T>(m_id);
 		}
 

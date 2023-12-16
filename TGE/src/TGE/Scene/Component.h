@@ -67,7 +67,6 @@ namespace TGE
 			:Color(color) {}
 	};
 
-
 	struct CircleRendererComponent
 	{
 		glm::vec4 Color{ 1.f, 1.f, 1.f, 1.f };
@@ -81,6 +80,33 @@ namespace TGE
 		CircleRendererComponent() = default;
 		CircleRendererComponent(const CircleRendererComponent&) = default;
 		CircleRendererComponent(const glm::vec4& color)
+			:Color(color) {}
+	};
+
+	struct CubeRendererComponent
+	{
+		glm::vec4 Color{ 1.f, 1.f, 1.f, 1.f };
+
+		bool usingTexture = false;
+		Ref<Texture2D> Texture = Texture2D::Create();
+		//float TilingFactor = 1.0f;
+
+		CubeRendererComponent() = default;
+		CubeRendererComponent(const CubeRendererComponent&) = default;
+		CubeRendererComponent(const glm::vec4& color)
+			:Color(color) {}
+	};
+
+	struct SphereRendererComponent
+	{
+		glm::vec4 Color{ 1.f, 1.f, 1.f, 1.f };
+
+		bool usingTexture = false;
+		Ref<Texture2D> Texture = Texture2D::Create();
+
+		SphereRendererComponent() = default;
+		SphereRendererComponent(const SphereRendererComponent&) = default;
+		SphereRendererComponent(const glm::vec4& color)
 			:Color(color) {}
 	};
 

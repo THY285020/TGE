@@ -1,6 +1,7 @@
 #include "tgpch.h"
 #include "Scene.h"
 #include "TGE/Renderer/Renderer2D.h"
+#include "TGE/Renderer/Renderer3D.h"
 #include <glm/glm.hpp>
 #include "Entity.h"
 //Box2D
@@ -47,7 +48,6 @@ namespace TGE
 		//每次component创建都会调用OnTransformConstruct函数
 		m_Registry.on_construct<TransformComponent>().connect<&OnTransformConstruct>();
 #endif
-		
 	}
 	Scene::~Scene()
 	{
@@ -274,7 +274,10 @@ namespace TGE
 	}
 	void Scene::RenderScene(EditorCamera& camera)
 	{
+		
 		Renderer2D::BeginScene(camera);
+		Renderer3D::BeginScene(camera);
+
 		//遍历同时带有两个组件的group
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
@@ -294,17 +297,38 @@ namespace TGE
 
 		{
 			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-			if (view)//空白场景不报错
-			{
+			//if (view)//空白场景不报错
+			//{
 				for (auto entity : view)
 				{
 					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
 
 					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
 				}
+			//}
+		}
+
+		{
+			auto view = m_Registry.view<TransformComponent, CubeRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, cube] = view.get<TransformComponent, CubeRendererComponent>(entity);
+				Renderer3D::DrawCube(transform.GetTransform(), cube, int(entity));
 			}
 		}
+
+		{
+			auto view = m_Registry.view<TransformComponent, SphereRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, cube] = view.get<TransformComponent, SphereRendererComponent>(entity);
+				Renderer3D::DrawSphere(transform.GetTransform(), cube, int(entity));
+			}
+		}
+
+		//实际绘制
 		Renderer2D::EndScene();
+		Renderer3D::EndScene();
 	}
 
 	void Scene::OnPhysics2DStart()
@@ -403,6 +427,7 @@ namespace TGE
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		
 	}
 
 	Entity Scene::DuplicateEntity(Entity entity)
@@ -444,7 +469,14 @@ namespace TGE
 	template<>
 	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
 	{
-
+	}
+	template<>
+	void Scene::OnComponentAdded<CubeRendererComponent>(Entity entity, CubeRendererComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<SphereRendererComponent>(Entity entity, SphereRendererComponent& component)
+	{
 	}
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)

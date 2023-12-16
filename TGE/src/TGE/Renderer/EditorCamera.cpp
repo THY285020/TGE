@@ -63,8 +63,8 @@ namespace TGE
 				MousePan(delta);
 			else if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_LEFT))//ÊÓ½Ç×ª¶¯
 				MouseRotate(delta);
-			else if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_RIGHT))
-				MouseZoom(delta.y);
+			//else if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_RIGHT))
+			//	MouseZoom(delta.y);
 		}
 		UpdateView();
 	}

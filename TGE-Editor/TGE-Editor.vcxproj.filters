@@ -28,5 +28,8 @@
     <None Include="assets\shaders\Circle_2D.glsl" />
     <None Include="assets\shaders\Quad_2D.glsl" />
     <None Include="assets\shaders\Line_2D.glsl" />
+    <None Include="assets\shaders\Cube.glsl" />
+    <None Include="assets\shaders\Sphere.glsl" />
+    <None Include="assets\shaders\TerrainMesh.glsl" />
   </ItemGroup>
 </Project>

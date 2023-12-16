@@ -28,6 +28,13 @@ namespace TGE
 		static Ref<Texture2D> Create(const std::string& path);
 	};
 
+	class TextureCube : public Texture
+	{
+	public:
+		static Ref<TextureCube> Create();
+		static Ref<TextureCube> Create(const std::array<std::string, 6>& path);
+	};
+
 }
 
 

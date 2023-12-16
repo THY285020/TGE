@@ -31,5 +31,6 @@
 #include "TGE/Renderer/OrthoCameraController.h"
 
 #include "TGE/Renderer/Renderer2D.h"
+#include "TGE/Renderer/Renderer3D.h"
 //----------------------------
 

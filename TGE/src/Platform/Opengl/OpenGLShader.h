@@ -34,6 +34,7 @@ namespace TGE{
 		void SetUniformMat4(const std::string& name, const glm::mat4& matrix);
 		void SetUniformMat3(const std::string& name, const glm::mat3& matrix);
 
+		virtual uint32_t GetID()const override{ return Shader_ID; }
 	private:
 		std::string ReadFile(const std::string& filepath);
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);

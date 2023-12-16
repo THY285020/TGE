@@ -1,6 +1,7 @@
 #pragma once
 #include "TGE/Renderer/Texture.h"
 #include <glad/glad.h>
+#include<array>
 
 namespace TGE
 {
@@ -32,6 +33,39 @@ namespace TGE
 		uint32_t m_TextureID;
 		GLenum m_InternalFormat;
 		GLenum m_DataFormat;
+	};
+
+	class OpenGLTextureCube : public TextureCube
+	{
+	public:
+		OpenGLTextureCube();
+		//OpenGLTextureCube(uint32_t width, uint32_t height);
+		OpenGLTextureCube(const std::array<std::string, 6>& path);
+		virtual ~OpenGLTextureCube();
+
+		virtual uint32_t GetWidth() const override { return 0; }
+		virtual uint32_t GetHeight() const override { return 0; }
+		virtual uint32_t GetRendererID() const override { return m_TextureID; }
+		virtual std::string GetPath()const override { return "CubeTexture"; }
+
+		virtual void Bind(uint32_t slot) const override;
+
+		virtual void SetData(void* data, uint32_t size) override;
+
+		void SetDataI(int index, const std::string& path);
+
+		virtual bool operator ==(const Texture& other) const override
+		{
+			return m_TextureID == ((OpenGLTextureCube&)other).m_TextureID;
+		};
+	private:
+		//std::string m_Path;
+		uint32_t m_TextureID;
+		std::array<uint32_t, 6> m_Widthes;
+		std::array<uint32_t, 6> m_Heights;
+		std::array<GLenum, 6> m_InternalFormats;
+		std::array<GLenum, 6> m_DataFormats;
+		bool gammaCorrection = false;
 	};
 }
 

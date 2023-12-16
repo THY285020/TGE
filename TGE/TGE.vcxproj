@@ -140,6 +140,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\TGE\Renderer\LightManager.h" />
+    <ClInclude Include="src\TGE\Renderer\Light.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLContext.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLFrameBuffer.h" />
@@ -178,6 +180,7 @@
     <ClInclude Include="src\TGE\Renderer\RenderCommand.h" />
     <ClInclude Include="src\TGE\Renderer\Renderer.h" />
     <ClInclude Include="src\TGE\Renderer\Renderer2D.h" />
+    <ClInclude Include="src\TGE\Renderer\Renderer3D.h" />
     <ClInclude Include="src\TGE\Renderer\RendererAPI.h" />
     <ClInclude Include="src\TGE\Renderer\SceneCamera.h" />
     <ClInclude Include="src\TGE\Renderer\Shader.h" />
@@ -192,6 +195,7 @@
     <ClInclude Include="src\TGE\Utils\PlatformUtils.h" />
     <ClInclude Include="src\tgpch.h" />
     <ClInclude Include="src\TGE\Core\UUID.h" />
+    <ClInclude Include="src\TGE\Renderer\Terrain.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -448,6 +452,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\TGE\Renderer\LightManager.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Light.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLFrameBuffer.cpp" />
@@ -474,6 +480,7 @@
     <ClCompile Include="src\TGE\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\TGE\Renderer\Renderer.cpp" />
     <ClCompile Include="src\TGE\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\TGE\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\TGE\Renderer\SceneCamera.cpp" />
     <ClCompile Include="src\TGE\Renderer\Shader.cpp" />
@@ -487,6 +494,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\TGE\Core\UUID.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Terrain.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

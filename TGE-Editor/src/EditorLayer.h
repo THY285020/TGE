@@ -54,6 +54,8 @@ namespace TGE
 
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene;
+		Ref<Terrain> m_terrain;
+
 		Entity m_SquareEntity;
 		Entity m_SquareEntity2;
 		Entity m_Camera;

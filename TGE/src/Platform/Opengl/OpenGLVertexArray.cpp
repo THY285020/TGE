@@ -48,7 +48,7 @@ namespace TGE {
 	{
 		TGE_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "VertexBuffer has no layout!")
 
-			glBindVertexArray(m_VertexArrayID);
+		glBindVertexArray(m_VertexArrayID);
 		vertexBuffer->Bind();
 
 		uint32_t index = 0;
@@ -109,6 +109,7 @@ namespace TGE {
 			}//switch
 		}//for
 		m_VertexBuffers.push_back(vertexBuffer);
+		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
@@ -117,6 +118,7 @@ namespace TGE {
 		indexBuffer->Bind();
 
 		m_IndexBuffer = indexBuffer;
+		glBindVertexArray(0);
 	}
 }
 

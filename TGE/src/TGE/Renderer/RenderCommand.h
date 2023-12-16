@@ -26,9 +26,25 @@ namespace TGE {
 		{
 			s_RendererAPI->DrawIndex(vertexArray, count);
 		}
+		inline static void DrawIndexTS(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
+		{
+			s_RendererAPI->DrawIndexTS(vertexArray, count);
+		}
 		inline static void DrawLines(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
 		{
 			s_RendererAPI->DrawLines(vertexArray, count);
+		}
+		inline static void DrawPatches(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
+		{
+			s_RendererAPI->DrawPatches(vertexArray, count);
+		}
+		inline static void DrawArrays(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
+		{
+			s_RendererAPI->DrawArrays(vertexArray, count);
+		}
+		inline static void DrawArraysTS(const Ref<VertexArray>& vertexArray, uint32_t count = 0)
+		{
+			s_RendererAPI->DrawArraysTS(vertexArray, count);
 		}
 		inline static void SetLineWidth(float width)
 		{

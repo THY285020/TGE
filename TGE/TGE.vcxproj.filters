@@ -979,6 +979,10 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\TGE\Core\UUID.h" />
+    <ClInclude Include="src\TGE\Renderer\Renderer3D.h" />
+    <ClInclude Include="src\TGE\Renderer\Light.h" />
+    <ClInclude Include="src\TGE\Renderer\LightManager.h" />
+    <ClInclude Include="src\TGE\Renderer\Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -1096,5 +1100,9 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\TGE\Core\UUID.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Renderer3D.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Light.cpp" />
+    <ClCompile Include="src\TGE\Renderer\LightManager.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Terrain.cpp" />
   </ItemGroup>
 </Project>

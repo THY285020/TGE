@@ -42,6 +42,7 @@ namespace TGE
 		bool SwapChainTarget = false;
 		
 	};
+	//Specification °üº¬ AttachmentsSpecification °üº¬TextureSpecification
 	class FrameBuffer
 	{
 	public:

@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>TGE_PLATFORM_WINDOWS;TGE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\TGE\vendor\spdlog\include;..\TGE\src;..\TGE\vendor;..\TGE\vendor\glm;..\TGE\vendor\entt\include;..\TGE\vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\TGE\vendor\Glad\include;..\TGE\vendor\spdlog\include;..\TGE\src;..\TGE\vendor;..\TGE\vendor\glm;..\TGE\vendor\entt\include;..\TGE\vendor\ImGuizmo;..\TGE\vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -148,8 +148,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\Circle_2D.glsl" />
+    <None Include="assets\shaders\Cube.glsl" />
     <None Include="assets\shaders\Line_2D.glsl" />
     <None Include="assets\shaders\Quad_2D.glsl" />
+    <None Include="assets\shaders\Sphere.glsl" />
+    <None Include="assets\shaders\TerrainMesh.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

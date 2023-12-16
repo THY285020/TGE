@@ -3,6 +3,7 @@
 
 #include "Platform/Opengl/OpenGLShader.h"
 #include "Renderer2D.h"
+#include "Renderer3D.h"
 
 namespace TGE {
 
@@ -12,6 +13,7 @@ namespace TGE {
 	{
 		RenderCommand::Init();
 		Renderer2D::Init();
+		Renderer3D::Init();
 	}
 	void TGE::Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{

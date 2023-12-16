@@ -10,6 +10,8 @@
 #include "TGE/Scene/Serializer.h"
 #include "TGE/Math/Math.h"
 
+#include <glad/glad.h>
+
 namespace TGE
 {
     //extern const std::filesystem::path s_Assetpath;
@@ -94,6 +96,8 @@ namespace TGE
 #endif
         m_EditorCamera = EditorCamera(30.f, fbSpec.Width / fbSpec.Height, 0.1, 1000.f);
         m_SHP.SetContext(m_ActiveScene);
+        m_terrain = std::make_shared<Terrain>();
+        m_terrain->Init();
     }
 
     void EditorLayer::EditTransform(float* cameraView, float* cameraProjection, float* matrix, int& m_GizmoType)
@@ -240,8 +244,6 @@ namespace TGE
                     OnSceneSimulate();
             }
         }
-
-
         ImGui::PopStyleColor(3);
         ImGui::PopStyleVar(2);
         ImGui::End();
@@ -402,6 +404,16 @@ namespace TGE
         ImGui::Text("Quads : %d", stats.QuadCount);
         ImGui::Text("Vertices : %d", stats.GetTotalVertexCount());
         ImGui::Text("Indices : %d", stats.GetTotalIndexCount());
+
+        ImGui::Separator();
+
+        auto stats3d = Renderer3D::GetStats();
+        ImGui::Text("Renderer3D Stats:");
+        ImGui::Text("Draw Calls: %d", stats3d.DrawCalls);
+        ImGui::Text("Cubes : %d", stats3d.CubeCount);
+        ImGui::Text("Sphere : %d", stats3d.SphereCount);
+        ImGui::Text("Vertices : %d", stats3d.GetTotalVertexCount());
+        ImGui::Text("Indices : %d", stats3d.GetTotalIndexCount());
         ImGui::End();
 
         //Physics Colliders
@@ -429,7 +441,7 @@ namespace TGE
         uint32_t m_TextureID = m_FrameBuffer->GetColorAttachment(0);
         ImGui::Image((void*)m_TextureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
-        //接收拖动资源的载荷数据
+        //接收拖动资源的载荷数据,此处是场景文件
         if (ImGui::BeginDragDropTarget())
         {
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
@@ -526,6 +538,7 @@ namespace TGE
         }
         //------------------Renderer---------------
         Renderer2D::ResetStats();
+        Renderer3D::ResetStats();
         m_FrameBuffer->Bind();
         //以下是绘制到缓冲的部分
         RenderCommand::SetClearColor({ 0.1f, 0.2f, 0.3f, 1.0f });
@@ -534,6 +547,12 @@ namespace TGE
         m_FrameBuffer->ClearAttachment(1, -1);//刷新帧缓冲1的slot为-1(entity)
         //--------------------Scene----------------
         /*Renderer2D::BeginScene(m_CameraController.GetCamera());*/
+        
+        //glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);//sfail,dpfail,allpass 
+        //glStencilFunc(GL_ALWAYS, 1, 0xFF); // 所有的片段都应该更新模板缓冲 func,ref,mask
+        //glStencilMask(0xFF); // 启用模板缓冲写入
+        m_terrain->Begin(m_EditorCamera);
+        m_terrain->Draw();
         switch (m_SceneState)
         {
             case SceneState::Edit:
@@ -552,10 +571,21 @@ namespace TGE
                 m_ActiveScene->OnUpdateRunTime(ts);
                 break;
         }
+
         //m_ActiveScene->OnUpdateRunTime(ts);
         //m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
         //Renderer2D::EndScene();
+
+        //glStencilFunc(GL_NOTEQUAL, 1, 0xFF);//只绘制不等于1的部分
+        //glStencilMask(0x00); // 禁止模板缓冲的写入
+        //glDisable(GL_DEPTH_TEST);
+
         OnOverlayRender();
+
+        //glStencilMask(0xFF);
+        //glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        //glEnable(GL_DEPTH_TEST);
+
         //-------------------MousePos-------------------
         auto [mx, my] = ImGui::GetMousePos();
         mx -= m_ViewportBounds[0].x;
@@ -691,14 +721,17 @@ namespace TGE
                 {
                     auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
                     //glm::vec3 translation = tc.Translate + glm::vec3(bc2d.Offset, 0.001f);
-                    glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f, 1.0f);
+                    //glm::vec2 bs = bc2d.Size * 2.0f;
+                    //glm::vec3 scale = tc.Scale * glm::vec3(bs.x + 0.1f, bs.y+0.1f, 1.1f);
+                    glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size * 2.0f+0.01f, 1.0f);
 
                     glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translate)
+                        * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.0f))//glm::vec3(bc2d.Offset, 0.001f
                         * glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-                        * glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
                         * glm::scale(glm::mat4(1.0f), scale);
 
                     Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
+                    //Renderer2D::DrawQuad(transform, glm::vec4(0, 1, 0, 1));
                 }
             }
             //Circle Colliders
@@ -712,8 +745,19 @@ namespace TGE
 
                     glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(translation))
                         * glm::scale(glm::mat4(1.0f), scale);
-
+                    //Stencil
+                    //Entity e = Entity(entity, m_ActiveScene.get());
+                    //if (e.HasComponent<CircleRendererComponent>())
+                    //{
+                    //    float th = e.GetComponent<CircleRendererComponent>().Thickness;
+                    //    Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), th + 0.01f);
+                    //}
+                    //else
+                    //{
+                    //    Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.01f);
+                    //}
                     Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.01f);
+                   
                 }
             }
         }

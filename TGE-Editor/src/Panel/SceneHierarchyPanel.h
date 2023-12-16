@@ -23,6 +23,10 @@ namespace TGE
 	private:
 		Ref<Scene> m_Context;
 		Entity m_SelectionContext;
+		template<typename T, typename UIFunction>
+		void DrawComponent(const std::string name, Entity entity, UIFunction function);
+		std::array<Ref<Texture2D>, 6> imageArray;
+		std::array<std::string, 6> imagePath;
 	};
 }
 

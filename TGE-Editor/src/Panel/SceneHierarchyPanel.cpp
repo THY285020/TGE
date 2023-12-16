@@ -4,18 +4,22 @@
 #include <filesystem>
 #include "TGE/Scene/Component.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "Platform/Opengl/OpenGLTexture.h"
+#include "stb_image.h"
 
 namespace TGE
 {
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
+		imageArray.fill(Texture2D::Create());
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
 		m_SelectionContext = {};
+		imageArray.fill(Texture2D::Create());
 	}
 
 	void SceneHierarchyPanel::OnImGuiRenderer()
@@ -32,9 +36,9 @@ namespace TGE
 			m_SelectionContext = {};
 		
 		//右键空白处
-		if (ImGui::BeginPopupContextWindow(0, 1))
+		if (ImGui::BeginPopupContextWindow(0, 1))//0是ID，1是右键
 		{
-			if (ImGui::MenuItem("Create Empty Entity"))
+			if (ImGui::MenuItem("Create Entity"))
 				m_SelectionContext = m_Context->CreateEntity("Empty Entity");
 			ImGui::EndPopup();
 		}
@@ -56,31 +60,36 @@ namespace TGE
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		//选中或点击箭头则展开标志成立
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)|ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		//flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)(entity), flags, tag.c_str());//判断是否展开
+		
 		if (ImGui::IsItemClicked())//点击后设置为选中的entity
 		{
 			m_SelectionContext = entity;
 		}
+
 		//删除entity菜单
 		bool entityDeleted = false;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Delete Entity"))
+			{
 				entityDeleted = true;
-				
+			}
 			ImGui::EndPopup();
 		}
 
 		if (opened)
 		{
-			ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
-			flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-			bool opened = ImGui::TreeNodeEx((void*)12342, flags, tag.c_str());//判断是否展开
-			if (opened)
-				ImGui::TreePop();
+			//ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+			//flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+			//bool opened = ImGui::TreeNodeEx((void*)12342, flags, tag.c_str());//判断是否展开
+			//if (opened)
+			//	ImGui::TreePop();
+
 			ImGui::TreePop();
 		}
+
 
 		if (entityDeleted)
 		{
@@ -156,7 +165,7 @@ namespace TGE
 	}
 
 	template<typename T, typename UIFunction>
-	static void DrawComponent(const std::string name, Entity entity, UIFunction function)
+	void SceneHierarchyPanel::DrawComponent(const std::string name, Entity entity, UIFunction function)
 	{
 		const ImGuiTreeNodeFlags treeNodeFlags = 
 			ImGuiTreeNodeFlags_DefaultOpen 
@@ -196,7 +205,19 @@ namespace TGE
 			}
 
 			if (removeComponent)
-				entity.RemoveComponent<T>();
+			{
+				//如果是transform组件则直接删除实体
+				if (std::is_same<T, TransformComponent>::value)
+				{
+					if (m_SelectionContext == entity)
+						m_SelectionContext = {};
+					m_Context->DestroyEntity(entity);
+				}
+				else//不是则仅删除组件
+				{
+					entity.RemoveComponent<T>();
+				}
+			}				
 		}
 		
 	}
@@ -237,6 +258,18 @@ namespace TGE
 			if (!entity.HasComponent<CircleRendererComponent>() && ImGui::MenuItem("Circle Renderer"))
 			{
 				m_SelectionContext.AddComponent<CircleRendererComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (!entity.HasComponent<CubeRendererComponent>() && ImGui::MenuItem("Cube Renderer"))
+			{
+				m_SelectionContext.AddComponent<CubeRendererComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (!entity.HasComponent<SphereRendererComponent>() && ImGui::MenuItem("Sphere Renderer"))
+			{
+				m_SelectionContext.AddComponent<SphereRendererComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -352,26 +385,46 @@ namespace TGE
 				//Texture
 				ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.f);
 			});
+
 		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](CircleRendererComponent& component)
 			{
 				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 				ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
 				ImGui::DragFloat("Fade", &component.Fade, 0.0025f, 0.0f, 1.0f);
+			});
 
-				//ImGui::Image((void*)component.Texture->GetRendererID(), ImVec2{ 50.f, 50.f }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-				//if (ImGui::BeginDragDropTarget())
-				//{
-				//	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-				//	{
-				//		const wchar_t* path = (const wchar_t*)payload->Data;
-				//		std::filesystem::path texturePath = std::filesystem::path(path);
-				//		component.Texture = Texture2D::Create(texturePath.string());
-				//		component.usingTexture = true;
-				//	}
-				//	ImGui::EndDragDropTarget();
-				//}
-				////Texture
-				//ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.f);
+		DrawComponent<CubeRendererComponent>("Cube Renderer", entity, [](CubeRendererComponent& component)
+			{
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::Image((void*)component.Texture->GetRendererID(), ImVec2{ 50.f, 50.f }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath = std::filesystem::path(path);
+						component.Texture = Texture2D::Create(texturePath.string());
+						component.usingTexture = true;
+					}
+					ImGui::EndDragDropTarget();
+				}
+			});
+
+		DrawComponent<SphereRendererComponent>("Sphere Renderer", entity, [](SphereRendererComponent& component)
+			{
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+				ImGui::Image((void*)component.Texture->GetRendererID(), ImVec2{ 50.f, 50.f }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath = std::filesystem::path(path);
+						component.Texture = Texture2D::Create(texturePath.string());
+						component.usingTexture = true;
+					}
+					ImGui::EndDragDropTarget();
+				}
 			});
 
 		DrawComponent<RigidBody2DComponent>("RigidBody 2D", entity, [](RigidBody2DComponent& component)
@@ -418,6 +471,7 @@ namespace TGE
 				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 
 			});
+
 		//if (entity.HasComponent<SpriteRendererComponent>())
 		//{
 		//	bool open = ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), treeNodeFlags, "Sprite Renderer");
