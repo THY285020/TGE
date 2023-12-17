@@ -982,7 +982,7 @@
     <ClInclude Include="src\TGE\Renderer\Renderer3D.h" />
     <ClInclude Include="src\TGE\Renderer\Light.h" />
     <ClInclude Include="src\TGE\Renderer\LightManager.h" />
-    <ClInclude Include="src\TGE\Renderer\Terrain.h" />
+    <ClInclude Include="src\TGE\Renderer\Grid.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp">
@@ -1103,6 +1103,6 @@
     <ClCompile Include="src\TGE\Renderer\Renderer3D.cpp" />
     <ClCompile Include="src\TGE\Renderer\Light.cpp" />
     <ClCompile Include="src\TGE\Renderer\LightManager.cpp" />
-    <ClCompile Include="src\TGE\Renderer\Terrain.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Grid.cpp" />
   </ItemGroup>
 </Project>

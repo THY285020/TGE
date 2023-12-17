@@ -32,5 +32,6 @@
 
 #include "TGE/Renderer/Renderer2D.h"
 #include "TGE/Renderer/Renderer3D.h"
+#include "TGE/Renderer/Grid.h"
 //----------------------------
 

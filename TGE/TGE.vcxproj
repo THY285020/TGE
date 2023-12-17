@@ -195,7 +195,7 @@
     <ClInclude Include="src\TGE\Utils\PlatformUtils.h" />
     <ClInclude Include="src\tgpch.h" />
     <ClInclude Include="src\TGE\Core\UUID.h" />
-    <ClInclude Include="src\TGE\Renderer\Terrain.h" />
+    <ClInclude Include="src\TGE\Renderer\Grid.h" />
     <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -494,7 +494,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\TGE\Core\UUID.cpp" />
-    <ClCompile Include="src\TGE\Renderer\Terrain.cpp" />
+    <ClCompile Include="src\TGE\Renderer\Grid.cpp" />
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

@@ -152,7 +152,7 @@
     <None Include="assets\shaders\Line_2D.glsl" />
     <None Include="assets\shaders\Quad_2D.glsl" />
     <None Include="assets\shaders\Sphere.glsl" />
-    <None Include="assets\shaders\TerrainMesh.glsl" />
+    <None Include="assets\shaders\Grid.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

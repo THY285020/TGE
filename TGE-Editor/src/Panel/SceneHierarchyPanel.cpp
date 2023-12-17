@@ -12,14 +12,14 @@ namespace TGE
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
-		imageArray.fill(Texture2D::Create());
+		//imageArray.fill(Texture2D::Create());
 	}
 
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
 		m_SelectionContext = {};
-		imageArray.fill(Texture2D::Create());
+		//imageArray.fill(Texture2D::Create());
 	}
 
 	void SceneHierarchyPanel::OnImGuiRenderer()
@@ -63,9 +63,17 @@ namespace TGE
 		//flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)(entity), flags, tag.c_str());//判断是否展开
 		
+		
 		if (ImGui::IsItemClicked())//点击后设置为选中的entity
 		{
 			m_SelectionContext = entity;
+			//双击后更新相机位置
+			double current_time = ImGui::GetTime();
+			if (current_time - last_time <= 1)
+			{
+				m_Context->UpdateEditCamera(entity.GetComponent<TransformComponent>().Translate);
+			}
+			last_time = current_time;
 		}
 
 		//删除entity菜单

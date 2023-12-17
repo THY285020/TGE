@@ -95,9 +95,12 @@ namespace TGE
             m_Camera2.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 #endif
         m_EditorCamera = EditorCamera(30.f, fbSpec.Width / fbSpec.Height, 0.1, 1000.f);
+        m_CameraSpeed = m_EditorCamera.GetMoveSpeed();
         m_SHP.SetContext(m_ActiveScene);
-        m_terrain = std::make_shared<Terrain>();
-        m_terrain->Init();
+
+        //m_terrain = std::make_shared<Terrain>();
+        //m_terrain->Init();
+        Grid::Init();
     }
 
     void EditorLayer::EditTransform(float* cameraView, float* cameraProjection, float* matrix, int& m_GizmoType)
@@ -418,7 +421,12 @@ namespace TGE
 
         //Physics Colliders
         ImGui::Begin("Settings");
+
         ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+        if (ImGui::SliderFloat("Move Speed", &m_CameraSpeed, 1, 5))
+        {
+            m_EditorCamera.SetMoveSpeed(m_CameraSpeed);
+        }
 
         ImGui::End();
 
@@ -525,8 +533,12 @@ namespace TGE
             time_temp += ts.GetTimeSeconds();
         }
         //--------------------Camera----------------
-
-
+        //双击跳转
+        if (m_ActiveScene->CameraNeedUpdate)
+        {
+            m_EditorCamera.SetFocusPos(m_ActiveScene->m_UpdateTransform);
+            m_ActiveScene->CameraNeedUpdate = false;
+        }
         //------------------Resize-----------------
         FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
         if (m_ViewportSize.x > 0 && m_ViewportSize.y > 0 && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
@@ -551,8 +563,7 @@ namespace TGE
         //glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);//sfail,dpfail,allpass 
         //glStencilFunc(GL_ALWAYS, 1, 0xFF); // 所有的片段都应该更新模板缓冲 func,ref,mask
         //glStencilMask(0xFF); // 启用模板缓冲写入
-        m_terrain->Begin(m_EditorCamera);
-        m_terrain->Draw();
+
         switch (m_SceneState)
         {
             case SceneState::Edit:
@@ -571,6 +582,9 @@ namespace TGE
                 m_ActiveScene->OnUpdateRunTime(ts);
                 break;
         }
+
+        Grid::Begin(m_EditorCamera);
+        Grid::Draw();
 
         //m_ActiveScene->OnUpdateRunTime(ts);
         //m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);

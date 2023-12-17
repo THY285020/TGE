@@ -45,27 +45,70 @@ namespace TGE
 	}
 	float EditorCamera::ZoomSpeed() const
 	{
-		float distance = m_Distance * 0.2f;
+		float distance = m_Distance * 40.2f;
 		distance = std::max(distance, 0.0f);
-		float speed = distance * distance;
+		float speed = distance * distance * 0.5;
 		speed = std::min(speed, 100.f);//max = 100.f
 		return speed;
 	}
 	void EditorCamera::OnUpdate(TimeStep ts)
 	{
-		if (Input::IsKeyPressed(TGE_KEY_LEFT_ALT))
+
+		if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_MIDDLE))//移动
 		{
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
-			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+			glm::vec2 delta;
+			if (firstMouse)
+			{
+				m_InitialMousePosition = mouse;//第一次要更新初始坐标
+				firstMouse = false;
+			}
+			delta = (mouse - m_InitialMousePosition);
+			m_InitialMousePosition = mouse;
+			MousePan(delta * 0.003f);
+		}
+		//glm::vec2 lastPos;
+		if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_RIGHT))
+		{
+			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+			glm::vec2 delta;
+			if (firstMouse)
+			{
+				m_InitialMousePosition = mouse;//第一次要更新初始坐标
+				firstMouse = false;
+			}
+			delta = (mouse - m_InitialMousePosition);
 			m_InitialMousePosition = mouse;
 
-			if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_MIDDLE))//移动
-				MousePan(delta);
-			else if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_LEFT))//视角转动
-				MouseRotate(delta);
-			//else if (Input::IsMouseButtonPressed(TGE_MOUSE_BUTTON_RIGHT))
-			//	MouseZoom(delta.y);
+			MouseRotate(delta * 0.003f);
+					
+			//方向键移动
+			if (Input::IsKeyPressed(TGE_KEY_W))
+			{
+				m_FocalPoint += 2 * m_MoveSpeed * GetForwardDirection();
+			}
+			if (Input::IsKeyPressed(TGE_KEY_S))
+			{
+				m_FocalPoint -= 2 * m_MoveSpeed * GetForwardDirection();;
+			}			
+			if (Input::IsKeyPressed(TGE_KEY_A))
+			{
+				m_FocalPoint -= 2 * m_MoveSpeed * GetRightDirection();
+			}			
+			if (Input::IsKeyPressed(TGE_KEY_D))
+			{
+				m_FocalPoint += 2 * m_MoveSpeed * GetRightDirection();
+			}
+			if (Input::IsKeyPressed(TGE_KEY_Q))
+			{
+				m_FocalPoint += m_MoveSpeed * GetUpDirection();
+			}
+			if (Input::IsKeyPressed(TGE_KEY_E))
+			{
+				m_FocalPoint -= m_MoveSpeed * GetUpDirection();
+			}
 		}
+
 		UpdateView();
 	}
 
@@ -73,6 +116,8 @@ namespace TGE
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(TGE_BIND_EVENT_FN(EditorCamera::OnMouseScroll));
+		dispatcher.Dispatch<MouseButtonReleasedEvent>(TGE_BIND_EVENT_FN(EditorCamera::OnMouseRelease));
+
 	}
 
 	bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)
@@ -80,6 +125,12 @@ namespace TGE
 		float delta = e.GetYOffset() * 0.1f;
 		MouseZoom(delta);
 		UpdateView();
+		return false;
+	}
+
+	bool EditorCamera::OnMouseRelease(MouseButtonReleasedEvent& e)
+	{
+		firstMouse = true;
 		return false;
 	}
 

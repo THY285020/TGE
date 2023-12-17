@@ -4,7 +4,6 @@
 #include "TGE/Core/UUID.h"
 #include "TGE/Scene/Component.h"
 #include "TGE/Renderer/EditorCamera.h"
-#include "TGE/Renderer/Terrain.h"
 
 class b2World;
 namespace TGE
@@ -42,11 +41,20 @@ namespace TGE
 
 		Entity GetPrimaryCamera();
 
+		void UpdateEditCamera(glm::vec3 transform) {
+			m_UpdateTransform = transform; 
+			CameraNeedUpdate = true;
+		}
+
 		template<typename ...Components>
 		auto GetAllEntitiesWith()
 		{
 			return m_Registry.view<Components...>();
 		}
+
+		bool CameraNeedUpdate = false;
+		glm::vec3 m_UpdateTransform;
+
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

@@ -9,7 +9,9 @@ struct VertexOutput
 	vec2 TexCoord;
 	vec3 Color;
 };
+
 uniform mat4 ViewProj;
+uniform mat4 Transform;
 
 layout(location = 0) out VertexOutput Output;
 
@@ -17,7 +19,7 @@ void main() {
 	Output.TexCoord = aTexCoord;
 	Output.Color = aColor;
 
-	gl_Position = ViewProj * vec4(aPos, 1.0);
+	gl_Position = ViewProj * Transform * vec4(aPos, 1.0);
 }
 
 #type fragment
@@ -32,6 +34,7 @@ struct VertexOutput
 layout(location = 0) in VertexOutput Input;
 
 layout(location = 0) out vec4 FragColor;
+layout(location = 1) out int entity_id;
 
 void main() {
 
@@ -43,9 +46,10 @@ void main() {
 	
 	uv = abs(uv - 0.5);
 	float min = min(uv.x, uv.y);
-	float isShader = 1.0 - step(0.05, min);//小于0.05（边缘）则绘制
+	float isShader = 1.0 - step(0.005, min);//小于0.05（边缘）则绘制
 
 	vec3 color = Input.Color * isShader;
 
-	FragColor = vec4(color, 1.0);
+	FragColor = vec4(color, isShader);
+	entity_id = -1;
 }

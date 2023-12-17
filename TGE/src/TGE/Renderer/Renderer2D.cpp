@@ -103,6 +103,11 @@ namespace TGE
 		//};
 		//CameraBuffer cameraBuffer;
 		//Ref<UniformBuffer> CameraUniformBuffer;
+
+		//Ref<VertexArray> terrainVAO;
+		//Ref<VertexBuffer> terrainVBO;
+		//Ref<IndexBuffer> terrainIBO;
+		//Ref<Shader> terrainShader;
 	};
 
 	static Renderer2DData s_Data;
@@ -219,58 +224,85 @@ namespace TGE
 
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };//0.5f,  0.5f, 0.0f, 1.0f
+		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };//-0.5f,  0.5f, 0.0f, 1.0f
 
 		//--------------------Cube-----------------------
-		s_Data.CubeVertexPositions[0] = { -0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[1] = {  0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[2] = {  0.5f,  0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[3] = {  0.5f,  0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[4] = { -0.5f,  0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[5] = { -0.5f, -0.5f, -0.5f, 1.0f };
-		
-		s_Data.CubeVertexPositions[6] =  { -0.5f, -0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[7] =  { 0.5f, -0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[8] =  { 0.5f,  0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[9] =  { 0.5f,  0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[10] = { -0.5f, 0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[11] = { -0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[0] = { -0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[1] = {  0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[2] = {  0.5f,  0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[3] = {  0.5f,  0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[4] = { -0.5f,  0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[5] = { -0.5f, -0.5f, -0.5f, 1.0f };
+		//
+		//s_Data.CubeVertexPositions[6] =  { -0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[7] =  { 0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[8] =  { 0.5f,  0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[9] =  { 0.5f,  0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[10] = { -0.5f, 0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[11] = { -0.5f, -0.5f,  0.5f, 1.0f };
 	
-		s_Data.CubeVertexPositions[12] = { -0.5f,  0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[13] = { -0.5f,  0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[14] = { -0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[15] = { -0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[16] = { -0.5f, -0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[17] = { -0.5f,  0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[12] = { -0.5f,  0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[13] = { -0.5f,  0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[14] = { -0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[15] = { -0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[16] = { -0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[17] = { -0.5f,  0.5f,  0.5f, 1.0f };
 	
-		s_Data.CubeVertexPositions[18] = { 0.5f,  0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[19] = { 0.5f,  0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[20] = { 0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[21] = { 0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[22] = { 0.5f, -0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[23] = { 0.5f,  0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[18] = { 0.5f,  0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[19] = { 0.5f,  0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[20] = { 0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[21] = { 0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[22] = { 0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[23] = { 0.5f,  0.5f,  0.5f, 1.0f };
 
-		s_Data.CubeVertexPositions[18] = { 0.5f,  0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[19] = { 0.5f,  0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[20] = { 0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[21] = { 0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[22] = { 0.5f, -0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[23] = { 0.5f,  0.5f,  0.5f, 1.0f };
-			
-		s_Data.CubeVertexPositions[24] = { -0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[25] = {  0.5f, -0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[26] = {  0.5f, -0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[27] = {  0.5f, -0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[28] = { -0.5f, -0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[29] = { -0.5f, -0.5f, -0.5f, 1.0f };
-			
-		s_Data.CubeVertexPositions[30] = { -0.5f, 0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[31] = {  0.5f, 0.5f, -0.5f, 1.0f };
-		s_Data.CubeVertexPositions[32] = {  0.5f, 0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[33] = {  0.5f, 0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[34] = { -0.5f, 0.5f,  0.5f, 1.0f };
-		s_Data.CubeVertexPositions[35] = { -0.5f, 0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[18] = { 0.5f,  0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[19] = { 0.5f,  0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[20] = { 0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[21] = { 0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[22] = { 0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[23] = { 0.5f,  0.5f,  0.5f, 1.0f };
+		//	
+		//s_Data.CubeVertexPositions[24] = { -0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[25] = {  0.5f, -0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[26] = {  0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[27] = {  0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[28] = { -0.5f, -0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[29] = { -0.5f, -0.5f, -0.5f, 1.0f };
+		//	
+		//s_Data.CubeVertexPositions[30] = { -0.5f, 0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[31] = {  0.5f, 0.5f, -0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[32] = {  0.5f, 0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[33] = {  0.5f, 0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[34] = { -0.5f, 0.5f,  0.5f, 1.0f };
+		//s_Data.CubeVertexPositions[35] = { -0.5f, 0.5f, -0.5f, 1.0f };
+
+		//tData.terrainShader = Shader::Create("assets/shaders/TerrainMesh.glsl");
+
+		//tData.terrainVAO = VertexArray::Create();
+		//tData.terrainVBO = VertexBuffer::Create(sizeof(TerrainData));//申请
+
+		//tData.terrainVBO->SetLayout({
+		//	 { ShaderDataType::Float3, "aPos"},
+		//	 { ShaderDataType::Float2, "aTexCoord"},
+		//	 { ShaderDataType::Float3, "aColor" }
+		//	});
+		//tData.terrainVAO->AddVertexBuffer(tData.terrainVBO);
+
+		//unsigned int indices[4] = { 0, 1, 3, 2 };
+		//tData.terrainIBO = IndexBuffer::Create(indices, 4);
+		//tData.terrainVAO->SetIndexBuffer(tData.terrainIBO);
+
+		//float verticesMesh[] =
+		//{
+		//	-0.5, -0.5, 0.0	, 0.0, 0.0, 1.0f,1.0f,1.0f,
+		//	 0.5, -0.5, 0.0	, 1.0, 0.0, 1.0f,1.0f,1.0f,
+		//	 0.5,  0.5, 0.0	, 1.0, 1.0, 1.0f,1.0f,1.0f,
+		//	-0.5,  0.5, 0.0 , 0.0, 1.0, 1.0f,1.0f,1.0f
+		//};
+
+		//tData.terrainVBO->SetData(verticesMesh, sizeof(verticesMesh));
+
 
 	}
 
@@ -391,7 +423,7 @@ namespace TGE
 			uint32_t dataSize = (uint8_t*)s_Data.CircleVertexBufferPtr - (uint8_t*)s_Data.CircleVertexBufferBase;
 			s_Data.CircleVertexBuffer->SetData(s_Data.CircleVertexBufferBase, dataSize);//此时才把数据输入VBO
 			s_Data.CircleShader->Bind();
-			RenderCommand::DrawIndex(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
+			RenderCommand::DrawIndexTS(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
 		if (s_Data.LineVertexCount)

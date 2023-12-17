@@ -30,6 +30,6 @@
     <None Include="assets\shaders\Line_2D.glsl" />
     <None Include="assets\shaders\Cube.glsl" />
     <None Include="assets\shaders\Sphere.glsl" />
-    <None Include="assets\shaders\TerrainMesh.glsl" />
+    <None Include="assets\shaders\Grid.glsl" />
   </ItemGroup>
 </Project>

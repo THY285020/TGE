@@ -19,6 +19,11 @@ namespace TGE
 		void OnEvent(Event& e);
 
 		inline void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
+		void SetFocusPos(glm::vec3 newPos) { 
+			m_FocalPoint = newPos; 
+			//m_Position = newPos + glm::vec3(0.0f, 0.0f, 2.5f); 因为position会根据focal_point改变 
+			UpdateView(); 
+		}
 
 		glm::vec3 GetUpDirection() const;
 		glm::vec3 GetRightDirection() const;
@@ -32,6 +37,8 @@ namespace TGE
 		float GetPitch() const { return m_Pitch; }
 		float GetYaw() const { return m_Yaw; }
 
+		float GetMoveSpeed()const { return m_MoveSpeed; }
+		void SetMoveSpeed(float speed) { m_MoveSpeed = 0.01 * speed; }
 	private:
 		void UpdateProjection();
 
@@ -42,6 +49,7 @@ namespace TGE
 		float ZoomSpeed() const;
 
 		bool OnMouseScroll(MouseScrolledEvent& e);
+		inline bool OnMouseRelease(MouseButtonReleasedEvent& e);
 		void MousePan(const glm::vec2& delta);
 		void MouseRotate(const glm::vec2& delta);
 		void MouseZoom(float delta);
@@ -58,6 +66,9 @@ namespace TGE
 		float m_FarClip = 1000.f;
 		float m_AspectRatio = 1.778f;
 		float m_Fov = 45.f;
+
+		float m_MoveSpeed = 0.01f;
+		bool firstMouse = true;
 
 		float m_Distance = 10.f;
 		float m_ViewportWidth;

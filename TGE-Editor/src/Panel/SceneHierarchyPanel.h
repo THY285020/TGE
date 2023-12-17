@@ -25,8 +25,9 @@ namespace TGE
 		Entity m_SelectionContext;
 		template<typename T, typename UIFunction>
 		void DrawComponent(const std::string name, Entity entity, UIFunction function);
-		std::array<Ref<Texture2D>, 6> imageArray;
-		std::array<std::string, 6> imagePath;
+		double last_time = 0.0;
+		//std::array<Ref<Texture2D>, 6> imageArray;
+		//std::array<std::string, 6> imagePath;
 	};
 }
 
