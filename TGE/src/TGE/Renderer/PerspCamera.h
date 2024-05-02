@@ -36,11 +36,29 @@ namespace TGE {
 		void SetPosition(const glm::vec3& position) { Position = position; RecalViewMatrix(); }
 		const glm::vec3& GetPosition() const { return Position; }
 		
-		void SetRotation(const float rotation) { Rotation = rotation; RecalViewMatrix(); }
+		void SetRotation(const glm::vec3 rotation) 
+		{ 
+			glm::mat4 Rotatin = glm::mat4_cast(glm::quat(rotation));
+			Front = Rotation * glm::vec4(Front, 1.0f);
+			//Up = Rotation * glm::vec4(Up, 1.0f);
+			RecalViewMatrix(); 
+		}
+
+		void SetLookAt(glm::vec3 pos, glm::vec3 front, glm::vec3 up)
+		{
+			Position = pos;
+			Front = front;
+			Up = up;
+			RecalViewMatrix();
+		}
 		const float GetRotation() const { return Rotation; }
 
 		void SetZoom(const float zoom) { Zoom = zoom; RecalViewMatrix(); }
 		const float GetZoom() const { return Zoom; }
+
+		void SetFarPlane(float farPlane) { FarPlane = farPlane; RecalProjectionMatrix(); }
+		void SetNearPlane(float nearPlane) { NearPlane = nearPlane; RecalProjectionMatrix(); }
+		void SetAspectRatio(float aspectRatio) { AspectRatio = aspectRatio; RecalProjectionMatrix(); }
 
 		const glm::mat4& GetViewMatrix()const { return ViewMatrix; }
 		const glm::mat4& GetProjectionMatrix()const { return ProjectionMatrix; }
@@ -49,7 +67,7 @@ namespace TGE {
 
 	private:
 		void RecalViewMatrix();
-
+		void RecalProjectionMatrix();
 	private:
 		glm::vec3 Position;
 		glm::vec3 Front;
@@ -69,5 +87,6 @@ namespace TGE {
 	
 	};
 }
+
 
 

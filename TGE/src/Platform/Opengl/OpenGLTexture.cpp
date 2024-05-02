@@ -96,6 +96,12 @@ namespace TGE
 		glActiveTexture(GL_TEXTURE0 + slot);
 		glBindTexture(GL_TEXTURE_2D, m_TextureID);
 	}
+	void OpenGLTexture2D::GenMipmap() const
+	{
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
 		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
@@ -119,6 +125,7 @@ namespace TGE
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	}
+
 
 	OpenGLTextureCube::OpenGLTextureCube(const std::array<std::string, 6>& path)
 	{
@@ -146,13 +153,12 @@ namespace TGE
 				else if (channels == 3)
 				{
 					m_InternalFormats[i] = gammaCorrection ? GL_SRGB : GL_RGB;
-					m_InternalFormats[i] = GL_RGB;
+					
 					m_DataFormats[i] = GL_RGB;
 				}
 				else if (channels == 4)
 				{
 					m_InternalFormats[i] = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
-					m_InternalFormats[i] = GL_RGBA;
 					m_DataFormats[i] = GL_RGBA;
 				}
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormats[i], width, height, 0, m_DataFormats[i], GL_UNSIGNED_BYTE, data);
@@ -180,6 +186,13 @@ namespace TGE
 	{
 		glActiveTexture(GL_TEXTURE0 + slot);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
+	}
+
+	void OpenGLTextureCube::GenMipmap() const
+	{
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_TextureID);
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	}
 
 	void OpenGLTextureCube::SetData(void* data, uint32_t size)
@@ -222,6 +235,7 @@ namespace TGE
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, m_InternalFormats[i], width, height, 0, m_DataFormats[i], GL_UNSIGNED_BYTE, data);
 
 	}
+
 
 	//void OpenGLTextureCube::SetData(void* data, uint32_t size)
 	//{

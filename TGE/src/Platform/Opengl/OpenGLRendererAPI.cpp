@@ -10,7 +10,7 @@ namespace TGE {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);//混合因子，混合方法
 
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_LINE_SMOOTH);//传统AA
+		//glEnable(GL_LINE_SMOOTH);//传统AA
 		glEnable(GL_MULTISAMPLE);//MSAA
 
 		glEnable(GL_STENCIL_TEST);//模板测试
@@ -22,6 +22,21 @@ namespace TGE {
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
+	}
+
+	void OpenGLRendererAPI::SetCullFaceFront()
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+	}
+	void OpenGLRendererAPI::SetCullFaceBack()
+	{
+		glCullFace(GL_BACK);
+	}
+
+	void OpenGLRendererAPI::CloseCullFace()
+	{
+		glDisable(GL_CULL_FACE);
 	}
 
 	void OpenGLRendererAPI::Clear()

@@ -16,4 +16,16 @@ namespace TGE
 		TGE_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
+
+	Ref<FrameBuffer> FrameBuffer::Create()
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None: TGE_CORE_ASSERT(false, "RendererAPI::None is currently support!")
+		case RendererAPI::API::OpenGL: return std::make_shared<OpenGLFrameBuffer>();
+		}
+
+		TGE_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
 }

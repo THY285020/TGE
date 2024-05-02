@@ -47,7 +47,7 @@ namespace TGE
 	{
 		static constexpr uint32_t MaxQuads = 2000;
 		static constexpr uint32_t MaxVertices = MaxQuads * 4;//4个顶点
-		static constexpr uint32_t MaxIndices = MaxQuads * 4; //6个索引
+		static constexpr uint32_t MaxIndices = MaxQuads * 6; //6个索引
 		static constexpr uint32_t MaxTextureSlots = 32;//render caps
 
 		Ref<VertexArray> QuadVertexArray;
@@ -127,8 +127,9 @@ namespace TGE
 
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
-		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];//顶点数组
-		
+		//s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];//顶点数组
+		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxIndices];//顶点数组
+
 		//Index																 //
 		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];		//索引数组
 
@@ -146,13 +147,24 @@ namespace TGE
 		//	quadIndices[i + 5] = offset + 0;
 		//}
 
+		//uint32_t offset = 0;
+		//for (uint32_t i = 0; i < s_Data.MaxIndices; i += 4, offset += 4)
+		//{
+		//	quadIndices[i + 0] = offset + 0;
+		//	quadIndices[i + 1] = offset + 1;
+		//	quadIndices[i + 2] = offset + 2;
+		//	quadIndices[i + 3] = offset + 3;
+		//}
+
 		uint32_t offset = 0;
-		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 4, offset += 4)
+		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6, offset += 4)
 		{
 			quadIndices[i + 0] = offset + 0;
 			quadIndices[i + 1] = offset + 1;
-			quadIndices[i + 2] = offset + 3;
+			quadIndices[i + 2] = offset + 2;
 			quadIndices[i + 3] = offset + 2;
+			quadIndices[i + 4] = offset + 3;
+			quadIndices[i + 5] = offset + 0;
 		}
 
 		/*Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, sizeof(quadIndices) / sizeof(uint32_t));*/
@@ -226,6 +238,13 @@ namespace TGE
 		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
 		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };//0.5f,  0.5f, 0.0f, 1.0f
 		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };//-0.5f,  0.5f, 0.0f, 1.0f
+
+		//s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+		//s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
+		//s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };//0.5f,  0.5f, 0.0f, 1.0f
+		//s_Data.QuadVertexPositions[3] = {  0.5f,  0.5f, 0.0f, 1.0f };//-0.5f,  0.5f, 0.0f, 1.0f
+		//s_Data.QuadVertexPositions[4] = { -0.5f,  0.5f, 0.0f, 1.0f };//-0.5f,  0.5f, 0.0f, 1.0f
+		//s_Data.QuadVertexPositions[5] = { -0.5f, -0.5f, 0.0f, 1.0f };
 
 		//--------------------Cube-----------------------
 		//s_Data.CubeVertexPositions[0] = { -0.5f, -0.5f, -0.5f, 1.0f };
@@ -415,7 +434,7 @@ namespace TGE
 			}
 			//（VAO，索引数量）
 			s_Data.QuadShader->Bind();
-			RenderCommand::DrawIndexTS(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+			RenderCommand::DrawIndex(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
 		if (s_Data.CircleIndexCount)
@@ -423,7 +442,7 @@ namespace TGE
 			uint32_t dataSize = (uint8_t*)s_Data.CircleVertexBufferPtr - (uint8_t*)s_Data.CircleVertexBufferBase;
 			s_Data.CircleVertexBuffer->SetData(s_Data.CircleVertexBufferBase, dataSize);//此时才把数据输入VBO
 			s_Data.CircleShader->Bind();
-			RenderCommand::DrawIndexTS(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
+			RenderCommand::DrawIndex(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
 		if (s_Data.LineVertexCount)
@@ -800,7 +819,7 @@ namespace TGE
 			s_Data.QuadVertexBufferPtr->ID = entity_id;
 			s_Data.QuadVertexBufferPtr++;
 		}
-		s_Data.QuadIndexCount += 4;
+		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 	}
 	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, const float tilingFactor = 1.0f)
@@ -811,7 +830,7 @@ namespace TGE
 		constexpr glm::vec4 color(1.0, 1.0, 1.0, 1.0);
 		float texIndex = 0.0f;
 		constexpr float QuadVertexCount = 4;
-		constexpr glm::vec2 TexCoords[4] = { { 0.0f, 0.0f},{ 1.0f, 0.0f },{ 1.0f, 1.0f },{ 0.0f, 1.0f } };
+		constexpr glm::vec2 TexCoords[4] = { { 0.0f, 0.0f},{ 1.0f, 0.0f },{ 1.0f, 1.0f }, { 0.0f, 1.0f }};
 
 		//第一轮传入texture后，便不再需要传递texture
 		for (uint32_t i = 1; i < s_Data.TextureSlots.size(); ++i)
@@ -839,7 +858,7 @@ namespace TGE
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 			s_Data.QuadVertexBufferPtr++;
 		}
-		s_Data.QuadIndexCount += 4;
+		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 	}
 	void Renderer2D::DrawQuad(const glm::mat4& transform, Ref<Texture2D> texture, glm::vec4 color = glm::vec4(1.f, 1.f, 1.f, 1.f), const float tilingFactor = 1.0f, int entity_id=-1)
@@ -850,7 +869,7 @@ namespace TGE
 		//constexpr glm::vec4 color(1.0, 1.0, 1.0, 1.0);
 		float texIndex = 0.0f;
 		constexpr float QuadVertexCount = 4;
-		constexpr glm::vec2 TexCoords[4] = { { 0.0f, 0.0f},{ 1.0f, 0.0f },{ 1.0f, 1.0f },{ 0.0f, 1.0f } };
+		constexpr glm::vec2 TexCoords[4] = { { 0.0f, 0.0f},{ 1.0f, 0.0f },{ 1.0f, 1.0f }, { 0.0f, 1.0f }};
 
 		//第一轮传入texture后，便不再需要传递texture
 		for (uint32_t i = 1; i < s_Data.TextureSlots.size(); ++i)
@@ -879,7 +898,7 @@ namespace TGE
 			s_Data.QuadVertexBufferPtr->ID = entity_id;
 			s_Data.QuadVertexBufferPtr++;
 		}
-		s_Data.QuadIndexCount += 4;
+		s_Data.QuadIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 	}
 	void Renderer2D::DrawLine(const glm::vec3 p0, glm::vec3 p1, const glm::vec4& color, int entity_id)
@@ -913,7 +932,7 @@ namespace TGE
 			s_Data.CircleVertexBufferPtr->Fade = fade;
 			s_Data.CircleVertexBufferPtr++;
 		}
-		s_Data.CircleIndexCount += 4;
+		s_Data.CircleIndexCount += 6;
 		s_Data.Stats.QuadCount++;
 
 		s_Data.CircleShader->Bind();

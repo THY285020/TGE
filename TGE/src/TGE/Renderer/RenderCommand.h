@@ -18,6 +18,18 @@ namespace TGE {
 		{
 			s_RendererAPI->SetClearColor(color);
 		}
+		inline static void SetCullFaceFront()
+		{
+			s_RendererAPI->SetCullFaceFront();
+		}
+		inline static void SetCullFaceBack()
+		{
+			s_RendererAPI->SetCullFaceBack();
+		}
+		inline static void CloseCullFace()
+		{
+			s_RendererAPI->CloseCullFace();
+		}
 		inline static void Clear()
 		{
 			s_RendererAPI->Clear();

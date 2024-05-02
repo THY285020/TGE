@@ -80,16 +80,21 @@ namespace TGE
 	{
 		tData.GridShader = Shader::Create("assets/shaders/Grid.glsl");
 
-		float verticesMesh[] =
+		float gridVertices[] =
 		{
-			-1.0, -1.0, 0.0	, 0.0, 0.0, 0.5f,0.5f,0.5f,
-			 1.0, -1.0, 0.0	, 1.0, 0.0, 0.5f,0.5f,0.5f,
-			 1.0,  1.0, 0.0	, 1.0, 1.0, 0.5f,0.5f,0.5f,
-			-1.0,  1.0, 0.0 , 0.0, 1.0, 0.5f,0.5f,0.5f
+			-1.0, 0.0, -1.0, 0.0, 0.0, 0.5f,0.5f,0.5f,
+			 1.0, 0.0, -1.0, 1.0, 0.0, 0.5f,0.5f,0.5f,
+			 1.0, 0.0,  1.0, 1.0, 1.0, 0.5f,0.5f,0.5f,
+			-1.0, 0.0,  1.0, 0.0, 1.0, 0.5f,0.5f,0.5f,
+
+			-1.0, 0.5, -1.0, 0.0, 0.0, 0.5f,0.5f,0.5f,
+			 1.0, 0.5, -1.0, 1.0, 0.0, 0.5f,0.5f,0.5f,
+			 1.0, 0.5,  1.0, 1.0, 1.0, 0.5f,0.5f,0.5f,
+			-1.0, 0.5,  1.0, 0.0, 1.0, 0.5f,0.5f,0.5f
 		};
 
 		tData.GridVAO = VertexArray::Create();
-		tData.GridVBO = VertexBuffer::Create(verticesMesh, sizeof(verticesMesh));
+		tData.GridVBO = VertexBuffer::Create(gridVertices, sizeof(gridVertices));
 
 		tData.GridVBO->SetLayout({
 			 { ShaderDataType::Float3, "aPos"},
@@ -103,8 +108,8 @@ namespace TGE
 		tData.GridVAO->SetIndexBuffer(tData.GridIBO);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, -2.0, 0.0));
-		transform =	glm::rotate(transform, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
-		transform = glm::scale(transform, glm::vec3(100, 100, 100));
+		//transform =	glm::rotate(transform, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+		transform = glm::scale(transform, glm::vec3(1000, 1, 1000));
 
 		tData.GridShader->Bind();
 		tData.GridShader->SetMat4("Transform", transform);

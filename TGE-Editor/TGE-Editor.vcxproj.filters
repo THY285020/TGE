@@ -31,5 +31,6 @@
     <None Include="assets\shaders\Cube.glsl" />
     <None Include="assets\shaders\Sphere.glsl" />
     <None Include="assets\shaders\Grid.glsl" />
+    <None Include="assets\shaders\Sky.glsl" />
   </ItemGroup>
 </Project>

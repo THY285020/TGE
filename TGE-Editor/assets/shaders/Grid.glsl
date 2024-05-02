@@ -13,7 +13,7 @@ struct VertexOutput
 uniform mat4 ViewProj;
 uniform mat4 Transform;
 
-layout(location = 0) out VertexOutput Output;
+layout(location = 0) flat out VertexOutput Output;
 
 void main() {
 	Output.TexCoord = aTexCoord;
@@ -38,18 +38,28 @@ layout(location = 1) out int entity_id;
 
 void main() {
 
-	vec2 uv = Input.TexCoord * 30;//tiling
+	vec2 uv = Input.TexCoord * 100;//tiling
 
 	//截取小数
 	uv.x = uv.x - int(uv.x);
 	uv.y = uv.y - int(uv.y);
-	
+
 	uv = abs(uv - 0.5);
 	float min = min(uv.x, uv.y);
 	float isShader = 1.0 - step(0.005, min);//小于0.05（边缘）则绘制
 
+	//方案1
 	vec3 color = Input.Color * isShader;
 
-	FragColor = vec4(color, isShader);
+	FragColor = vec4(Input.Color, isShader);
+
+	//方案2
+	//vec4 color = vec4(Input.Color, 0.0);
+	//if (min <= 0.005)
+	//{
+	//	color.a = 1.0;
+	//}
+	//FragColor = color;
+
 	entity_id = -1;
 }

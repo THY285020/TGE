@@ -229,7 +229,7 @@ namespace TGE
 				float zPos = std::sin(2 * s_Data.PI * phi) * std::sin(s_Data.PI * xita);
 				//0-Y, Y+1-2Y+1, 2Y+2-3Y+2 (X)*(Y+1)-X*Y+X+Y=(X+1)*(Y+1)-1
 				s_Data.SphereVertexPositions[x * (s_Data.Y_Segments+1) + y] = glm::vec4(xPos, yPos, zPos, 1.0f);
-				s_Data.SphereTexCoords[x * (s_Data.Y_Segments + 1) + y] = glm::vec2(phi, xita);
+				s_Data.SphereTexCoords[x * (s_Data.Y_Segments + 1) + y] = glm::vec2(phi, -xita);//从顶部往下，x轴方向开始逆时针
 				s_Data.SphereNormals[x * (s_Data.Y_Segments + 1) + y] = glm::vec3(xPos, yPos, zPos);
 			}
 		}
@@ -663,6 +663,11 @@ namespace TGE
 	Renderer3D::Statistics Renderer3D::GetStats()
 	{
 		return s_Data.Stats;
+	}
+
+	Ref<VertexArray> Renderer3D::GetSphereVAO()
+	{
+		return s_Data.SphereVertexArray;
 	}
 }
 

@@ -202,6 +202,7 @@ namespace TGE
 
 		if (mainCamera)
 		{
+			Renderer3D::BeginScene(*mainCamera, mainTransform);
 			Renderer2D::BeginScene(*mainCamera, mainTransform);
 			//DrawSprite
 			{
@@ -223,6 +224,17 @@ namespace TGE
 					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
 				}
 			}
+
+			{
+				auto view = m_Registry.view<TransformComponent, SphereRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, sphere] = view.get<TransformComponent, SphereRendererComponent>(entity);
+					Renderer3D::DrawSphere(transform.GetTransform(), sphere, int(entity));
+				}
+			}
+
+			Renderer3D::EndScene();
 			Renderer2D::EndScene();
 		}
 		
@@ -275,6 +287,7 @@ namespace TGE
 	void Scene::RenderScene(EditorCamera& camera)
 	{
 		
+
 		Renderer2D::BeginScene(camera);
 		Renderer3D::BeginScene(camera);
 
@@ -294,6 +307,7 @@ namespace TGE
 				}
 			}
 		}
+
 
 		{
 			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();

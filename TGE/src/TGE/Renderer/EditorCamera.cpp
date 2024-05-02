@@ -45,7 +45,7 @@ namespace TGE
 	}
 	float EditorCamera::ZoomSpeed() const
 	{
-		float distance = m_Distance * 40.2f;
+		float distance = m_Distance * 30.2f;//40.2f
 		distance = std::max(distance, 0.0f);
 		float speed = distance * distance * 0.5;
 		speed = std::min(speed, 100.f);//max = 100.f
@@ -65,6 +65,7 @@ namespace TGE
 			}
 			delta = (mouse - m_InitialMousePosition);
 			m_InitialMousePosition = mouse;
+
 			MousePan(delta * 0.003f);
 		}
 		//glm::vec2 lastPos;
@@ -81,6 +82,18 @@ namespace TGE
 			m_InitialMousePosition = mouse;
 
 			MouseRotate(delta * 0.003f);
+
+			//{
+			//	m_Yaw += delta.x;
+			//	m_Pitch -= delta.y;
+			//	glm::vec3 front;
+			//	front.x = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));//sin(glm::radians(yaw))
+			//	front.y = sin(glm::radians(m_Pitch));
+			//	front.z = -cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));//cos
+			//	front = glm::normalize(front);
+			// //位置 朝向 相机上方向
+			//	m_ViewMatrix = glm::lookAt(m_FocalPoint, m_FocalPoint + front, up);
+			//}
 					
 			//方向键移动
 			if (Input::IsKeyPressed(TGE_KEY_W))

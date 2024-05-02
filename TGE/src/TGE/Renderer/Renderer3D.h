@@ -51,6 +51,9 @@ namespace TGE {
 
 		static void ResetStats();
 		static Statistics GetStats();
+
+		static Ref<VertexArray> GetSphereVAO();
+
 	private:
 		static void FlushAndReset();
 	};

@@ -49,7 +49,7 @@ layout(location = 0) in VertexOutput Input;
 layout(location = 4) flat in float v_TexIndex;
 layout(location = 5) flat in int entity_id;
 
-layout(binding = 0) uniform sampler2D Textures[32];
+layout(binding = 0) uniform sampler2D Textures[32];//对应glActiveTexture的槽位
 uniform vec3 cameraPos;
 
 layout(location = 0) out vec4 FragColor;

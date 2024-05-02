@@ -6,9 +6,13 @@ namespace TGE
 		None = 0,
 		
 		//color
+		RGB8,
 		RGBA8,
+		RGB16F,
 		RED_INT,
 
+		//Cube
+		Cube_RGB8,
 		//Depth/Stencil
 		DEPTH24STENCIL8,
 
@@ -56,9 +60,15 @@ namespace TGE
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
 		virtual const FrameBufferSpecification& GetSpecification() const = 0;
+
+		virtual void SetColorAttachment(uint32_t textureID, uint32_t attachment) = 0;
 		virtual uint32_t GetColorAttachment(uint32_t index) const = 0;
 
+		virtual void SetCubeAttachment(uint32_t attachment, uint32_t face, uint32_t index) = 0;
+		virtual uint32_t GetCubeAttachment(uint32_t index) = 0;
+
 		static Ref<FrameBuffer> Create(const FrameBufferSpecification& spec);
+		static Ref<FrameBuffer> Create();
 	};
 
 }

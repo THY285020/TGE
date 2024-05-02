@@ -1,0 +1,398 @@
+Scene: Untitled
+Entities:
+  - Entity: 1259275653115236245
+    TagComponent:
+      Tag: limb22
+    TransformComponent:
+      Translate: [-1.08000004, -7.0999999, -2.25]
+      Rotation: [-0.0453785583, 0, -0.263544708]
+      Scale: [0.100000001, 1.5, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 6039262553470004080
+    TagComponent:
+      Tag: limb21
+    TransformComponent:
+      Translate: [-1.14999998, -5.5, -1.04999995]
+      Rotation: [0.905127764, -0.207843766, -0.00628318544]
+      Scale: [0.100000001, 3.20000005, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 9013646484341076398
+    TagComponent:
+      Tag: limb20
+    TransformComponent:
+      Translate: [1.45000005, -8.76000023, -1.75999999]
+      Rotation: [-0.961676359, 0.488692194, 0]
+      Scale: [0.100000001, 1.48000002, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 11907416465562421110
+    TagComponent:
+      Tag: limb19
+    TransformComponent:
+      Translate: [1.25, -6.5999999, -1.38999999]
+      Rotation: [0.425860316, 0, -0.0349065848]
+      Scale: [0.100000001, 4.11999989, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 832036675522410399
+    TagComponent:
+      Tag: limb18
+    TransformComponent:
+      Translate: [-1.04999995, -2.70000005, 0.0299999993]
+      Rotation: [-0.0455530919, -0, -0.197222203]
+      Scale: [0.100000001, 3.79999995, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 8742334466738638742
+    TagComponent:
+      Tag: limb17
+    TransformComponent:
+      Translate: [1.20000005, -2.79999995, -0.300000012]
+      Rotation: [0.12042772, 0, 0.0558505356]
+      Scale: [0.100000001, 3.79999995, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 5561143748420381241
+    TagComponent:
+      Tag: limb16
+    TransformComponent:
+      Translate: [-0.720000029, 1.60000002, -0.0399999991]
+      Rotation: [0, 0, 0]
+      Scale: [0.100000001, 5.19999981, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 16465693180506639377
+    TagComponent:
+      Tag: limb15
+    TransformComponent:
+      Translate: [1.04999995, 1.75, 0.100000001]
+      Rotation: [0.0488692187, 0, 0.0349065848]
+      Scale: [0.100000001, 5.1500001, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 3745376776412934175
+    TagComponent:
+      Tag: limb14
+    TransformComponent:
+      Translate: [-2.30999994, 0.600000024, -0.949999988]
+      Rotation: [-0.0907571167, 0, -0.158824965]
+      Scale: [0.100000001, 2.5999999, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 8326560342520617212
+    TagComponent:
+      Tag: limb13
+    TransformComponent:
+      Translate: [2.70000005, 0.50000006, 0.400000006]
+      Rotation: [-0.352556527, 4.09781933e-08, 0.284488648]
+      Scale: [0.100000001, 2.6500001, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 14284949128169860623
+    TagComponent:
+      Tag: limb12
+    TransformComponent:
+      Translate: [2.1500001, 3, 0.159999996]
+      Rotation: [0.12042772, 0, 0.171042264]
+      Scale: [0.100000001, 2.5999999, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 4914087267460458802
+    TagComponent:
+      Tag: limb11
+    TransformComponent:
+      Translate: [-1.91999996, 3.0999999, -0.459999949]
+      Rotation: [0.474729568, 4.47034836e-08, -0.172787651]
+      Scale: [0.100000001, 2.79999995, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 14137447195610045621
+    TagComponent:
+      Tag: limb10
+    TransformComponent:
+      Translate: [-1.26999998, 4.25, 0.100000001]
+      Rotation: [0.249582082, 0.0767944902, 1.56730568]
+      Scale: [0.100000001, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 9933935247750961767
+    TagComponent:
+      Tag: limb9
+    TransformComponent:
+      Translate: [1.38999999, 4.30000019, 0.200000003]
+      Rotation: [0, -0, 1.57079637]
+      Scale: [0.100000001, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 9609735125912705325
+    TagComponent:
+      Tag: limb8
+    TransformComponent:
+      Translate: [0.519999981, 4.73000002, 0.189999998]
+      Rotation: [0.0907571167, 0, 0.787143469]
+      Scale: [0.100000001, 1.25999999, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 13255304727614745831
+    TagComponent:
+      Tag: limb7
+    TransformComponent:
+      Translate: [0.180000007, 5.51999998, 0.629999995]
+      Rotation: [0.816814065, 0, -0.413643032]
+      Scale: [0.100000001, 0.879999995, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 15041955641962107866
+    TagComponent:
+      Tag: limb6
+    TransformComponent:
+      Translate: [-0.319999993, 4.78999996, 0.194644168]
+      Rotation: [0.232128769, -1.11758709e-07, -0.659734309]
+      Scale: [0.100000001, 1.21000004, 0.999999523]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 3002238885687397506
+    TagComponent:
+      Tag: limb5
+    TransformComponent:
+      Translate: [0.560000002, 3.66000009, 0.200000003]
+      Rotation: [0.0209439509, 0.0680678412, -0.579449296]
+      Scale: [0.100000001, 1.5, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 15828116264910242981
+    TagComponent:
+      Tag: limb4
+    TransformComponent:
+      Translate: [-0.310000002, 3.6500001, 0.0599999987]
+      Rotation: [-0.106465079, 0.0226892792, 0.509636164]
+      Scale: [0.100000001, 1.5, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 7327553700182435954
+    TagComponent:
+      Tag: limb3
+    TransformComponent:
+      Translate: [0.0900000036, 2.70000005, -0.0500000007]
+      Rotation: [0.649262488, 0, -0.0750491619]
+      Scale: [0.100000001, 0.600000024, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 1907666614306247609
+    TagComponent:
+      Tag: Joint20
+    TransformComponent:
+      Translate: [-2.50999999, -0.720000029, -0.829999983]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 18435337012294313268
+    TagComponent:
+      Tag: Joint19
+    TransformComponent:
+      Translate: [3.03999996, -0.620000005, 0.850000024]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 14423308569487540728
+    TagComponent:
+      Tag: Joint2
+    TransformComponent:
+      Translate: [-0.0199999996, 1.08000004, -0.280000001]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 6420775779001160970
+    TagComponent:
+      Tag: Joint18
+    TransformComponent:
+      Translate: [-2.11999989, 1.83000004, -1.08000004]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 13397486035117082876
+    TagComponent:
+      Tag: limb2
+    TransformComponent:
+      Translate: [0.589999974, 0.0700000003, -0.159999996]
+      Rotation: [3.00720239, 0.00698131695, 0.535816073]
+      Scale: [0.100000001, 2.25, 0.999999166]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 9322068309062786858
+    TagComponent:
+      Tag: limb1
+    TransformComponent:
+      Translate: [-0.349999994, 0.150000006, -0.129999995]
+      Rotation: [-0.0787143558, -0.040896073, -0.337372154]
+      Scale: [0.100000001, 2.0999999, 1.09000003]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 815071768794238504
+    TagComponent:
+      Tag: limb
+    TransformComponent:
+      Translate: [0.0199999996, 1.74000001, -0.239999995]
+      Rotation: [0.052359879, 0, -0.0610865243]
+      Scale: [0.100000001, 1.5, 1]
+    SpriteRendererComponent:
+      Color: [0.0392156877, 1, 1, 1]
+  - Entity: 15328799343452092466
+    TagComponent:
+      Tag: Joint17
+    TransformComponent:
+      Translate: [2.3599999, 1.69000006, -0.0399999991]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 10296178742523284389
+    TagComponent:
+      Tag: Joint16
+    TransformComponent:
+      Translate: [-1.72000003, 4.25, 0.189999998]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 12318438650512537062
+    TagComponent:
+      Tag: Joint15
+    TransformComponent:
+      Translate: [1.88999999, 4.32999992, 0.300000012]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 3761844767552959900
+    TagComponent:
+      Tag: Joint14
+    TransformComponent:
+      Translate: [0.289999992, 5.78999996, 0.959999979]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 14545132240531268807
+    TagComponent:
+      Tag: Joint13
+    TransformComponent:
+      Translate: [-0.709999979, 4.25, -0.0399999991]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 17681453036386458114
+    TagComponent:
+      Tag: Joint12
+    TransformComponent:
+      Translate: [0.910000026, 4.26999998, 0.170000002]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 10299813677555044663
+    TagComponent:
+      Tag: Joint11
+    TransformComponent:
+      Translate: [0.0599999987, 5.21999979, 0.280000001]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 12890541112037094762
+    TagComponent:
+      Tag: Joint10
+    TransformComponent:
+      Translate: [-1.27999997, -7.76999998, -2.20000005]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 4584379716677966860
+    TagComponent:
+      Tag: Joint9
+    TransformComponent:
+      Translate: [1.75, -9.21000004, -1.15999997]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 16884101742900494124
+    TagComponent:
+      Tag: Joint8
+    TransformComponent:
+      Translate: [0.0900000036, 2.97000003, 0.140000001]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 2287388512779566847
+    TagComponent:
+      Tag: Joint7
+    TransformComponent:
+      Translate: [-0.889999986, -6.46000004, -2.26999998]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 4066078234248858488
+    TagComponent:
+      Tag: Joint6
+    TransformComponent:
+      Translate: [1.20000005, -8.39999962, -2.19000006]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 9999997561504941658
+    TagComponent:
+      Tag: Joint5
+    TransformComponent:
+      Translate: [0.0799999982, 2.46000004, -0.189999998]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 13593438331521156393
+    TagComponent:
+      Tag: Joint4
+    TransformComponent:
+      Translate: [-1.39999998, -4.5, 0.129999995]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 15520358188349253297
+    TagComponent:
+      Tag: Joint3
+    TransformComponent:
+      Translate: [1.30999994, -4.69999981, -0.5]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 1963533348673979173
+    TagComponent:
+      Tag: Joint1
+    TransformComponent:
+      Translate: [-0.699999988, -0.899999976, -0.0399999991]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]
+  - Entity: 4845487200053850445
+    TagComponent:
+      Tag: Joint0
+    TransformComponent:
+      Translate: [1.10551929, -0.876386702, -0.0405611396]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+    SphereRendererComponent:
+      Color: [1, 1, 1, 1]

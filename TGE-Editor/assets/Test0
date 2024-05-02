@@ -1,0 +1,31 @@
+Scene: Untitled
+Entities:
+  - Entity: 767744297034169545
+    TagComponent:
+      Tag: sphere
+    TransformComponent:
+      Translate: [-1.93364811, 0.0910508633, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SphereRendererComponent:
+      Color: [0.865094423, 0.899613917, 0.0868353024, 1]
+  - Entity: 1369853067272926514
+    TagComponent:
+      Tag: circle
+    TransformComponent:
+      Translate: [1.79553223, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [1, 1, 1, 1]
+      Thickness: 1
+      Fade: 0.00499999989
+  - Entity: 9090004850850926848
+    TagComponent:
+      Tag: Square
+    TransformComponent:
+      Translate: [0.309753418, -0.81860733, -0.18548584]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.818532825, 0.309715122, 0.309715122, 1]

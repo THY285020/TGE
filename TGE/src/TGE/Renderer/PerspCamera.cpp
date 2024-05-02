@@ -20,10 +20,17 @@ namespace TGE {
 
 	void PerspCamera::RecalViewMatrix()
 	{
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), Position)
-			* glm::rotate(glm::mat4(1.0f), glm::radians(Rotation), glm::vec3(0.0, 0.0, 1.0));
+		/*glm::mat4 transform = glm::translate(glm::mat4(1.0f), Position)
+			* glm::rotate(glm::mat4(1.0f), glm::radians(Rotation), glm::vec3(0.0, 0.0, 1.0));*/
 
-		ViewMatrix = glm::inverse(transform);
+		//ViewMatrix = glm::inverse(transform);
+		ViewMatrix = glm::lookAt(Position, Position + Front, Up);
+
+		ViewProjectionMatrix = ProjectionMatrix * ViewMatrix;
+	}
+	void PerspCamera::RecalProjectionMatrix()
+	{
+		ProjectionMatrix = glm::perspective(glm::radians(Zoom), AspectRatio, NearPlane, FarPlane);
 		ViewProjectionMatrix = ProjectionMatrix * ViewMatrix;
 	}
 }

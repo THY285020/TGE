@@ -207,6 +207,28 @@ namespace TGE
 			out << YAML::EndMap;//CircleRendererComponent
 		}
 
+		if (entity.HasComponent<SphereRendererComponent>())
+		{
+			out << YAML::Key << "SphereRendererComponent";
+			out << YAML::BeginMap;
+
+			auto& src = entity.GetComponent<SphereRendererComponent>();
+
+			out << YAML::Key << "Color" << YAML::Value << src.Color;
+			out << YAML::EndMap;
+		}
+
+		if (entity.HasComponent<CubeRendererComponent>())
+		{
+			out << YAML::Key << "CubeRendererComponent";
+			out << YAML::BeginMap;
+
+			auto& src = entity.GetComponent<CubeRendererComponent>();
+
+			out << YAML::Key << "Color" << YAML::Value << src.Color;
+			out << YAML::EndMap;
+		}
+
 		if (entity.HasComponent<RigidBody2DComponent>())
 		{
 			out << YAML::Key << "RigidBody2DComponent";
@@ -367,6 +389,19 @@ namespace TGE
 					src.Fade = circleRendererComponent["Fade"].as<float>();	
 				}
 
+				auto sphereRendererComponent = entity["SphereRendererComponent"];
+				if (sphereRendererComponent)
+				{
+					auto& src = deserializedEntity.AddComponent<SphereRendererComponent>();
+					src.Color = sphereRendererComponent["Color"].as<glm::vec4>();
+				}
+
+				auto cubeRendererComponent = entity["CubeRendererComponent"];
+				if (cubeRendererComponent)
+				{
+					auto& src = deserializedEntity.AddComponent<CubeRendererComponent>();
+					src.Color = cubeRendererComponent["Color"].as<glm::vec4>();
+				}
 
 				auto rigidBody2DComponent = entity["RigidBody2DComponent"];
 				if (rigidBody2DComponent)

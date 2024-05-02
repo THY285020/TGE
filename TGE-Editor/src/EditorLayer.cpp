@@ -14,6 +14,9 @@
 
 namespace TGE
 {
+
+    static const glm::mat4 originGridMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0));
+
     //extern const std::filesystem::path s_Assetpath;
     EditorLayer::EditorLayer() :Layer("EditorLayer"), m_CameraController(1280.f / 720.f, true)
     {
@@ -98,56 +101,14 @@ namespace TGE
         m_CameraSpeed = m_EditorCamera.GetMoveSpeed();
         m_SHP.SetContext(m_ActiveScene);
 
-        //m_terrain = std::make_shared<Terrain>();
-        //m_terrain->Init();
         Grid::Init();
+        m_skyRender.Init(fbSpec.Width, fbSpec.Height);
     }
+
 
     void EditorLayer::EditTransform(float* cameraView, float* cameraProjection, float* matrix, int& m_GizmoType)
     {
         static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
-        //static bool useSnap = false;
-        //static float snap[3] = { 1.f, 1.f, 1.f };
-        //static float bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
-        //static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
-        //static bool boundSizing = false;
-        //static bool boundSizingSnap = false;
-        //m_GizmoType = ImGuizmo::TRANSLATE;
-
-
-            //if (ImGui::IsKeyPressed(ImGuiKey_T))
-            //    m_GizmoType = ImGuizmo::TRANSLATE;
-            //if (ImGui::IsKeyPressed(ImGuiKey_E))
-            //    m_GizmoType = ImGuizmo::ROTATE;
-            //if (ImGui::IsKeyPressed(ImGuiKey_R)) // r Key
-            //    m_GizmoType = ImGuizmo::SCALE;
-
-            //if (ImGui::RadioButton("Translate", m_GizmoType == ImGuizmo::TRANSLATE))
-            //    m_GizmoType = ImGuizmo::TRANSLATE;
-            //ImGui::SameLine();
-            //if (ImGui::RadioButton("Rotate", m_GizmoType == ImGuizmo::ROTATE))
-            //    m_GizmoType = ImGuizmo::ROTATE;
-            //ImGui::SameLine();
-            //if (ImGui::RadioButton("Scale", m_GizmoType == ImGuizmo::SCALE))
-            //    m_GizmoType = ImGuizmo::SCALE;
-            //if (ImGui::RadioButton("Universal", m_GizmoType == ImGuizmo::UNIVERSAL))
-            //    m_GizmoType = ImGuizmo::UNIVERSAL;
-
-            //float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-            //ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
-            //ImGui::InputFloat3("Tr", matrixTranslation);
-            //ImGui::InputFloat3("Rt", matrixRotation);
-            //ImGui::InputFloat3("Sc", matrixScale);
-            //ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
-
-            //if (mCurrentGizmoOperation != ImGuizmo::SCALE)
-            //{
-            //    if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
-            //        mCurrentGizmoMode = ImGuizmo::LOCAL;
-            //    ImGui::SameLine();
-            //    if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
-            //        mCurrentGizmoMode = ImGuizmo::WORLD;
-            //}
 
             //SNAP
         bool snap = Input::IsKeyPressed(TGE_KEY_LEFT_CONTROL);
@@ -157,33 +118,6 @@ namespace TGE
             snapValue = 30.0f;
 
         float snapValues[3] = { snapValue, snapValue, snapValue };
-        //if (ImGui::IsKeyPressed(ImGuiKey_S))
-        //    useSnap = !useSnap;
-        //ImGui::Checkbox("##UseSnap", &useSnap);
-        //ImGui::SameLine();
-
-        //switch (mCurrentGizmoOperation)
-        //{
-        //case ImGuizmo::TRANSLATE:
-        //    ImGui::InputFloat3("Snap", &snap[0]);
-        //    break;
-        //case ImGuizmo::ROTATE:
-        //    ImGui::InputFloat("Angle Snap", &snap[0]);
-        //    break;
-        //case ImGuizmo::SCALE:
-        //    ImGui::InputFloat("Scale Snap", &snap[0]);
-        //    break;
-        //}
-        //ImGui::Checkbox("Bound Sizing", &boundSizing);
-        //if (boundSizing)
-        //{
-        //    ImGui::PushID(3);
-        //    ImGui::Checkbox("##BoundSizing", &boundSizingSnap);
-        //    ImGui::SameLine();
-        //    ImGui::InputFloat3("Snap", boundsSnap);
-        //    ImGui::PopID();
-        //}
-
 
         ImGuiIO& io = ImGui::GetIO();
         float viewManipulateRight = io.DisplaySize.x;
@@ -203,13 +137,12 @@ namespace TGE
         ImGuiWindow* window = ImGui::GetCurrentWindow();
         gizmoWindowFlags = ImGui::IsWindowHovered() && ImGui::IsMouseHoveringRect(window->InnerRect.Min, window->InnerRect.Max) ? ImGuiWindowFlags_NoMove : 0;
 
-        //ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
-        //ImGuizmo::DrawCubes(cameraView, cameraProjection, &objectMatrix[0][0], 1);
+        //ImGuizmo::DrawGrid(cameraView, cameraProjection, glm::value_ptr(originGridMatrix), 100.f);
+
         ImGuizmo::Manipulate(cameraView, cameraProjection, (ImGuizmo::OPERATION)m_GizmoType, mCurrentGizmoMode, matrix, NULL, snap ? snapValues : NULL);//matrix
 
         //ImGuizmo::ViewManipulate(cameraView, 8.f, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);    
     }
-
     void EditorLayer::UI_Toolbar()
     {
         //运行，停止按钮
@@ -391,7 +324,7 @@ namespace TGE
         //ImGui::SameLine();
         //if (ImGui::RadioButton("Window", useWindow)) useWindow = true;
 
-        m_SHP.OnImGuiRenderer();//多级菜单
+        m_SHP.OnImGuiRenderer();//层级菜单
         m_CBP.OnImGuiRenderer();//资产菜单
         //--------------Statistics-------------------
         ImGui::Begin("Statistics");
@@ -417,16 +350,28 @@ namespace TGE
         ImGui::Text("Sphere : %d", stats3d.SphereCount);
         ImGui::Text("Vertices : %d", stats3d.GetTotalVertexCount());
         ImGui::Text("Indices : %d", stats3d.GetTotalIndexCount());
+
         ImGui::End();
 
-        //Physics Colliders
+        //--------------Settings-------------------
         ImGui::Begin("Settings");
 
-        ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+        //Moving Speed
         if (ImGui::SliderFloat("Move Speed", &m_CameraSpeed, 1, 5))
         {
             m_EditorCamera.SetMoveSpeed(m_CameraSpeed);
         }
+
+        ImGui::Checkbox("Show Grid", &m_ShowGrid);
+
+        //Physics Colliders
+        ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+
+        static int model = 1;
+        ImGui::RadioButton("MCF-STGCN", &model, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("DSSTGCN", &model, 1);
+
 
         ImGui::End();
 
@@ -459,6 +404,7 @@ namespace TGE
             }
             ImGui::EndDragDropTarget();
         }
+
         //ViewportBounds ImGui从左上(0,0)到右下
         auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
         auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -467,16 +413,9 @@ namespace TGE
         m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
         Entity selectedEntity = m_SHP.GetSelectedEntity();
-        //RunTime Camera
-        //auto cameraEntity = m_ActiveScene->GetPrimaryCamera();
-        //if (cameraEntity)
-        //{
-            //auto& cc = cameraEntity.GetComponent<CameraComponent>().camera;
-            //glm::mat4 cameraProjection = cc.GetProjection();
-            //glm::mat4 cameraView = glm::lookAt((cameraEntity.GetComponent<TransformComponent>().Translate),
-            //    glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.f, 1.f, 0.f));*/
 
-            //EditorCamera
+
+        //EditorCamera
         if (m_SceneState == SceneState::Edit)
         {
             glm::mat4 cameraProjection = m_EditorCamera.GetProjection();
@@ -490,30 +429,28 @@ namespace TGE
                 //ImGuizmo::SetOrthographic(bool(cc.GetProjectionType()));
                 ImGuizmo::SetOrthographic(false);
                 ImGuizmo::BeginFrame();
-
-                EditTransform(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), glm::value_ptr(transform), m_GizmoType);
+                float* matrix = glm::value_ptr(transform);
+                EditTransform(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), matrix, m_GizmoType);
 
                 if (ImGuizmo::IsUsing())
                 {
-                    //glm::vec3 translation, rotation, scale;
-                    //Math::DecomposeTransform(transform, translation, rotation, scale);
-
-                    //glm::vec3 deltaRotation = rotation - tc.Rotation;
+                    //old
+                    //glm::vec3 translation, scale, skew;
+                    //glm::quat rotation;
+                    //glm::vec4 perspective;
+                    //glm::decompose(transform, scale, rotation, translation, skew, perspective);
+                    //tc.Rotation = glm::eulerAngles(rotation);
                     //tc.Translate = translation;
-                    //tc.Rotation += deltaRotation;
                     //tc.Scale = scale;
-
-                    glm::vec3 translation, scale, skew;
-                    glm::quat rotation;
-                    glm::vec4 perspective;
-                    glm::decompose(transform, scale, rotation, translation, skew, perspective);
-                    tc.Rotation = glm::eulerAngles(rotation);
-                    tc.Translate = translation;
-                    tc.Scale = scale;
+                    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+                    ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
+                    tc.Translate = glm::vec3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]);
+                    tc.Rotation = glm::vec3(glm::radians(matrixRotation[0]), glm::radians(matrixRotation[1]), glm::radians(matrixRotation[2]));
+                    tc.Scale = glm::vec3(matrixScale[0], matrixScale[1], matrixScale[2]);
                 }
             }
         }
-        //}
+
         ImGui::End();
         ImGui::PopStyleVar();
         //----------------Viewport--------------------
@@ -547,6 +484,7 @@ namespace TGE
             m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
             m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
             m_ActiveScene->OnViewportResize(uint32_t(m_ViewportSize.x), uint32_t(m_ViewportSize.y));
+            m_skyRender.Resize(m_ViewportSize.x, m_ViewportSize.y);
         }
         //------------------Renderer---------------
         Renderer2D::ResetStats();
@@ -583,8 +521,12 @@ namespace TGE
                 break;
         }
 
-        Grid::Begin(m_EditorCamera);
-        Grid::Draw();
+        if (m_ShowGrid)
+        {
+            Grid::Begin(m_EditorCamera);
+            Grid::Draw();
+        }
+
 
         //m_ActiveScene->OnUpdateRunTime(ts);
         //m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
@@ -615,7 +557,15 @@ namespace TGE
             m_HoveredEntity = pixel == -1 ? Entity() : Entity((entt::entity)pixel, m_ActiveScene.get());
         }
 
+        //防止在屏幕外操作
+        if (!m_ViewportHovered)
+        {
+            m_EditorCamera.OnOutofScreen();
+        }
+
         m_FrameBuffer->UnBind();
+
+        m_skyRender.Render(m_EditorCamera);//渲染到球体
     }
 
     void EditorLayer::OnEvent(Event& event)
@@ -647,7 +597,7 @@ namespace TGE
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
     {
         //shortcuts
-        if (e.GetRepeatCount() > 0)
+        if (e.GetRepeatCount() > 0 )
             return false;
         bool control = Input::IsKeyPressed(TGE_KEY_LEFT_CONTROL) || Input::IsKeyPressed(TGE_KEY_RIGHT_CONTROL);
         bool shift = Input::IsKeyPressed(TGE_KEY_LEFT_SHIFT) || Input::IsKeyPressed(TGE_KEY_RIGHT_SHIFT);

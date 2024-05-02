@@ -39,6 +39,9 @@ namespace TGE
 
 		float GetMoveSpeed()const { return m_MoveSpeed; }
 		void SetMoveSpeed(float speed) { m_MoveSpeed = 0.01 * speed; }
+
+		void OnOutofScreen(){ firstMouse = true; }
+
 	private:
 		void UpdateProjection();
 
@@ -48,7 +51,7 @@ namespace TGE
 		float RotationSpeed() const;
 		float ZoomSpeed() const;
 
-		bool OnMouseScroll(MouseScrolledEvent& e);
+		inline bool OnMouseScroll(MouseScrolledEvent& e);
 		inline bool OnMouseRelease(MouseButtonReleasedEvent& e);
 		void MousePan(const glm::vec2& delta);
 		void MouseRotate(const glm::vec2& delta);
@@ -59,7 +62,7 @@ namespace TGE
 
 	private:
 		glm::vec2 m_InitialMousePosition;
-		glm::vec3 m_Position = {0.f, 0.f, 0.f};
+		glm::vec3 m_Position = {0.f, 0.05f, 0.f};
 		glm::mat4 m_ViewMatrix;
 
 		float m_NearClip = 0.1f;

@@ -1,7 +1,7 @@
 #pragma once
 #include "TGE/Renderer/Texture.h"
 #include <glad/glad.h>
-#include<array>
+#include <array>
 
 namespace TGE
 {
@@ -19,6 +19,9 @@ namespace TGE
 		virtual std::string GetPath()const override { return m_Path; }
 
 		virtual void Bind(uint32_t slot) const override;
+		virtual void UnBind() const override { glBindTexture(GL_TEXTURE_2D, 0); }
+
+		virtual void GenMipmap() const override;
 
 		virtual void SetData(void* data, uint32_t size) override;
 
@@ -26,6 +29,8 @@ namespace TGE
 		{ 
 			return m_TextureID == ((OpenGLTexture2D&)other).m_TextureID;
 		};
+
+
 	private:
 		std::string m_Path;
 		uint32_t m_Width;
@@ -49,6 +54,9 @@ namespace TGE
 		virtual std::string GetPath()const override { return "CubeTexture"; }
 
 		virtual void Bind(uint32_t slot) const override;
+		virtual void UnBind() const override { glBindTexture(GL_TEXTURE_CUBE_MAP, 0); };
+
+		virtual void GenMipmap() const override;
 
 		virtual void SetData(void* data, uint32_t size) override;
 
@@ -58,6 +66,7 @@ namespace TGE
 		{
 			return m_TextureID == ((OpenGLTextureCube&)other).m_TextureID;
 		};
+
 	private:
 		//std::string m_Path;
 		uint32_t m_TextureID;

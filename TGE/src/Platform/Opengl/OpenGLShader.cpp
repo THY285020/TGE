@@ -458,6 +458,11 @@ namespace TGE
 		SetUniformIntArray(name, count, values);
 	}
 
+	void OpenGLShader::SetFloat(const std::string& name, const int& value)
+	{
+		SetUniformFloat(name, value);
+	}
+
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
 		SetUniformFloat3(name, value);

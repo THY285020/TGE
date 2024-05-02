@@ -4,6 +4,8 @@
 #include "TGE/Renderer/EditorCamera.h"
 #include "Panel/SceneHierarchyPanel.h"
 #include "Panel/ContentBrowserPanel.h"
+#include "TGE/Renderer/SkyRender.h"
+
 namespace TGE
 {
 	class EditorLayer :public Layer
@@ -55,10 +57,12 @@ namespace TGE
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene;
 
-		Entity m_SquareEntity;
-		Entity m_SquareEntity2;
+		//Entity m_SquareEntity;
+		//Entity m_SquareEntity2;
 		Entity m_Camera;
 		Entity m_Camera2;
+
+
 		EditorCamera m_EditorCamera;
 		float m_CameraSpeed;
 		Entity m_HoveredEntity;
@@ -84,6 +88,8 @@ namespace TGE
 		SceneState m_SceneState = SceneState::Edit;
 
 		bool m_ShowPhysicsColliders = false;
+		bool m_ShowGrid = false;
+		SkyRender m_skyRender;
 	};
 }
 

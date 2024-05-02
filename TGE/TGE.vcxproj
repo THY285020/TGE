@@ -140,6 +140,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\TGE\Renderer\SkyRender.h" />
     <ClInclude Include="src\TGE\Renderer\LightManager.h" />
     <ClInclude Include="src\TGE\Renderer\Light.h" />
     <ClInclude Include="src\Platform\Opengl\OpenGLBuffer.h" />
@@ -452,6 +453,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\TGE\Renderer\SkyRender.cpp" />
     <ClCompile Include="src\TGE\Renderer\LightManager.cpp" />
     <ClCompile Include="src\TGE\Renderer\Light.cpp" />
     <ClCompile Include="src\Platform\Opengl\OpenGLBuffer.cpp" />
